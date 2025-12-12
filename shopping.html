@@ -48,8 +48,14 @@
 </head>
 <body class="bg-green-50 text-slate-800 pb-32">
 
-    <div class="p-6 pt-10 flex justify-between items-center bg-white shadow-sm sticky top-0 z-30">
-        <h1 class="text-2xl font-bold text-slate-800">購物清單 <i class="fas fa-shopping-cart text-custom-green"></i></h1>
+    <div class="p-6 pt-10 flex justify-between items-end">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">購物清單 <i class="fas fa-shopping-cart text-custom-green"></i></h1>
+        </div>
+        <div class="text-right">
+            <div class="text-[10px] text-slate-400">買好買滿</div>
+            <div class="text-xs text-slate-500 font-bold">Fukuoka & Busan</div>
+        </div>
     </div>
 
     <div class="p-4 space-y-8 max-w-md mx-auto">
@@ -160,6 +166,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // 🔴 請替換成您的 Firebase 設定
         const firebaseConfig = {
             apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
             authDomain: "fukuoka-busan-trip.firebaseapp.com",
@@ -273,7 +280,6 @@
             } catch(e) {
                 console.error(e);
                 alert("更新失敗");
-                // 失敗復原 UI (略)
             }
         }
 
@@ -328,7 +334,7 @@
                 desc: document.getElementById('input-desc').value,
                 link: document.getElementById('input-link').value,
                 image: document.getElementById('base64-storage').value,
-                checked: false, // 預設未勾選 (編輯時不應重置，下面處理)
+                checked: false, 
                 created_at: Date.now()
             };
 
