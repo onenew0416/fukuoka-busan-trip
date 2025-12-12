@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>必買清單</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        
+        /* 綠色主題 */
+        .text-custom-green { color: rgb(0, 140, 0); }
+        .bg-custom-green { background-color: rgb(0, 140, 0); }
+        .border-custom-green { border-color: rgb(0, 140, 0); }
+        
+        /* Checkbox 自訂顏色 */
+        .checkbox-custom {
+            accent-color: rgb(0, 140, 0);
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* 完成項目的樣式 */
+        .item-completed .item-title {
+            text-decoration: line-through;
+            color: #94a3b8; /* slate-400 */
+        }
+        .item-completed img {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        /* 卡片互動 */
+        .item-card { transition: all 0.2s; }
+        .action-area { 
+            max-height: 0; overflow: hidden; 
+            transition: max-height 0.3s ease-out, opacity 0.3s;
+            opacity: 0;
+        }
+        .item-card.active .action-area {
+            max-height: 100px; opacity: 1; margin-top: 12px; padding-top: 12px;
+            border-top: 1px dashed #e2e8f0;
+        }
+    </style>
+</head>
+<body class="bg-green-50 text-slate-800 pb-32">
+
+    <div class="p-6 pt-10 flex justify-between items-center bg-white shadow-sm sticky top-0 z-30">
+        <h1 class="text-2xl font-bold text-slate-800">購物清單 <i class="fas fa-shopping-cart text-custom-green"></i></h1>
+    </div>
+
+    <div class="p-4 space-y-8 max-w-md mx-auto">
+        
+        <div>
+            <div class="flex items-center gap-2 mb-4 px-2">
+                <span class="bg-red-500 w-2 h-6 rounded-full block"></span>
+                <h2 class="text-xl font-bold text-slate-700">福岡 Fukuoka</h2>
+            </div>
+            <div id="list-fukuoka" class="space-y-3">
+                </div>
+        </div>
+
+        <div>
+            <div class="flex items-center gap-2 mb-4 px-2 mt-8">
+                <span class="bg-blue-500 w-2 h-6 rounded-full block"></span>
+                <h2 class="text-xl font-bold text-slate-700">釜山 Busan</h2>
+            </div>
+            <div id="list-busan" class="space-y-3">
+                </div>
+        </div>
+
+    </div>
+
+    <div id="shop-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-bold text-slate-800">新增待買物品</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            
+            <form id="shop-form" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="input-id">
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="city" value="fukuoka" class="peer hidden" checked>
+                            <div class="bg-slate-100 text-slate-400 py-2 text-center rounded-xl font-bold peer-checked:bg-red-500 peer-checked:text-white transition">
+                                福岡
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="city" value="busan" class="peer hidden">
+                            <div class="bg-slate-100 text-slate-400 py-2 text-center rounded-xl font-bold peer-checked:bg-blue-500 peer-checked:text-white transition">
+                                釜山
+                            </div>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">圖片 (選填)</label>
+                        <input type="file" id="input-image" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-custom-green hover:file:bg-green-100">
+                        <div id="preview-container" class="mt-2 hidden">
+                            <img id="image-preview" src="" class="h-24 w-auto rounded-lg border border-slate-200 object-cover">
+                            <button type="button" onclick="clearImage()" class="text-xs text-red-400 mt-1 underline">移除圖片</button>
+                        </div>
+                        <input type="hidden" id="base64-storage">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">物品名稱</label>
+                        <input type="text" id="input-name" placeholder="例如：明太子仙貝" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">說明/備註 (選填)</label>
+                        <textarea id="input-desc" rows="2" placeholder="口味、數量、在哪裡買..." class="w-full bg-slate-100 rounded-xl px-4 py-3 text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">參考連結 (選填)</label>
+                        <input type="url" id="input-link" placeholder="https://..." class="w-full bg-slate-100 rounded-xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full bg-custom-green text-white font-bold py-3 rounded-xl mt-6 shadow-lg shadow-green-300 active:scale-95 transition-transform hover:bg-[#008c00]">
+                    確認儲存
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <button onclick="openModal()" class="fixed bottom-24 right-6 w-14 h-14 bg-custom-green text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-110 transition z-40 active:scale-95 shadow-green-200">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <div class="fixed bottom-6 left-4 right-4 bg-white rounded-full shadow-2xl py-3 px-6 flex justify-between items-center z-50">
+        <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
+            <i class="fas fa-suitcase text-lg mb-1"></i>
+            <span class="text-[10px]">行程</span>
+        </a>
+        <a href="map.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
+            <i class="fas fa-map-marked-alt text-lg mb-1"></i>
+            <span class="text-[10px]">地圖</span>
+        </a>
+        <a href="accounting.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
+            <i class="fas fa-wallet text-lg mb-1"></i>
+            <span class="text-[10px]">記帳</span>
+        </a>
+        <div class="flex flex-col items-center text-custom-green cursor-pointer w-1/4">
+            <i class="fas fa-shopping-bag text-lg mb-1"></i>
+            <span class="text-[10px] font-bold">購物</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
+            authDomain: "fukuoka-busan-trip.firebaseapp.com",
+            projectId: "fukuoka-busan-trip",
+            storageBucket: "fukuoka-busan-trip.firebasestorage.app",
+            messagingSenderId: "130540342304",
+            appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
+            measurementId: "G-XDV9S0066R"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let shopData = [];
+
+        // 讀取資料
+        async function loadData() {
+            try {
+                // 改存到 'shopping_list' 集合
+                const q = query(collection(db, "shopping_list"), orderBy("created_at", "desc"));
+                const snapshot = await getDocs(q);
+                
+                shopData = [];
+                snapshot.forEach(doc => {
+                    shopData.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderLists();
+            } catch (e) {
+                console.error("讀取失敗:", e);
+            }
+        }
+
+        // 渲染列表
+        function renderLists() {
+            const fukuokaContainer = document.getElementById('list-fukuoka');
+            const busanContainer = document.getElementById('list-busan');
+            
+            fukuokaContainer.innerHTML = '';
+            busanContainer.innerHTML = '';
+
+            const fukuokaItems = shopData.filter(i => i.city === 'fukuoka');
+            const busanItems = shopData.filter(i => i.city === 'busan');
+
+            // 渲染函數
+            const createItemHTML = (item) => {
+                const isChecked = item.checked ? 'checked' : '';
+                const completedClass = item.checked ? 'item-completed' : '';
+                
+                // 圖片 HTML
+                let imgHtml = '';
+                if (item.image) {
+                    imgHtml = `<img src="${item.image}" class="w-16 h-16 rounded-lg object-cover border border-slate-100 flex-shrink-0">`;
+                }
+
+                // 連結 HTML
+                let linkHtml = '';
+                if (item.link) {
+                    linkHtml = `<a href="${item.link}" target="_blank" onclick="event.stopPropagation()" class="ml-2 text-custom-green bg-green-50 w-6 h-6 rounded-full inline-flex items-center justify-center text-xs"><i class="fas fa-link"></i></a>`;
+                }
+
+                return `
+                    <div id="item-${item.id}" class="item-card bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-pointer ${completedClass}" onclick="toggleExpand('${item.id}')">
+                        <div class="flex items-start gap-3">
+                            <div class="pt-1" onclick="event.stopPropagation()">
+                                <input type="checkbox" class="checkbox-custom" onchange="toggleCheck('${item.id}', this.checked)" ${isChecked}>
+                            </div>
+                            
+                            ${imgHtml}
+
+                            <div class="flex-1 min-w-0">
+                                <h3 class="font-bold text-slate-800 text-lg leading-tight item-title break-words">
+                                    ${item.name} ${linkHtml}
+                                </h3>
+                                ${item.desc ? `<p class="text-sm text-slate-500 mt-1 break-words">${item.desc}</p>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="action-area flex gap-3">
+                            <button onclick="event.stopPropagation(); editItem('${item.id}')" class="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-sm font-bold hover:bg-green-200">
+                                <i class="fas fa-pen mr-1"></i> 編輯
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="flex-1 bg-red-100 text-red-600 py-2 rounded-lg text-sm font-bold hover:bg-red-200">
+                                <i class="fas fa-trash mr-1"></i> 刪除
+                            </button>
+                        </div>
+                    </div>
+                `;
+            };
+
+            if (fukuokaItems.length === 0) fukuokaContainer.innerHTML = '<div class="text-center text-slate-300 py-4 text-sm">尚無福岡待買清單</div>';
+            else fukuokaContainer.innerHTML = fukuokaItems.map(createItemHTML).join('');
+
+            if (busanItems.length === 0) busanContainer.innerHTML = '<div class="text-center text-slate-300 py-4 text-sm">尚無釜山待買清單</div>';
+            else busanContainer.innerHTML = busanItems.map(createItemHTML).join('');
+        }
+
+        // 互動：切換 Checkbox 狀態
+        window.toggleCheck = async function(id, isChecked) {
+            // UI 先更新 (Optimistic UI)
+            const el = document.getElementById(`item-${id}`);
+            if(isChecked) el.classList.add('item-completed');
+            else el.classList.remove('item-completed');
+
+            // 資料庫更新
+            try {
+                await updateDoc(doc(db, "shopping_list", id), { checked: isChecked });
+                // 更新本地資料狀態，避免重整前點編輯拿到舊狀態
+                const item = shopData.find(i => i.id === id);
+                if(item) item.checked = isChecked;
+            } catch(e) {
+                console.error(e);
+                alert("更新失敗");
+                // 失敗復原 UI (略)
+            }
+        }
+
+        // 互動：展開編輯選單
+        window.toggleExpand = function(id) {
+            const allItems = document.querySelectorAll('.item-card');
+            allItems.forEach(el => {
+                if (el.id !== `item-${id}`) el.classList.remove('active');
+            });
+            document.getElementById(`item-${id}`).classList.toggle('active');
+        }
+
+        // 圖片預覽處理
+        const fileInput = document.getElementById('input-image');
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 1024 * 800) { // 限制約 800KB
+                    alert("圖片太大囉！請使用截圖或小一點的照片 (Firestore 限制)");
+                    this.value = ''; // 清空
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('image-preview').src = e.target.result;
+                    document.getElementById('base64-storage').value = e.target.result;
+                    document.getElementById('preview-container').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        window.clearImage = function() {
+            document.getElementById('input-image').value = '';
+            document.getElementById('base64-storage').value = '';
+            document.getElementById('preview-container').classList.add('hidden');
+        }
+
+        // 表單提交
+        window.handleFormSubmit = async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('input-id').value;
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true; btn.innerText = '儲存中...';
+
+            // 取得 Radio 的值
+            const city = document.querySelector('input[name="city"]:checked').value;
+
+            const newItem = {
+                city: city,
+                name: document.getElementById('input-name').value,
+                desc: document.getElementById('input-desc').value,
+                link: document.getElementById('input-link').value,
+                image: document.getElementById('base64-storage').value,
+                checked: false, // 預設未勾選 (編輯時不應重置，下面處理)
+                created_at: Date.now()
+            };
+
+            try {
+                if (id) {
+                    // 編輯模式：保留原本的 checked 狀態和 created_at
+                    const oldItem = shopData.find(i => i.id === id);
+                    newItem.checked = oldItem ? oldItem.checked : false;
+                    newItem.created_at = oldItem ? oldItem.created_at : Date.now();
+                    
+                    await updateDoc(doc(db, "shopping_list", id), newItem);
+                } else {
+                    await addDoc(collection(db, "shopping_list"), newItem);
+                }
+                await loadData();
+                closeModal();
+            } catch (e) {
+                console.error(e);
+                alert('儲存失敗：可能圖片太大了');
+            } finally {
+                btn.disabled = false; btn.innerText = '確認儲存';
+            }
+        }
+
+        window.deleteItem = async function(id) {
+            if(!confirm('確定刪除這個項目？')) return;
+            const el = document.getElementById(`item-${id}`);
+            el.style.opacity = '0';
+            setTimeout(async () => {
+                await deleteDoc(doc(db, "shopping_list", id));
+                await loadData();
+            }, 300);
+        }
+
+        window.editItem = function(id) {
+            const item = shopData.find(i => i.id === id);
+            if(item) {
+                document.getElementById('input-id').value = item.id;
+                document.getElementById('input-name').value = item.name;
+                document.getElementById('input-desc').value = item.desc || '';
+                document.getElementById('input-link').value = item.link || '';
+                
+                // 設定 Radio
+                const radios = document.getElementsByName('city');
+                radios.forEach(r => {
+                    if(r.value === item.city) r.checked = true;
+                });
+
+                // 設定圖片
+                if (item.image) {
+                    document.getElementById('base64-storage').value = item.image;
+                    document.getElementById('image-preview').src = item.image;
+                    document.getElementById('preview-container').classList.remove('hidden');
+                } else {
+                    clearImage();
+                }
+
+                document.getElementById('modal-title').innerText = '編輯物品';
+                document.getElementById('shop-modal').classList.remove('hidden');
+            }
+        }
+
+        window.openModal = function() {
+            document.getElementById('shop-form').reset();
+            document.getElementById('input-id').value = '';
+            clearImage();
+            document.getElementById('modal-title').innerText = '新增待買物品';
+            document.getElementById('shop-modal').classList.remove('hidden');
+        }
+        
+        window.closeModal = function() { document.getElementById('shop-modal').classList.add('hidden'); }
+        document.getElementById('shop-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
+
+        loadData();
+    </script>
+</body>
+</html>
