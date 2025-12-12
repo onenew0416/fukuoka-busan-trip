@@ -160,293 +160,280 @@
         </div>
     </div>
 
-    <script>
-        // 資料初始化
-        let resourcesData = [
-            {
-                id: 'traffic', title: '交通地圖', icon: 'fa-subway',
-                links: [
-                    { id: 1, text: '福岡地鐵圖', url: 'https://subway.city.fukuoka.lg.jp/cha_trad/route/deta/map.pdf' },
-                    { id: 2, text: '釜山地鐵圖', url: 'https://www.settour.com.tw/help/docs/pkg/%E9%87%9C%E5%B1%B1%E5%9C%B0%E9%90%B5%E5%9C%96.pdf' }
-                ]
-            },
-            {
-                id: 'stay', title: '住宿導航', icon: 'fa-bed',
-                links: [
-                    { id: 3, text: '福岡 UNPLAN', url: 'https://maps.app.goo.gl/F9gh33cWVJXq6LnQ6' },
-                    { id: 4, text: '釜山 Urbanstay', url: 'https://naver.me/xKEqBo0n' }
-                ]
-            },
-            {
-                id: 'coupon', title: '優惠券', icon: 'fa-ticket-alt', isSpecial: true,
-                links: [
-                    { id: 5, text: '唐吉訶德', url: 'https://japanportal.donki-global.com/coupon/cp001_zhtw.html' }
-                ]
-            }
-        ];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+        // 🔴 請替換成你的 Firebase 設定
+        const firebaseConfig = {
+        apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
+        authDomain: "fukuoka-busan-trip.firebaseapp.com",
+        projectId: "fukuoka-busan-trip",
+        storageBucket: "fukuoka-busan-trip.firebasestorage.app",
+        messagingSenderId: "130540342304",
+        appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
+        measurementId: "G-XDV9S0066R"
+        };
 
-        let todoData = [
-            { id: 1, text: '買 Greenland 門票', url: 'https://www.klook.com/zh-TW/activity/45735-greenland-kumamoto/', date: '', done: false },
-            { id: 2, text: '租車電話預約', url: 'https://www.pref.saga.lg.jp/airport/kiji00312799/index.html', date: '', done: false },
-            { id: 3, text: '膠囊列車預約', url: 'https://www.bluelinepark.com/eng/booking.do', date: '2026-02-03', done: false }
-        ];
-
-        // 這裡將您的 HTML 列表轉換為 JS 資料，以便支援編輯功能
-        let packingData = [
-            // 包包 (Bag)
-            { id: 101, text: '行動電源', category: 'bag', done: false },
-            { id: 102, text: '雨傘', category: 'bag', done: false },
-            { id: 103, text: '台灣駕照', category: 'bag', done: false },
-            { id: 104, text: '日文譯本', category: 'bag', done: false },
-            { id: 105, text: '信用卡', category: 'bag', done: false },
-            { id: 106, text: '現金', category: 'bag', done: false },
-            { id: 107, text: '感冒藥/胃散', category: 'bag', done: false },
-            { id: 108, text: '護照', category: 'bag', done: false },
-            { id: 109, text: '暈車/船藥', category: 'bag', done: false },
-            // 隨身 (Carry)
-            { id: 201, text: '充電器', category: 'carry', done: false },
-            { id: 202, text: 'Lightning線', category: 'carry', done: false },
-            { id: 203, text: 'Type C線', category: 'carry', done: false },
-            { id: 204, text: '隱眼', category: 'carry', done: false },
-            { id: 205, text: '眼鏡', category: 'carry', done: false },
-            { id: 206, text: '行李秤', category: 'carry', done: false },
-            { id: 207, text: '口罩', category: 'carry', done: false },
-            { id: 208, text: '平板', category: 'carry', done: false },
-            { id: 209, text: '轉接頭', category: 'carry', done: false },
-            // 託運 (Check)
-            { id: 301, text: '睡衣', category: 'check', done: false },
-            { id: 302, text: '洗衣袋', category: 'check', done: false },
-            { id: 303, text: '浴巾', category: 'check', done: false },
-            { id: 304, text: '藍牙喇叭', category: 'check', done: false },
-            { id: 305, text: '牙刷', category: 'check', done: false },
-            { id: 306, text: '牙膏', category: 'check', done: false },
-            { id: 307, text: '洗髮精', category: 'check', done: false },
-            { id: 308, text: '洗面乳', category: 'check', done: false },
-            { id: 309, text: '刮鬍刀', category: 'check', done: false },
-            { id: 310, text: '保養品', category: 'check', done: false },
-        ];
-
-        // 渲染函式：資源卡片
-        function renderResources() {
-            const container = document.getElementById('resources-container');
-            container.innerHTML = '';
-
-            resourcesData.forEach(group => {
-                let linksHtml = group.links.map(link => `
-                    <div class="flex items-center justify-between group/item p-2 hover:bg-green-50 rounded-xl transition">
-                        <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2">
-                             ${group.isSpecial ? '<i class="fas fa-chevron-right text-[10px] mr-1"></i>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-1"></span>'}
-                             ${link.text}
-                        </a>
-                        <div class="flex space-x-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                            <button onclick="editResource('${group.id}', ${link.id})" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
-                            <button onclick="deleteResource('${group.id}', ${link.id})" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                `).join('');
-
-                let cardClass = group.isSpecial 
-                    ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' 
-                    : 'bg-white border-slate-100 flex flex-col';
-                
-                let titleColor = group.isSpecial ? 'text-orange-500' : 'text-custom-green';
-
-                const html = `
-                    <div class="${cardClass} p-4 rounded-3xl shadow-sm border relative group/card">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${titleColor} mr-1.5"></i> ${group.title}</h3>
-                            <button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button>
-                        </div>
-                        <div class="space-y-1 flex-1">
-                            ${linksHtml}
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += html;
-            });
+    
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        // 本地資料暫存
+        let resourcesData = [];
+        let todoData = [];
+        let packingData = [];
+    
+        // ==========================================
+        // 1. 讀取功能 (分成三個資料表讀取)
+        // ==========================================
+        async function loadAllData() {
+            await Promise.all([loadResources(), loadTodos(), loadPacking()]);
         }
-
-        // 渲染函式：待辦事項
-        function renderTodos() {
-            const container = document.getElementById('todo-list');
-            container.innerHTML = '';
+    
+        // 讀取資訊卡片 (Collection: 'resources')
+        async function loadResources() {
+            const q = query(collection(db, "resources"), orderBy("created_at")); // 建議加一個 created_at 欄位排序
+            const snapshot = await getDocs(q);
+            // 這裡需要做一點轉換，把單層資料轉回原本的 Group 結構，或是我們簡化結構
+            // 為了方便，我們假設資料庫存的是單一連結，我們前端再分類
+            let rawLinks = [];
+            snapshot.forEach(doc => rawLinks.push({ id: doc.id, ...doc.data() }));
             
-            todoData.forEach(item => {
-                const dateBadge = item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : '';
-                const linkIcon = item.url ? `<a href="${item.url}" target="_blank"><i class="fas fa-external-link-alt text-xs text-slate-300 hover:text-custom-green ml-2"></i></a>` : '';
-
-                const html = `
-                <div class="flex items-center p-3 hover:bg-slate-50 rounded-xl transition group border-b border-slate-50 last:border-0">
-                    <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTodo(${item.id})" class="w-4 h-4 rounded border-gray-300 accent-custom-green mr-3 cursor-pointer">
-                    <div class="flex-1 cursor-pointer" onclick="editTodo(${item.id})">
-                        <div class="text-sm font-medium ${item.done ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.text}</div>
-                        ${dateBadge}
-                    </div>
-                    ${linkIcon}
-                    <div class="action-btns flex space-x-3 ml-2">
-                        <button onclick="editTodo(${item.id})" class="text-slate-300 hover:text-custom-green"><i class="fas fa-pen text-xs"></i></button>
-                        <button onclick="deleteTodo(${item.id})" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash text-xs"></i></button>
-                    </div>
-                </div>`;
-                container.innerHTML += html;
-            });
+            // 重組資料結構以符合畫面 (這裡簡單示範，預設分為三個固定群組)
+            resourcesData = [
+                { id: 'traffic', title: '交通地圖', icon: 'fa-subway', links: rawLinks.filter(i => i.group === 'traffic') },
+                { id: 'stay', title: '住宿導航', icon: 'fa-bed', links: rawLinks.filter(i => i.group === 'stay') },
+                { id: 'coupon', title: '優惠券', icon: 'fa-ticket-alt', isSpecial: true, links: rawLinks.filter(i => i.group === 'coupon') }
+            ];
+            renderResources();
         }
-
-        // 渲染函式：行李清單
-        function renderPacking() {
-            ['bag', 'carry', 'check'].forEach(cat => {
-                const container = document.getElementById(`packing-${cat}`);
-                container.innerHTML = '';
-                const items = packingData.filter(i => i.category === cat);
+    
+        // 讀取待辦事項 (Collection: 'todos')
+        async function loadTodos() {
+            const snapshot = await getDocs(collection(db, "todos"));
+            todoData = [];
+            snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
+            renderTodos();
+        }
+    
+        // 讀取行李清單 (Collection: 'packing')
+        async function loadPacking() {
+            const snapshot = await getDocs(collection(db, "packing"));
+            packingData = [];
+            snapshot.forEach(doc => packingData.push({ id: doc.id, ...doc.data() }));
+            renderPacking();
+        }
+    
+        // ==========================================
+        // 2. 新增/修改 (統一處理)
+        // ==========================================
+        window.handleFormSubmit = async function(e) {
+            e.preventDefault();
+            const mode = document.getElementById('input-mode').value;
+            const id = document.getElementById('input-id').value;
+            
+            // 共用欄位
+            let collectionName = '';
+            let payload = {
+                text: document.getElementById('input-text').value,
+                created_at: Date.now() // 用於排序
+            };
+    
+            if (mode === 'resource') {
+                collectionName = 'resources';
+                payload.url = document.getElementById('input-url').value;
+                payload.group = document.getElementById('input-group-id').value; // 存群組ID
+            } else if (mode === 'todo') {
+                collectionName = 'todos';
+                payload.url = document.getElementById('input-url').value;
+                payload.date = document.getElementById('input-date').value;
+                if(!id) payload.done = false; // 新增時預設未完成
+            } else if (mode === 'packing') {
+                collectionName = 'packing';
+                payload.category = document.getElementById('input-category').value;
+                if(!id) payload.done = false;
+            }
+    
+            try {
+                if (id) {
+                    await updateDoc(doc(db, collectionName, id), payload);
+                } else {
+                    await addDoc(collection(db, collectionName), payload);
+                }
                 
-                items.forEach(item => {
-                    const html = `
-                    <div class="flex items-center justify-between group py-1">
-                        <label class="flex items-center text-xs text-slate-700 cursor-pointer hover:text-custom-green flex-1">
-                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePacking(${item.id})" class="mr-1.5 accent-custom-green"> 
-                            <span class="${item.done ? 'text-slate-300 line-through' : ''}">${item.text}</span>
-                        </label>
-                        <div class="opacity-0 group-hover:opacity-100 flex space-x-1">
-                            <button onclick="editPacking(${item.id})" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
-                            <button onclick="deletePacking(${item.id})" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>`;
-                    container.innerHTML += html;
-                });
-            });
+                // 重新讀取對應的區塊
+                if(mode === 'resource') loadResources();
+                if(mode === 'todo') loadTodos();
+                if(mode === 'packing') loadPacking();
+                
+                closeModal();
+            } catch (err) {
+                console.error(err);
+                alert("儲存失敗");
+            }
         }
-
-        // CRUD & Modal Logic
-        function openModal(mode, id = null, groupId = null) {
+    
+        // ==========================================
+        // 3. 刪除與狀態切換
+        // ==========================================
+        // 通用刪除
+        async function deleteItemGeneric(collectionName, id, callback) {
+            if(!confirm('確定刪除？')) return;
+            await deleteDoc(doc(db, collectionName, id));
+            callback();
+        }
+    
+        window.deleteResource = (groupId, id) => deleteItemGeneric('resources', id, loadResources);
+        window.deleteTodo = (id) => deleteItemGeneric('todos', id, loadTodos);
+        window.deletePacking = (id) => deleteItemGeneric('packing', id, loadPacking);
+    
+        // 狀態切換 (打勾)
+        window.toggleTodo = async function(id) {
+            const item = todoData.find(i => i.id === id);
+            await updateDoc(doc(db, "todos", id), { done: !item.done });
+            loadTodos(); // 為了簡單直接重讀，也可以只改本地
+        }
+    
+        window.togglePacking = async function(id) {
+            const item = packingData.find(i => i.id === id);
+            await updateDoc(doc(db, "packing", id), { done: !item.done });
+            loadPacking();
+        }
+    
+        // ==========================================
+        // 4. 介面操作 (Modal) - 與原本相同
+        // ==========================================
+        window.openModal = function(mode, id = null, groupId = null) {
             document.getElementById('universal-form').reset();
             document.getElementById('input-mode').value = mode;
             document.getElementById('input-id').value = id || '';
             document.getElementById('input-group-id').value = groupId || '';
             document.getElementById('universal-modal').classList.remove('hidden');
-
-            // 欄位顯示控制
+    
             const fieldLink = document.getElementById('field-link');
             const fieldDate = document.getElementById('field-date');
             const fieldCat = document.getElementById('field-category');
             
-            fieldLink.classList.add('hidden');
-            fieldDate.classList.add('hidden');
-            fieldCat.classList.add('hidden');
-
+            fieldLink.classList.add('hidden'); fieldDate.classList.add('hidden'); fieldCat.classList.add('hidden');
+    
             if (mode === 'resource') {
                 document.getElementById('modal-title').innerText = id ? '編輯連結' : '新增連結';
                 fieldLink.classList.remove('hidden');
-            } else if (mode === 'todo') {
-                document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦';
-                fieldLink.classList.remove('hidden');
-                fieldDate.classList.remove('hidden');
-            } else if (mode === 'packing') {
-                document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品';
-                fieldCat.classList.remove('hidden');
-            }
-
-            // 填入既有資料 (編輯模式)
-            if (id) {
-                if (mode === 'resource') {
+                if(id) {
                     const group = resourcesData.find(g => g.id === groupId);
                     const item = group.links.find(i => i.id === id);
                     document.getElementById('input-text').value = item.text;
                     document.getElementById('input-url').value = item.url;
-                } else if (mode === 'todo') {
+                }
+            } else if (mode === 'todo') {
+                document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦';
+                fieldLink.classList.remove('hidden');
+                fieldDate.classList.remove('hidden');
+                if(id) {
                     const item = todoData.find(i => i.id === id);
                     document.getElementById('input-text').value = item.text;
                     document.getElementById('input-url').value = item.url || '';
                     document.getElementById('input-date').value = item.date || '';
-                } else if (mode === 'packing') {
+                }
+            } else if (mode === 'packing') {
+                document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品';
+                fieldCat.classList.remove('hidden');
+                if(id) {
                     const item = packingData.find(i => i.id === id);
                     document.getElementById('input-text').value = item.text;
                     document.getElementById('input-category').value = item.category;
                 }
             }
         }
-
-        function closeModal() { document.getElementById('universal-modal').classList.add('hidden'); }
-        document.getElementById('universal-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            const mode = document.getElementById('input-mode').value;
-            const id = document.getElementById('input-id').value;
-            const text = document.getElementById('input-text').value;
-            const url = document.getElementById('input-url').value;
-            const date = document.getElementById('input-date').value;
-            const category = document.getElementById('input-category').value;
-            const groupId = document.getElementById('input-group-id').value;
-            const numId = id ? parseInt(id) : Date.now();
-
-            if (mode === 'resource') {
-                const groupIdx = resourcesData.findIndex(g => g.id === groupId);
-                if (id) {
-                    const itemIdx = resourcesData[groupIdx].links.findIndex(i => i.id == id);
-                    resourcesData[groupIdx].links[itemIdx] = { id: numId, text, url };
-                } else {
-                    resourcesData[groupIdx].links.push({ id: numId, text, url });
-                }
-                renderResources();
-            } else if (mode === 'todo') {
-                if (id) {
-                    const idx = todoData.findIndex(i => i.id == id);
-                    todoData[idx] = { ...todoData[idx], text, url, date };
-                } else {
-                    todoData.push({ id: numId, text, url, date, done: false });
-                }
-                renderTodos();
-            } else if (mode === 'packing') {
-                if (id) {
-                    const idx = packingData.findIndex(i => i.id == id);
-                    packingData[idx] = { ...packingData[idx], text, category };
-                } else {
-                    packingData.push({ id: numId, text, category, done: false });
-                }
-                renderPacking();
-            }
-            closeModal();
+    
+        window.closeModal = function() { document.getElementById('universal-modal').classList.add('hidden'); }
+        document.getElementById('universal-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
+        window.editResource = (groupId, id) => openModal('resource', id, groupId);
+        window.editTodo = (id) => openModal('todo', id);
+        window.editPacking = (id) => openModal('packing', id);
+    
+        // ==========================================
+        // 5. 渲染函式 (Render) - 與原本幾乎相同
+        // ==========================================
+        function renderResources() {
+            const container = document.getElementById('resources-container');
+            container.innerHTML = '';
+            resourcesData.forEach(group => {
+                let linksHtml = group.links.map(link => `
+                    <div class="flex items-center justify-between group/item p-2 hover:bg-green-50 rounded-xl transition">
+                        <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2">
+                             ${group.isSpecial ? '<i class="fas fa-chevron-right text-[10px] mr-1"></i>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-1"></span>'} ${link.text}
+                        </a>
+                        <div class="flex space-x-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                            <button onclick="editResource('${group.id}', '${link.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
+                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`).join('');
+                let cardClass = group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col';
+                let titleColor = group.isSpecial ? 'text-orange-500' : 'text-custom-green';
+                const html = `
+                    <div class="${cardClass} p-4 rounded-3xl shadow-sm border relative group/card">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${titleColor} mr-1.5"></i> ${group.title}</h3>
+                            <button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="space-y-1 flex-1">${linksHtml}</div>
+                    </div>`;
+                container.innerHTML += html;
+            });
         }
-
-        // Helper Functions
-        function editResource(groupId, id) { openModal('resource', id, groupId); }
-        function deleteResource(groupId, id) {
-            if(confirm('刪除連結？')) {
-                const idx = resourcesData.findIndex(g => g.id === groupId);
-                resourcesData[idx].links = resourcesData[idx].links.filter(i => i.id !== id);
-                renderResources();
-            }
+    
+        function renderTodos() {
+            const container = document.getElementById('todo-list');
+            container.innerHTML = '';
+            todoData.forEach(item => {
+                const dateBadge = item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : '';
+                const linkIcon = item.url ? `<a href="${item.url}" target="_blank"><i class="fas fa-external-link-alt text-xs text-slate-300 hover:text-custom-green ml-2"></i></a>` : '';
+                const html = `
+                <div class="flex items-center p-3 hover:bg-slate-50 rounded-xl transition group border-b border-slate-50 last:border-0">
+                    <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTodo('${item.id}')" class="w-4 h-4 rounded border-gray-300 accent-custom-green mr-3 cursor-pointer">
+                    <div class="flex-1 cursor-pointer" onclick="editTodo('${item.id}')">
+                        <div class="text-sm font-medium ${item.done ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.text}</div>${dateBadge}
+                    </div>${linkIcon}
+                    <div class="action-btns flex space-x-3 ml-2">
+                        <button onclick="editTodo('${item.id}')" class="text-slate-300 hover:text-custom-green"><i class="fas fa-pen text-xs"></i></button>
+                        <button onclick="deleteTodo('${item.id}')" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash text-xs"></i></button>
+                    </div>
+                </div>`;
+                container.innerHTML += html;
+            });
         }
-        function editTodo(id) { openModal('todo', id); }
-        function deleteTodo(id) {
-            if(confirm('刪除待辦？')) { todoData = todoData.filter(i => i.id !== id); renderTodos(); }
+    
+        function renderPacking() {
+            ['bag', 'carry', 'check'].forEach(cat => {
+                const container = document.getElementById(`packing-${cat}`);
+                container.innerHTML = '';
+                const items = packingData.filter(i => i.category === cat);
+                items.forEach(item => {
+                    const html = `
+                    <div class="flex items-center justify-between group py-1">
+                        <label class="flex items-center text-xs text-slate-700 cursor-pointer hover:text-custom-green flex-1">
+                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePacking('${item.id}')" class="mr-1.5 accent-custom-green"> 
+                            <span class="${item.done ? 'text-slate-300 line-through' : ''}">${item.text}</span>
+                        </label>
+                        <div class="opacity-0 group-hover:opacity-100 flex space-x-1">
+                            <button onclick="editPacking('${item.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
+                            <button onclick="deletePacking('${item.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                    container.innerHTML += html;
+                });
+            });
         }
-        function toggleTodo(id) {
-            const item = todoData.find(i => i.id === id);
-            item.done = !item.done;
-            renderTodos();
-        }
-        function editPacking(id) { openModal('packing', id); }
-        function deletePacking(id) {
-            if(confirm('刪除物品？')) { packingData = packingData.filter(i => i.id !== id); renderPacking(); }
-        }
-        function togglePacking(id) {
-            const item = packingData.find(i => i.id === id);
-            item.done = !item.done;
-            renderPacking();
-        }
-
-        // Initial Render
-        renderResources();
-        renderTodos();
-        renderPacking();
+    
+        // 自動導航捲動 (與其他頁面相同)
         window.addEventListener('load', function() {
-        const activeTab = document.getElementById('active-tab');
-        if (activeTab) {
-            // 這行會讓 active-tab 自動捲動到視窗中央
-            activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
-        }
+            const activeTab = document.getElementById('active-tab');
+            if (activeTab) { activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' }); }
+            loadAllData(); // 載入所有資料
         });
+    
     </script>
 </body>
 </html>
