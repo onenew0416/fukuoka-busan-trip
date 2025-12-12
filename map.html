@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>旅遊地圖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        /* 讓地圖填滿剩餘空間 */
+        #map { height: calc(100vh - 180px); width: 100%; z-index: 10; border-radius: 24px; }
+        
+        /* 自訂顏色 */
+        .text-custom-green { color: rgb(0, 140, 0); }
+        .bg-custom-green { background-color: rgb(0, 140, 0); }
+    </style>
+</head>
+<body class="bg-green-50 text-slate-800 pb-24 overflow-hidden">
+
+    <div class="p-6 pt-10 flex justify-between items-end">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">旅遊地圖 <i class="fas fa-map-marked-alt text-custom-green"></i></h1>
+        </div>
+        <div class="flex space-x-2">
+            <button onclick="flyTo('fukuoka')" class="bg-white px-3 py-1.5 rounded-full shadow-sm text-xs font-bold text-slate-600 hover:text-custom-green hover:shadow-md transition">
+                🇯🇵 福岡
+            </button>
+            <button onclick="flyTo('busan')" class="bg-white px-3 py-1.5 rounded-full shadow-sm text-xs font-bold text-slate-600 hover:text-custom-green hover:shadow-md transition">
+                🇰🇷 釜山
+            </button>
+        </div>
+    </div>
+
+    <div class="px-4">
+        <div id="map" class="shadow-lg border-2 border-white"></div>
+    </div>
+
+    <div class="fixed bottom-6 left-4 right-4 bg-white rounded-full shadow-2xl py-3 px-6 flex justify-between items-center z-50">
+        <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-clipboard-list text-lg mb-1"></i>
+            <span class="text-[10px]">行程</span>
+        </a>
+        <div class="flex flex-col items-center text-custom-green cursor-pointer">
+            <i class="fas fa-map-marked-alt text-lg mb-1"></i>
+            <span class="text-[10px] font-bold">地圖</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-wallet text-lg mb-1"></i>
+            <span class="text-[10px]">記帳</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-shopping-bag text-lg mb-1"></i>
+            <span class="text-[10px]">購物</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-info-circle text-lg mb-1"></i>
+            <span class="text-[10px]">資訊</span>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // 1. 初始化地圖，預設中心點設在福岡
+        // 座標格式: [緯度, 經度]
+        const map = L.map('map').setView([33.5902, 130.4017], 13);
+
+        // 2. 載入 OpenStreetMap 圖資 (免費)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // 3. 定義地點資料 (名稱, 緯度, 經度, 類型)
+        const locations = [
+            // --- 福岡 ---
+            { name: "福岡機場 (FUK)", lat: 33.5859, lng: 130.4446, type: "flight" },
+            { name: "博多站", lat: 33.5902, lng: 130.4207, type: "train" },
+            { name: "天神站 (逛街)", lat: 33.5916, lng: 130.3989, type: "shop" },
+            { id: "unplan", name: "UNPLAN Fukuoka (住宿)", lat: 33.5895, lng: 130.3785, type: "hotel" },
+            { name: "大濠公園", lat: 33.5866, lng: 130.3764, type: "spot" },
+            { name: "太宰府天滿宮", lat: 33.5215, lng: 130.5349, type: "spot" },
+            { name: "海之中道海濱公園", lat: 33.6595, lng: 130.3633, type: "spot" },
+            { name: "相島 (貓島)", lat: 33.7569, lng: 130.3875, type: "spot" },
+
+            // --- 釜山 ---
+            { name: "金海機場 (PUS)", lat: 35.1732, lng: 128.9464, type: "flight" },
+            { id: "urbanstay", name: "Urbanstay Seomyeon (住宿)", lat: 35.1578, lng: 129.0600, type: "hotel" },
+            { name: "西面站 (逛街)", lat: 35.1578, lng: 129.0600, type: "shop" },
+            { name: "甘川洞文化村", lat: 35.0974, lng: 129.0106, type: "spot" },
+            { name: "松島龍宮天空步道", lat: 35.0756, lng: 129.0225, type: "spot" },
+            { name: "海雲台海灘", lat: 35.1587, lng: 129.1604, type: "spot" },
+            { name: "釜山樂天世界", lat: 35.1950, lng: 129.2133, type: "spot" },
+            { name: "Skyline Luge", lat: 35.1925, lng: 129.2150, type: "spot" }
+        ];
+
+        // 4. 根據類型設定不同顏色的標記 (使用 FontAwesome 圖示的 HTML 標記)
+        function getIcon(type) {
+            let color = 'rgb(0, 140, 0)'; // 預設綠色
+            let iconClass = 'fa-map-marker-alt';
+
+            if (type === 'flight') { color = '#3b82f6'; iconClass = 'fa-plane'; } // 藍色
+            if (type === 'hotel') { color = '#ef4444'; iconClass = 'fa-bed'; } // 紅色
+            if (type === 'shop') { color = '#eab308'; iconClass = 'fa-shopping-bag'; } // 黃色
+            if (type === 'train') { color = '#64748b'; iconClass = 'fa-train'; } // 灰色
+
+            return L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div style="background-color: ${color}; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+                        <i class="fas ${iconClass}" style="color: white; font-size: 14px;"></i>
+                       </div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 30],
+                popupAnchor: [0, -30]
+            });
+        }
+
+        // 5. 將所有地點加入地圖
+        locations.forEach(loc => {
+            L.marker([loc.lat, loc.lng], { icon: getIcon(loc.type) })
+             .addTo(map)
+             .bindPopup(`<b>${loc.name}</b>`);
+        });
+
+        // 6. 切換城市功能
+        function flyTo(city) {
+            if (city === 'fukuoka') {
+                map.flyTo([33.5902, 130.4017], 12, { duration: 1.5 });
+            } else if (city === 'busan') {
+                map.flyTo([35.1578, 129.0600], 12, { duration: 1.5 });
+            }
+        }
+    </script>
+</body>
+</html>

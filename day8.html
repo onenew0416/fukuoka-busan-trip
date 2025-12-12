@@ -42,7 +42,7 @@
         <a href="day6.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 6</span><span class="text-lg font-bold text-slate-700 my-0.5">03/01</span><span>(日)</span></a>
         <a href="day7.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 7</span><span class="text-lg font-bold text-slate-700 my-0.5">03/02</span><span>(一)</span></a>
 
-        <div class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative">
+        <div id="active-tab" class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative">
             <span class="text-[10px] text-green-100">Day 8</span><span class="text-lg font-bold my-0.5">03/03</span><span>(二)</span>
             <div class="absolute -bottom-1 w-1 h-1 bg-white rounded-full"></div>
         </div>
@@ -201,6 +201,13 @@
             renderSchedules(); closeModal();
         }
         renderSchedules();
+        window.addEventListener('load', function() {
+        const activeTab = document.getElementById('active-tab');
+        if (activeTab) {
+            // 這行會讓 active-tab 自動捲動到視窗中央
+            activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+        }
+        });
     </script>
 </body>
 </html>
