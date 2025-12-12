@@ -93,49 +93,153 @@
         <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer"><i class="fas fa-info-circle text-lg mb-1"></i><span class="text-[10px]">資訊</span></div>
     </div>
 
-    <script>
-        // 切換顯示抵達時間
-        function toggleFlightInputs() {
-            const type = document.getElementById('input-type').value;
-            const arrivalBlock = document.getElementById('arrival-time-block');
-            const startLabel = document.getElementById('label-time-start');
-            const hint = document.getElementById('flight-hint');
-            if (type === 'flight') {
-                arrivalBlock.classList.remove('hidden');
-                startLabel.innerText = '出發時間';
-                hint.classList.remove('hidden');
-            } else {
-                arrivalBlock.classList.add('hidden');
-                startLabel.innerText = '時間';
-                hint.classList.add('hidden');
+    <script type="module">
+        // 1. 引入 Firebase 函式庫 (從 Google CDN)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+        // 2. 貼上你的 Firebase 設定 (請替換這裡！)
+        const firebaseConfig = {
+        apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
+        authDomain: "fukuoka-busan-trip.firebaseapp.com",
+        projectId: "fukuoka-busan-trip",
+        storageBucket: "fukuoka-busan-trip.firebasestorage.app",
+        messagingSenderId: "130540342304",
+        appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
+        measurementId: "G-XDV9S0066R"
+        };
+
+    
+        // 3. 初始化 Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const CURRENT_DAY = 'day1'; // 設定這是哪一天的頁面
+        
+        // 用來存放下載下來的資料
+        let scheduleData = [];
+    
+        // ==========================================
+        // 4. 讀取資料 (Read)
+        // ==========================================
+        async function loadSchedules() {
+            try {
+                // 建立查詢：只抓 day == 'day1' 的資料
+                const q = query(collection(db, "schedules"), where("day", "==", CURRENT_DAY));
+                const querySnapshot = await getDocs(q);
+                
+                scheduleData = [];
+                querySnapshot.forEach((doc) => {
+                    // 把 Firebase 的資料轉成我們需要的格式 (包含 ID)
+                    scheduleData.push({ id: doc.id, ...doc.data() });
+                });
+    
+                // 依照時間排序 (因為 Firestore 預設不保證順序)
+                scheduleData.sort((a, b) => a.time.localeCompare(b.time));
+                
+                renderSchedules(); // 畫出畫面
+            } catch (e) {
+                console.error("讀取錯誤: ", e);
+                alert("資料讀取失敗，請檢查 Console");
             }
         }
-
+    
         // ==========================================
-        // 這裡就是重點！只需要替換這個 scheduleData
+        // 5. 新增/修改資料 (Create / Update)
         // ==========================================
-        let scheduleData = [
-    { id: 1, type: 'hotel', time: '11:00', title: '退房', location: 'Urbanstay', note: '行李寄放', icon: 'fa-suitcase' },
-    { id: 2, type: 'shop', time: '13:00', title: '最後採買', location: '西面/樂天', note: '伴手禮', icon: 'fa-shopping-bag' },
-    { id: 3, type: 'train', time: '17:30', title: '地鐵/輕軌: 西面 - 機場', location: '往金海機場', note: '預留時間', icon: 'fa-subway' },
-    { id: 4, type: 'flight', time: '20:50', timeEnd: '22:30', title: '金海機場國際線航廈2F D22-D26櫃檯', location: 'PUS 釜山 - TPE 台北', note: '國際線 2F D22-D26', icon: 'fa-plane' }
-];
-
-        // 渲染邏輯
+        // 注意：因為是 module，要掛載到 window 才能被 HTML onclick 呼叫
+        window.handleFormSubmit = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerText = '處理中...';
+    
+            const id = document.getElementById('input-id').value;
+            
+            // 準備要存入的資料物件
+            const newItem = {
+                day: CURRENT_DAY,
+                time: document.getElementById('input-time').value,
+                timeEnd: document.getElementById('input-time-end').value || '',
+                type: document.getElementById('input-type').value,
+                title: document.getElementById('input-title').value,
+                location: document.getElementById('input-sub').value,
+                link: document.getElementById('input-link').value || '',
+                linkText: document.getElementById('input-link-text').value || '',
+                note: ''
+            };
+    
+            try {
+                if (id) {
+                    // --- 修改模式 (Update) ---
+                    // 找到該 ID 的文件並更新
+                    const scheduleRef = doc(db, "schedules", id);
+                    await updateDoc(scheduleRef, newItem);
+                } else {
+                    // --- 新增模式 (Create) ---
+                    // 新增到 'schedules' 集合
+                    await addDoc(collection(db, "schedules"), newItem);
+                }
+                
+                // 重新讀取並關閉視窗
+                await loadSchedules();
+                closeModal();
+            } catch (e) {
+                console.error("儲存錯誤: ", e);
+                alert("儲存失敗");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = id ? '儲存變更' : '確認新增';
+            }
+        }
+    
+        // ==========================================
+        // 6. 刪除資料 (Delete)
+        // ==========================================
+        window.deleteItem = async function(id) {
+            if (!confirm('確定要刪除這個行程嗎？')) return;
+    
+            try {
+                await deleteDoc(doc(db, "schedules", id));
+                await loadSchedules(); // 重新整理畫面
+            } catch (e) {
+                console.error("刪除錯誤: ", e);
+                alert("刪除失敗");
+            }
+        }
+    
+        // ==========================================
+        // 7. 渲染畫面 (Render)
+        // ==========================================
         function renderSchedules() {
             const container = document.getElementById('schedule-container');
             container.innerHTML = '';
-            scheduleData.sort((a, b) => a.time.localeCompare(b.time));
-
+            
             scheduleData.forEach(item => {
                 let html = '';
-                const linkBtn = item.link ? `<a href="${item.link}" target="_blank" class="mt-2 inline-block bg-slate-100 text-custom-green px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-100 transition"><i class="fas fa-external-link-alt mr-1"></i> ${item.linkText || '查看'}</a>` : '';
+                
+                // Icon 邏輯
+                let icon = 'fa-map-marker-alt';
+                if(item.type==='train'||item.type==='subway') icon='fa-train'; 
+                if(item.type==='flight') icon='fa-plane'; 
+                if(item.type==='food') icon='fa-utensils'; 
+                if(item.type==='shop') icon='fa-shopping-bag'; 
+                if(item.type==='car') icon='fa-car'; 
+                if(item.type==='hotel') icon='fa-bed'; 
+                if(item.type==='bus') icon='fa-bus';
+                if(item.type==='ferry') icon='fa-ship';
+    
+                // 連結按鈕
+                const linkBtn = item.link ? 
+                    `<a href="${item.link}" target="_blank" class="mt-2 inline-block bg-slate-100 text-custom-green px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-100 transition"><i class="fas fa-external-link-alt mr-1"></i> ${item.linkText || '查看'}</a>` : '';
+    
+                // 操作按鈕 (編輯/刪除時傳入 Firebase 的 ID 字串)
                 const actionBtns = (isLight = false) => `
                     <div class="flex space-x-3 z-20 relative">
-                        <button onclick="editItem(${item.id})" class="${isLight ? 'text-white/70 hover:text-white' : 'text-slate-300 hover:text-custom-green'} transition"><i class="fas fa-pen"></i></button>
-                        <button onclick="deleteItem(${item.id})" class="${isLight ? 'text-white/70 hover:text-red-200' : 'text-slate-300 hover:text-red-500'} transition"><i class="fas fa-trash"></i></button>
+                        <button onclick="editItem('${item.id}')" class="${isLight ? 'text-white/70 hover:text-white' : 'text-slate-300 hover:text-custom-green'} transition"><i class="fas fa-pen"></i></button>
+                        <button onclick="deleteItem('${item.id}')" class="${isLight ? 'text-white/70 hover:text-red-200' : 'text-slate-300 hover:text-red-500'} transition"><i class="fas fa-trash"></i></button>
                     </div>`;
-
+    
+                // 渲染邏輯 (與原本相同)
                 if (item.type === 'flight') {
                     let fromCode = 'DEP', fromName = '', toCode = 'ARR', toName = '';
                     if (item.location && item.location.includes('-')) {
@@ -144,8 +248,8 @@
                             const fromPart = parts[0].trim().split(' '); fromCode = fromPart[0]||'DEP'; fromName = fromPart.slice(1).join(' ')||'';
                             const toPart = parts[1].trim().split(' '); toCode = toPart[0]||'ARR'; toName = toPart.slice(1).join(' ')||'';
                         }
-                    } else { fromCode = item.location; }
-
+                    } else { fromCode = item.location || ''; }
+    
                     html = `
                     <div class="mx-4 p-5 bg-gradient-custom rounded-3xl shadow-lg shadow-green-200 text-white relative transform transition hover:scale-[1.02]">
                         <div class="flex justify-between items-start mb-4"><span class="bg-white/20 px-2 py-0.5 rounded text-xs font-bold uppercase">FLIGHT</span>${actionBtns(true)}</div>
@@ -165,9 +269,9 @@
                     
                     html = `
                     <div class="mx-4 bg-white rounded-3xl shadow-sm p-5 flex transform transition hover:scale-[1.02]">
-                        <div class="flex flex-col items-center mr-4"><div class="w-12 h-12 ${iconBg} rounded-2xl flex items-center justify-center text-white text-xl mb-2 shadow-md"><i class="fas ${item.icon}"></i></div><div class="text-sm font-bold text-slate-700">${item.time}</div></div>
+                        <div class="flex flex-col items-center mr-4"><div class="w-12 h-12 ${iconBg} rounded-2xl flex items-center justify-center text-white text-xl mb-2 shadow-md"><i class="fas ${icon}"></i></div><div class="text-sm font-bold text-slate-700">${item.time}</div></div>
                         <div class="flex-1"><div class="flex justify-between items-start"><h3 class="font-bold text-lg text-slate-800">${item.title}</h3>${actionBtns(false)}</div>
-                            <div class="flex items-center text-xs text-slate-500 mt-1 mb-1"><span class="text-custom-green font-bold mr-2"><i class="fas fa-map-pin"></i></span><span>${item.location}</span></div>
+                            <div class="flex items-center text-xs text-slate-500 mt-1 mb-1"><span class="text-custom-green font-bold mr-2"><i class="fas fa-map-pin"></i></span><span>${item.location || ''}</span></div>
                             ${item.note ? `<div class="text-xs text-slate-400 mb-1">${item.note}</div>` : ''}${linkBtn}
                         </div>
                     </div>`;
@@ -175,34 +279,77 @@
                 container.innerHTML += html;
             });
         }
-
-        // Functions
-        function openModal() { document.getElementById('add-form').reset(); document.getElementById('input-id').value=''; document.getElementById('modal-title').innerText='新增行程'; document.getElementById('submit-btn').innerText='確認新增'; toggleFlightInputs(); document.getElementById('add-modal').classList.remove('hidden'); }
-        function closeModal() { document.getElementById('add-modal').classList.add('hidden'); }
+    
+        // ==========================================
+        // 8. 介面操作 (Modal, Edit, Toggle)
+        // ==========================================
+        // 這裡也要掛載到 window
+        window.openModal = function() { 
+            document.getElementById('add-form').reset(); 
+            document.getElementById('input-id').value=''; 
+            document.getElementById('modal-title').innerText='新增行程'; 
+            document.getElementById('submit-btn').innerText='確認新增'; 
+            toggleFlightInputs(); 
+            document.getElementById('add-modal').classList.remove('hidden'); 
+        }
+        
+        window.closeModal = function() { document.getElementById('add-modal').classList.add('hidden'); }
+        
+        // 綁定背景點擊關閉
         document.getElementById('add-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
-        function deleteItem(id){if(confirm('刪除?')){scheduleData=scheduleData.filter(i=>i.id!==id);renderSchedules();}}
-        function editItem(id){const i=scheduleData.find(x=>x.id===id);if(i){
-            document.getElementById('input-id').value=i.id; document.getElementById('input-type').value=i.type; toggleFlightInputs();
-            document.getElementById('input-time').value=i.time; if(i.type==='flight')document.getElementById('input-time-end').value=i.timeEnd||'';
-            document.getElementById('input-title').value=i.title; document.getElementById('input-sub').value=i.location;
-            document.getElementById('input-link').value=i.link||''; document.getElementById('input-link-text').value=i.linkText||'';
-            document.getElementById('modal-title').innerText='編輯行程'; document.getElementById('submit-btn').innerText='儲存'; document.getElementById('add-modal').classList.remove('hidden');
-        }}
-        function handleFormSubmit(e){e.preventDefault();
-            const id=document.getElementById('input-id').value, time=document.getElementById('input-time').value, timeEnd=document.getElementById('input-time-end').value, type=document.getElementById('input-type').value, title=document.getElementById('input-title').value, sub=document.getElementById('input-sub').value, link=document.getElementById('input-link').value, linkText=document.getElementById('input-link-text').value;
-            let icon='fa-map-marker-alt'; if(type==='train'||type==='subway')icon='fa-train'; if(type==='flight')icon='fa-plane'; if(type==='food')icon='fa-utensils'; if(type==='shop')icon='fa-shopping-bag'; if(type==='car')icon='fa-car'; if(type==='hotel')icon='fa-bed'; if(type==='bus')icon='fa-bus'; if(type==='ferry')icon='fa-ship';
-            let newItem={id:id?parseInt(id):Date.now(), type, time, timeEnd, title, location:sub, note:'', icon, link, linkText};
-            if(id){const idx=scheduleData.findIndex(x=>x.id==id);if(idx!==-1)scheduleData[idx]={...scheduleData[idx],...newItem}}else{scheduleData.push(newItem)}
-            renderSchedules(); closeModal();
+    
+        // 編輯 (將資料填回表單)
+        window.editItem = function(id) {
+            const item = scheduleData.find(x => x.id === id);
+            if(item){
+                document.getElementById('input-id').value = item.id;
+                document.getElementById('input-type').value = item.type;
+                
+                // 觸發一下 toggle 以顯示/隱藏航班欄位
+                toggleFlightInputs();
+    
+                document.getElementById('input-time').value = item.time;
+                if(item.type === 'flight') {
+                    document.getElementById('input-time-end').value = item.timeEnd || '';
+                }
+                document.getElementById('input-title').value = item.title;
+                document.getElementById('input-sub').value = item.location;
+                document.getElementById('input-link').value = item.link || '';
+                document.getElementById('input-link-text').value = item.linkText || '';
+                
+                document.getElementById('modal-title').innerText = '編輯行程';
+                document.getElementById('submit-btn').innerText = '儲存變更';
+                document.getElementById('add-modal').classList.remove('hidden');
+            }
         }
-        renderSchedules();
+    
+        // 航班輸入框切換
+        window.toggleFlightInputs = function() {
+            const type = document.getElementById('input-type').value;
+            const arrivalBlock = document.getElementById('arrival-time-block');
+            const startLabel = document.getElementById('label-time-start');
+            const hint = document.getElementById('flight-hint');
+            if (type === 'flight') {
+                arrivalBlock.classList.remove('hidden');
+                startLabel.innerText = '出發時間';
+                hint.classList.remove('hidden');
+            } else {
+                arrivalBlock.classList.add('hidden');
+                startLabel.innerText = '時間';
+                hint.classList.add('hidden');
+            }
+        }
+    
+        // 自動導航捲動
         window.addEventListener('load', function() {
-        const activeTab = document.getElementById('active-tab');
-        if (activeTab) {
-            // 這行會讓 active-tab 自動捲動到視窗中央
-            activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
-        }
+            const activeTab = document.getElementById('active-tab');
+            if (activeTab) {
+                activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+            }
+            // 頁面載入後，開始抓取 Firebase 資料
+            loadSchedules();
         });
+    
     </script>
 </body>
 </html>
