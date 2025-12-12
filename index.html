@@ -30,8 +30,17 @@
         /* 操作按鈕隱藏/顯示 */
         .group:hover .action-btns { opacity: 1; }
         .action-btns { opacity: 0; transition: opacity 0.2s; }
-        /* 手機版預設顯示操作按鈕，避免無法點擊 */
+        /* 手機版預設顯示操作按鈕 */
         @media (max-width: 768px) { .action-btns { opacity: 1; } }
+
+        /* 行李區塊收合動畫 */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: slideDown 0.3s ease-in-out; }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-green-50 text-slate-800 pb-24">
@@ -40,7 +49,7 @@
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Fukuoka 🇯🇵 x Busan 🇰🇷</h1>
         </div>
-        </div>
+    </div>
 
     <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2">
         <div id="active-tab" class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative transition-transform active:scale-95">
@@ -69,29 +78,68 @@
                 <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-check-square text-custom-green mr-2"></i> 待辦事項</h3>
                 <button onclick="openModal('todo')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
             </div>
-            <div id="todo-list" class="p-2">
-                </div>
+            <div id="todo-list" class="p-2"></div>
         </div>
 
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-8">
-            <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-suitcase text-custom-green mr-2"></i> 行李清單</h3>
-                <button onclick="openModal('packing')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
+        <div class="space-y-4 mb-8">
+            <div class="flex items-center gap-2 px-1">
+                <i class="fas fa-suitcase text-custom-green"></i>
+                <h3 class="font-bold text-slate-800 text-sm">行李清單</h3>
             </div>
-            <div class="p-4 grid grid-cols-3 gap-4 divide-x divide-slate-100">
-                <div class="space-y-3">
-                    <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">👜 包包</h4>
-                    <div id="packing-bag" class="space-y-1"></div>
+
+            <details class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden group/details" open>
+                <summary class="bg-blue-50/50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-blue-50 transition">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">新</span>
+                        <span class="font-bold text-slate-700 text-sm">的行李</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="event.preventDefault(); openModal('packing', null, 'xin')" class="bg-white text-blue-500 w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-blue-100"><i class="fas fa-plus"></i></button>
+                        <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
+                    </div>
+                </summary>
+                <div class="p-4 grid grid-cols-3 gap-4 divide-x divide-slate-100">
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">👜 包包</h4>
+                        <div id="packing-xin-bag" class="space-y-1 min-h-[20px]"></div>
+                    </div>
+                    <div class="space-y-3 pl-2">
+                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🎒 隨身</h4>
+                        <div id="packing-xin-carry" class="space-y-1 min-h-[20px]"></div>
+                    </div>
+                    <div class="space-y-3 pl-2">
+                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🧳 託運</h4>
+                        <div id="packing-xin-check" class="space-y-1 min-h-[20px]"></div>
+                    </div>
                 </div>
-                <div class="space-y-3 pl-2">
-                    <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🎒 隨身</h4>
-                    <div id="packing-carry" class="space-y-1"></div>
+            </details>
+
+            <details class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden group/details" open>
+                <summary class="bg-orange-50/50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-orange-50 transition">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-orange-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">凱</span>
+                        <span class="font-bold text-slate-700 text-sm">的行李</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="event.preventDefault(); openModal('packing', null, 'kai')" class="bg-white text-orange-500 w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-orange-100"><i class="fas fa-plus"></i></button>
+                        <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
+                    </div>
+                </summary>
+                <div class="p-4 grid grid-cols-3 gap-4 divide-x divide-slate-100">
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">👜 包包</h4>
+                        <div id="packing-kai-bag" class="space-y-1 min-h-[20px]"></div>
+                    </div>
+                    <div class="space-y-3 pl-2">
+                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🎒 隨身</h4>
+                        <div id="packing-kai-carry" class="space-y-1 min-h-[20px]"></div>
+                    </div>
+                    <div class="space-y-3 pl-2">
+                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🧳 託運</h4>
+                        <div id="packing-kai-check" class="space-y-1 min-h-[20px]"></div>
+                    </div>
                 </div>
-                <div class="space-y-3 pl-2">
-                    <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🧳 託運</h4>
-                    <div id="packing-check" class="space-y-1"></div>
-                </div>
-            </div>
+            </details>
         </div>
     </div>
 
@@ -104,7 +152,15 @@
             
             <form id="universal-form" onsubmit="handleFormSubmit(event)">
                 <input type="hidden" id="input-id">
-                <input type="hidden" id="input-mode"> <input type="hidden" id="input-group-id"> <div class="space-y-4">
+                <input type="hidden" id="input-mode">
+                <input type="hidden" id="input-group-id"> 
+                
+                <div class="space-y-4">
+                    <div id="field-owner-display" class="hidden mb-2 p-2 bg-slate-50 rounded-lg text-center">
+                        <span class="text-xs text-slate-400">擁有者：</span>
+                        <span id="display-owner-name" class="font-bold text-custom-green"></span>
+                    </div>
+
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">內容 / 標題</label>
                         <input type="text" id="input-text" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
@@ -162,15 +218,14 @@
     
         // 🔴 請替換成你的 Firebase 設定
         const firebaseConfig = {
-        apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
-        authDomain: "fukuoka-busan-trip.firebaseapp.com",
-        projectId: "fukuoka-busan-trip",
-        storageBucket: "fukuoka-busan-trip.firebasestorage.app",
-        messagingSenderId: "130540342304",
-        appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
-        measurementId: "G-XDV9S0066R"
+            apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
+            authDomain: "fukuoka-busan-trip.firebaseapp.com",
+            projectId: "fukuoka-busan-trip",
+            storageBucket: "fukuoka-busan-trip.firebasestorage.app",
+            messagingSenderId: "130540342304",
+            appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
+            measurementId: "G-XDV9S0066R"
         };
-
     
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -181,73 +236,77 @@
         let packingData = [];
     
         // ==========================================
-        // 1. 讀取功能 (分成三個資料表讀取)
+        // 1. 讀取功能
         // ==========================================
         async function loadAllData() {
             await Promise.all([loadResources(), loadTodos(), loadPacking()]);
         }
     
-        // 讀取資訊卡片 (Collection: 'resources')
         async function loadResources() {
-            const q = query(collection(db, "resources"), orderBy("created_at")); // 建議加一個 created_at 欄位排序
-            const snapshot = await getDocs(q);
-            // 這裡需要做一點轉換，把單層資料轉回原本的 Group 結構，或是我們簡化結構
-            // 為了方便，我們假設資料庫存的是單一連結，我們前端再分類
-            let rawLinks = [];
-            snapshot.forEach(doc => rawLinks.push({ id: doc.id, ...doc.data() }));
-            
-            // 重組資料結構以符合畫面 (這裡簡單示範，預設分為三個固定群組)
-            resourcesData = [
-                { id: 'traffic', title: '交通地圖', icon: 'fa-subway', links: rawLinks.filter(i => i.group === 'traffic') },
-                { id: 'stay', title: '住宿導航', icon: 'fa-bed', links: rawLinks.filter(i => i.group === 'stay') },
-                { id: 'coupon', title: '優惠券', icon: 'fa-ticket-alt', isSpecial: true, links: rawLinks.filter(i => i.group === 'coupon') }
-            ];
-            renderResources();
+            try {
+                const q = query(collection(db, "resources"), orderBy("created_at"));
+                const snapshot = await getDocs(q);
+                let rawLinks = [];
+                snapshot.forEach(doc => rawLinks.push({ id: doc.id, ...doc.data() }));
+                
+                resourcesData = [
+                    { id: 'traffic', title: '交通地圖', icon: 'fa-subway', links: rawLinks.filter(i => i.group === 'traffic') },
+                    { id: 'stay', title: '住宿導航', icon: 'fa-bed', links: rawLinks.filter(i => i.group === 'stay') },
+                    { id: 'coupon', title: '優惠券', icon: 'fa-ticket-alt', isSpecial: true, links: rawLinks.filter(i => i.group === 'coupon') }
+                ];
+                renderResources();
+            } catch(e) { console.error("Load Resource Error", e); }
         }
     
-        // 讀取待辦事項 (Collection: 'todos')
         async function loadTodos() {
-            const snapshot = await getDocs(collection(db, "todos"));
-            todoData = [];
-            snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
-            renderTodos();
+            try {
+                // 建議加排序，這裡暫時全抓
+                const snapshot = await getDocs(collection(db, "todos"));
+                todoData = [];
+                snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
+                // 前端排序：完成的放後面
+                todoData.sort((a, b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
+                renderTodos();
+            } catch(e) { console.error("Load Todo Error", e); }
         }
     
-        // 讀取行李清單 (Collection: 'packing')
         async function loadPacking() {
-            const snapshot = await getDocs(collection(db, "packing"));
-            packingData = [];
-            snapshot.forEach(doc => packingData.push({ id: doc.id, ...doc.data() }));
-            renderPacking();
+            try {
+                const snapshot = await getDocs(collection(db, "packing"));
+                packingData = [];
+                snapshot.forEach(doc => packingData.push({ id: doc.id, ...doc.data() }));
+                renderPacking();
+            } catch(e) { console.error("Load Packing Error", e); }
         }
     
         // ==========================================
-        // 2. 新增/修改 (統一處理)
+        // 2. 新增/修改
         // ==========================================
         window.handleFormSubmit = async function(e) {
             e.preventDefault();
             const mode = document.getElementById('input-mode').value;
             const id = document.getElementById('input-id').value;
-            
-            // 共用欄位
+            const groupId = document.getElementById('input-group-id').value; // group 或是 owner(xin/kai)
+
             let collectionName = '';
             let payload = {
                 text: document.getElementById('input-text').value,
-                created_at: Date.now() // 用於排序
+                created_at: Date.now()
             };
     
             if (mode === 'resource') {
                 collectionName = 'resources';
                 payload.url = document.getElementById('input-url').value;
-                payload.group = document.getElementById('input-group-id').value; // 存群組ID
+                payload.group = groupId; 
             } else if (mode === 'todo') {
                 collectionName = 'todos';
                 payload.url = document.getElementById('input-url').value;
                 payload.date = document.getElementById('input-date').value;
-                if(!id) payload.done = false; // 新增時預設未完成
+                if(!id) payload.done = false;
             } else if (mode === 'packing') {
                 collectionName = 'packing';
                 payload.category = document.getElementById('input-category').value;
+                payload.owner = groupId; // 這裡存入 'xin' 或 'kai'
                 if(!id) payload.done = false;
             }
     
@@ -258,7 +317,6 @@
                     await addDoc(collection(db, collectionName), payload);
                 }
                 
-                // 重新讀取對應的區塊
                 if(mode === 'resource') loadResources();
                 if(mode === 'todo') loadTodos();
                 if(mode === 'packing') loadPacking();
@@ -273,22 +331,22 @@
         // ==========================================
         // 3. 刪除與狀態切換
         // ==========================================
-        // 通用刪除
         async function deleteItemGeneric(collectionName, id, callback) {
             if(!confirm('確定刪除？')) return;
-            await deleteDoc(doc(db, collectionName, id));
-            callback();
+            try {
+                await deleteDoc(doc(db, collectionName, id));
+                callback();
+            } catch(e) { console.error(e); }
         }
     
         window.deleteResource = (groupId, id) => deleteItemGeneric('resources', id, loadResources);
         window.deleteTodo = (id) => deleteItemGeneric('todos', id, loadTodos);
         window.deletePacking = (id) => deleteItemGeneric('packing', id, loadPacking);
     
-        // 狀態切換 (打勾)
         window.toggleTodo = async function(id) {
             const item = todoData.find(i => i.id === id);
             await updateDoc(doc(db, "todos", id), { done: !item.done });
-            loadTodos(); // 為了簡單直接重讀，也可以只改本地
+            loadTodos();
         }
     
         window.togglePacking = async function(id) {
@@ -298,8 +356,9 @@
         }
     
         // ==========================================
-        // 4. 介面操作 (Modal) - 與原本相同
+        // 4. Modal 操作
         // ==========================================
+        // groupId 用途：Resources 時是 group ID (traffic/stay...), Packing 時是 owner (xin/kai)
         window.openModal = function(mode, id = null, groupId = null) {
             document.getElementById('universal-form').reset();
             document.getElementById('input-mode').value = mode;
@@ -310,8 +369,13 @@
             const fieldLink = document.getElementById('field-link');
             const fieldDate = document.getElementById('field-date');
             const fieldCat = document.getElementById('field-category');
+            const fieldOwner = document.getElementById('field-owner-display');
             
-            fieldLink.classList.add('hidden'); fieldDate.classList.add('hidden'); fieldCat.classList.add('hidden');
+            // 重置顯示狀態
+            fieldLink.classList.add('hidden'); 
+            fieldDate.classList.add('hidden'); 
+            fieldCat.classList.add('hidden');
+            fieldOwner.classList.add('hidden');
     
             if (mode === 'resource') {
                 document.getElementById('modal-title').innerText = id ? '編輯連結' : '新增連結';
@@ -319,8 +383,10 @@
                 if(id) {
                     const group = resourcesData.find(g => g.id === groupId);
                     const item = group.links.find(i => i.id === id);
-                    document.getElementById('input-text').value = item.text;
-                    document.getElementById('input-url').value = item.url;
+                    if(item) {
+                        document.getElementById('input-text').value = item.text;
+                        document.getElementById('input-url').value = item.url;
+                    }
                 }
             } else if (mode === 'todo') {
                 document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦';
@@ -328,29 +394,42 @@
                 fieldDate.classList.remove('hidden');
                 if(id) {
                     const item = todoData.find(i => i.id === id);
-                    document.getElementById('input-text').value = item.text;
-                    document.getElementById('input-url').value = item.url || '';
-                    document.getElementById('input-date').value = item.date || '';
+                    if(item) {
+                        document.getElementById('input-text').value = item.text;
+                        document.getElementById('input-url').value = item.url || '';
+                        document.getElementById('input-date').value = item.date || '';
+                    }
                 }
             } else if (mode === 'packing') {
                 document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品';
                 fieldCat.classList.remove('hidden');
+                fieldOwner.classList.remove('hidden');
+
+                // 判斷擁有人顯示
+                let ownerKey = groupId; // 預設新增時傳入的
                 if(id) {
                     const item = packingData.find(i => i.id === id);
-                    document.getElementById('input-text').value = item.text;
-                    document.getElementById('input-category').value = item.category;
+                    if(item) {
+                        document.getElementById('input-text').value = item.text;
+                        document.getElementById('input-category').value = item.category;
+                        document.getElementById('input-group-id').value = item.owner; // 編輯時要確保 owner 不會跑掉
+                        ownerKey = item.owner;
+                    }
                 }
+                document.getElementById('display-owner-name').innerText = (ownerKey === 'xin') ? '新' : '凱';
             }
         }
     
         window.closeModal = function() { document.getElementById('universal-modal').classList.add('hidden'); }
         document.getElementById('universal-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
+        
         window.editResource = (groupId, id) => openModal('resource', id, groupId);
         window.editTodo = (id) => openModal('todo', id);
-        window.editPacking = (id) => openModal('packing', id);
+        // 編輯 packing 時，groupId 參數沒那麼重要，因為會從 data 裡抓 owner，但保持介面一致傳個 null
+        window.editPacking = (id) => openModal('packing', id, null);
     
         // ==========================================
-        // 5. 渲染函式 (Render) - 與原本幾乎相同
+        // 5. 渲染函式
         // ==========================================
         function renderResources() {
             const container = document.getElementById('resources-container');
@@ -383,6 +462,10 @@
         function renderTodos() {
             const container = document.getElementById('todo-list');
             container.innerHTML = '';
+            if(todoData.length === 0) {
+                container.innerHTML = '<div class="text-center text-slate-300 text-xs py-4">目前沒有待辦事項</div>';
+                return;
+            }
             todoData.forEach(item => {
                 const dateBadge = item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : '';
                 const linkIcon = item.url ? `<a href="${item.url}" target="_blank"><i class="fas fa-external-link-alt text-xs text-slate-300 hover:text-custom-green ml-2"></i></a>` : '';
@@ -401,33 +484,46 @@
             });
         }
     
+        // 核心修改：渲染行李清單 (區分 Xin 和 Kai)
         function renderPacking() {
-            ['bag', 'carry', 'check'].forEach(cat => {
-                const container = document.getElementById(`packing-${cat}`);
-                container.innerHTML = '';
-                const items = packingData.filter(i => i.category === cat);
-                items.forEach(item => {
-                    const html = `
-                    <div class="flex items-center justify-between group py-1">
-                        <label class="flex items-center text-xs text-slate-700 cursor-pointer hover:text-custom-green flex-1">
-                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePacking('${item.id}')" class="mr-1.5 accent-custom-green"> 
-                            <span class="${item.done ? 'text-slate-300 line-through' : ''}">${item.text}</span>
-                        </label>
-                        <div class="opacity-0 group-hover:opacity-100 flex space-x-1">
-                            <button onclick="editPacking('${item.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
-                            <button onclick="deletePacking('${item.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>`;
-                    container.innerHTML += html;
+            const owners = ['xin', 'kai'];
+            const categories = ['bag', 'carry', 'check'];
+            
+            owners.forEach(owner => {
+                categories.forEach(cat => {
+                    const container = document.getElementById(`packing-${owner}-${cat}`);
+                    if(!container) return;
+                    
+                    container.innerHTML = '';
+                    // 篩選出該擁有者 且 該類別 的項目
+                    const items = packingData.filter(i => i.owner === owner && i.category === cat);
+                    
+                    if (items.length === 0) {
+                        // 留白或顯示空狀態，這裡選擇留白保持整潔
+                    }
+
+                    items.forEach(item => {
+                        const html = `
+                        <div class="flex items-center justify-between group py-1">
+                            <label class="flex items-center text-xs text-slate-700 cursor-pointer hover:text-custom-green flex-1 min-w-0">
+                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePacking('${item.id}')" class="mr-1.5 accent-custom-green flex-shrink-0"> 
+                                <span class="truncate ${item.done ? 'text-slate-300 line-through' : ''}">${item.text}</span>
+                            </label>
+                            <div class="opacity-0 group-hover:opacity-100 flex space-x-1 flex-shrink-0 bg-white pl-1">
+                                <button onclick="editPacking('${item.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
+                                <button onclick="deletePacking('${item.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>`;
+                        container.innerHTML += html;
+                    });
                 });
             });
         }
     
-        // 自動導航捲動 (與其他頁面相同)
         window.addEventListener('load', function() {
             const activeTab = document.getElementById('active-tab');
             if (activeTab) { activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' }); }
-            loadAllData(); // 載入所有資料
+            loadAllData();
         });
     
     </script>
