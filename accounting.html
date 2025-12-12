@@ -14,7 +14,6 @@
         /* 綠色主題 */
         .text-custom-green { color: rgb(0, 140, 0); }
         .bg-custom-green { background-color: rgb(0, 140, 0); }
-        .border-custom-green { border-color: rgb(0, 140, 0); }
         .bg-gradient-custom { background: linear-gradient(135deg, rgb(0, 140, 0) 0%, rgb(0, 100, 0) 100%); }
 
         /* Modal 動畫 */
@@ -23,11 +22,29 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* 項目卡片互動樣式 */
+        .item-card { transition: background-color 0.2s; cursor: pointer; }
+        .item-card:active { background-color: #f0fdf4; } /* 點擊時的按壓感 */
         
-        /* 操作按鈕 */
-        .group:hover .action-btns { opacity: 1; }
-        .action-btns { opacity: 0; transition: opacity 0.2s; }
-        @media (max-width: 768px) { .action-btns { opacity: 1; } }
+        /* 操作區塊動畫 */
+        .action-area { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .item-card.active .action-area {
+            max-height: 100px; /* 足夠容納按鈕的高度 */
+            opacity: 1;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #e2e8f0;
+        }
+        
+        /* 旋轉箭頭 */
+        .chevron-icon { transition: transform 0.3s; }
+        .item-card.active .chevron-icon { transform: rotate(180deg); }
     </style>
 </head>
 <body class="bg-green-50 text-slate-800 pb-32">
@@ -38,7 +55,7 @@
         </div>
         <div class="text-right">
             <div class="text-[10px] text-slate-400">預設匯率基準</div>
-            <div class="text-xs text-slate-500 font-bold">1 TWD ≈ 4.5 JPY ≈ 41 KRW</div>
+            <div class="text-xs text-slate-500 font-bold">1 TWD ≈ 5 JPY ≈ 47 KRW</div>
         </div>
     </div>
 
@@ -143,10 +160,6 @@
             <i class="fas fa-shopping-bag text-lg mb-1"></i>
             <span class="text-[10px]">購物</span>
         </div>
-        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
-            <i class="fas fa-info-circle text-lg mb-1"></i>
-            <span class="text-[10px]">資訊</span>
-        </div>
     </div>
 
     <script type="module">
@@ -155,32 +168,28 @@
 
         // 🔴 請替換成您的 Firebase 設定
         const firebaseConfig = {
-        apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
-        authDomain: "fukuoka-busan-trip.firebaseapp.com",
-        projectId: "fukuoka-busan-trip",
-        storageBucket: "fukuoka-busan-trip.firebasestorage.app",
-        messagingSenderId: "130540342304",
-        appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
-        measurementId: "G-XDV9S0066R"
+            apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
+            authDomain: "fukuoka-busan-trip.firebaseapp.com",
+            projectId: "fukuoka-busan-trip",
+            storageBucket: "fukuoka-busan-trip.firebasestorage.app",
+            messagingSenderId: "130540342304",
+            appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
+            measurementId: "G-XDV9S0066R"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 匯率設定 (可手動調整)
         const RATES = {
-            JPY: 0.20,   // 1 JPY = 0.22 TWD (約 1:4.5)
-            KRW: 0.021,  // 1 KRW = 0.024 TWD (約 1:41)
+            JPY: 0.20,   
+            KRW: 0.021,  
             TWD: 1
         };
 
-        // 本地資料快取
         let accountingData = [];
 
-        // 讀取資料
         async function loadData() {
             try {
-                // 從 'expenses' 集合抓取資料
                 const q = query(collection(db, "expenses"), orderBy("created_at", "desc"));
                 const snapshot = await getDocs(q);
                 
@@ -196,12 +205,10 @@
             }
         }
 
-        // 渲染所有區塊
         function renderAll() {
             const container = document.getElementById('accounting-container');
             container.innerHTML = '';
 
-            // 定義要顯示的區塊順序與名稱
             const sections = [
                 { key: 'pre', name: '行前準備' },
                 { key: 'day1', name: 'Day 1 (02/24)' },
@@ -216,10 +223,8 @@
             ];
 
             sections.forEach(sec => {
-                // 篩選出該區塊的資料
                 const items = accountingData.filter(d => d.day === sec.key);
                 
-                // 計算該區塊的小計 (分幣別)
                 let subTWD = 0, subJPY = 0, subKRW = 0;
                 items.forEach(i => {
                     const amt = parseFloat(i.amount);
@@ -228,33 +233,40 @@
                     if(i.currency === 'KRW') subKRW += amt;
                 });
 
-                // 產生 HTML
+                // 修改：改成卡片式結構，包含隱藏的操作按鈕
                 let itemsHtml = items.map(item => `
-                    <div class="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 group">
-                        <div class="flex-1">
-                            <div class="text-sm font-medium text-slate-700">${item.title}</div>
-                        </div>
-                        <div class="flex items-center gap-3">
+                    <div id="item-${item.id}" class="item-card py-3 border-b border-slate-50 last:border-0" onclick="toggleItem('${item.id}')">
+                        <div class="flex justify-between items-center">
+                            <div class="flex-1">
+                                <div class="text-sm font-medium text-slate-700 flex items-center gap-2">
+                                    ${item.title}
+                                    <i class="fas fa-chevron-down text-[10px] text-slate-300 chevron-icon"></i>
+                                </div>
+                            </div>
                             <div class="text-right">
                                 <div class="text-sm font-bold text-slate-800">${formatCurrency(item.amount)} <span class="text-[10px] text-slate-400">${item.currency}</span></div>
                             </div>
-                            <div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity action-btns">
-                                <button onclick="editItem('${item.id}')" class="text-slate-300 hover:text-custom-green"><i class="fas fa-pen text-xs"></i></button>
-                                <button onclick="deleteItem('${item.id}')" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash text-xs"></i></button>
-                            </div>
+                        </div>
+                        
+                        <div class="action-area flex gap-3">
+                            <button onclick="event.stopPropagation(); editItem('${item.id}')" class="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-sm font-bold hover:bg-green-200 active:scale-95 transition">
+                                <i class="fas fa-pen mr-1"></i> 編輯
+                            </button>
+                            <button onclick="event.stopPropagation(); deleteItem('${item.id}')" class="flex-1 bg-red-100 text-red-600 py-2 rounded-lg text-sm font-bold hover:bg-red-200 active:scale-95 transition">
+                                <i class="fas fa-trash mr-1"></i> 刪除
+                            </button>
                         </div>
                     </div>
                 `).join('');
 
-                // 如果該區塊沒有資料，也可以選擇隱藏，這裡先預設顯示標題
                 const html = `
                     <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
                         <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
                             <h3 class="font-bold text-slate-800 text-sm">${sec.name}</h3>
                             <button onclick="openModal('${sec.key}')" class="text-slate-400 hover:text-custom-green text-xs"><i class="fas fa-plus"></i></button>
                         </div>
-                        <div class="p-4">
-                            ${itemsHtml || '<div class="text-center text-xs text-slate-300 py-2">尚無支出</div>'}
+                        <div class="p-4 pt-2 pb-2">
+                            ${itemsHtml || '<div class="text-center text-xs text-slate-300 py-4">尚無支出</div>'}
                         </div>
                         <div class="bg-green-50/50 px-5 py-2 flex justify-end space-x-4 text-xs border-t border-slate-100">
                             ${subTWD > 0 ? `<span class="font-bold text-slate-600">TWD ${formatNumber(subTWD)}</span>` : ''}
@@ -268,7 +280,22 @@
             });
         }
 
-        // 計算總金額
+        // 新增：切換卡片展開狀態
+        window.toggleItem = function(id) {
+            // 先關閉其他的 (如果想一次只能開一個)
+            const allItems = document.querySelectorAll('.item-card');
+            allItems.forEach(el => {
+                if (el.id !== `item-${id}`) {
+                    el.classList.remove('active');
+                }
+            });
+
+            const el = document.getElementById(`item-${id}`);
+            if (el) {
+                el.classList.toggle('active');
+            }
+        }
+
         function calculateTotal() {
             let totalTWD = 0;
             let sumJPY = 0, sumKRW = 0, sumTWD = 0;
@@ -293,17 +320,14 @@
             document.getElementById('total-twd').innerText = '$ ' + formatNumber(sumTWD);
         }
 
-        // 格式化數字 (三位一撇)
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
         
-        // 格式化顯示 (有些小數點可以去掉)
         function formatCurrency(num) {
-            return formatNumber(parseFloat(num)); // 簡單處理
+            return formatNumber(parseFloat(num));
         }
 
-        // 新增/修改資料
         window.handleFormSubmit = async function(e) {
             e.preventDefault();
             const id = document.getElementById('input-id').value;
@@ -334,16 +358,33 @@
             }
         }
 
-        // 刪除
+        // 修改：即時刪除邏輯
         window.deleteItem = async function(id) {
             if(!confirm('確定刪除此筆支出？')) return;
+            
+            // 1. 立即從畫面上移除 (Optimistic UI)
+            const itemElement = document.getElementById(`item-${id}`);
+            if (itemElement) {
+                // 加上淡出效果
+                itemElement.style.transition = 'all 0.3s';
+                itemElement.style.opacity = '0';
+                itemElement.style.height = '0';
+                itemElement.style.padding = '0';
+                setTimeout(() => itemElement.remove(), 300);
+            }
+
+            // 2. 背景執行資料庫刪除
             try {
                 await deleteDoc(doc(db, "expenses", id));
+                // 3. 重新讀取以確保金額計算正確 (使用者這時候已經看到項目消失了)
                 await loadData();
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e); 
+                alert("刪除失敗，請重新整理網頁");
+                loadData(); // 失敗的話把資料拉回來
+            }
         }
 
-        // 編輯 (填回表單)
         window.editItem = function(id) {
             const item = accountingData.find(i => i.id === id);
             if(item) {
@@ -358,11 +399,10 @@
             }
         }
 
-        // Modal 操作
         window.openModal = function(dayKey = 'day1') {
             document.getElementById('add-form').reset();
             document.getElementById('input-id').value = '';
-            document.getElementById('input-day').value = dayKey; // 自動選取點擊的日期
+            document.getElementById('input-day').value = dayKey;
             document.getElementById('modal-title').innerText = '新增支出';
             document.getElementById('add-modal').classList.remove('hidden');
         }
@@ -370,7 +410,6 @@
         window.closeModal = function() { document.getElementById('add-modal').classList.add('hidden'); }
         document.getElementById('add-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
 
-        // 初始化
         loadData();
 
     </script>
