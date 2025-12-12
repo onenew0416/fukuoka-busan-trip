@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅遊記帳</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 綠色主題 */
+        .text-custom-green { color: rgb(0, 140, 0); }
+        .bg-custom-green { background-color: rgb(0, 140, 0); }
+        .border-custom-green { border-color: rgb(0, 140, 0); }
+        .bg-gradient-custom { background: linear-gradient(135deg, rgb(0, 140, 0) 0%, rgb(0, 100, 0) 100%); }
+
+        /* Modal 動畫 */
+        .modal-enter { animation: slideUp 0.3s ease-out forwards; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 操作按鈕 */
+        .group:hover .action-btns { opacity: 1; }
+        .action-btns { opacity: 0; transition: opacity 0.2s; }
+        @media (max-width: 768px) { .action-btns { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-green-50 text-slate-800 pb-32">
+
+    <div class="p-6 pt-10 flex justify-between items-end">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">旅遊記帳 <i class="fas fa-wallet text-custom-green"></i></h1>
+        </div>
+        <div class="text-right">
+            <div class="text-[10px] text-slate-400">預設匯率基準</div>
+            <div class="text-xs text-slate-500 font-bold">1 TWD ≈ 4.5 JPY ≈ 41 KRW</div>
+        </div>
+    </div>
+
+    <div class="mx-4 mb-6 p-5 bg-gradient-custom rounded-3xl shadow-lg shadow-green-200 text-white relative overflow-hidden">
+        <div class="relative z-10">
+            <div class="text-xs text-green-100 mb-1">預估總花費 (TWD)</div>
+            <div class="text-3xl font-bold tracking-wider" id="grand-total">計算中...</div>
+            <div class="mt-4 flex space-x-4 text-xs text-green-100/80 border-t border-white/20 pt-3">
+                <div>
+                    <span class="block text-[10px] opacity-70">日幣總計</span>
+                    <span class="font-bold text-sm" id="total-jpy">¥0</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] opacity-70">韓元總計</span>
+                    <span class="font-bold text-sm" id="total-krw">₩0</span>
+                </div>
+                <div>
+                    <span class="block text-[10px] opacity-70">台幣支出</span>
+                    <span class="font-bold text-sm" id="total-twd">$0</span>
+                </div>
+            </div>
+        </div>
+        <i class="fas fa-coins absolute -right-4 -bottom-4 text-8xl text-white/10"></i>
+    </div>
+
+    <div id="accounting-container" class="px-4 space-y-6">
+        </div>
+
+    <div id="add-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-bold text-slate-800">新增支出</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            
+            <form id="add-form" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="input-id">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">歸屬天數</label>
+                        <select id="input-day" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green appearance-none">
+                            <option value="pre">行前準備</option>
+                            <option value="day1">Day 1 (02/24)</option>
+                            <option value="day2">Day 2 (02/25)</option>
+                            <option value="day3">Day 3 (02/26)</option>
+                            <option value="day4">Day 4 (02/27)</option>
+                            <option value="day5">Day 5 (02/28)</option>
+                            <option value="day6">Day 6 (03/01)</option>
+                            <option value="day7">Day 7 (03/02)</option>
+                            <option value="day8">Day 8 (03/03)</option>
+                            <option value="day9">Day 9 (03/04)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">項目名稱</label>
+                        <input type="text" id="input-title" placeholder="例如：機票、晚餐" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                    </div>
+
+                    <div class="flex gap-3">
+                        <div class="flex-1">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">金額</label>
+                            <input type="number" id="input-amount" placeholder="0" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-right">
+                        </div>
+                        <div class="w-1/3">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">幣別</label>
+                            <select id="input-currency" class="w-full bg-slate-100 rounded-xl px-2 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green appearance-none text-center">
+                                <option value="TWD">TWD</option>
+                                <option value="JPY">JPY</option>
+                                <option value="KRW">KRW</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="w-full bg-custom-green text-white font-bold py-3 rounded-xl mt-6 shadow-lg shadow-green-300 active:scale-95 transition-transform hover:bg-[#008c00]">
+                    確認儲存
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <button onclick="openModal()" class="fixed bottom-24 right-6 w-14 h-14 bg-custom-green text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-110 transition z-40 active:scale-95 shadow-green-200">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <div class="fixed bottom-6 left-4 right-4 bg-white rounded-full shadow-2xl py-3 px-6 flex justify-between items-center z-50">
+        <a href="index.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-suitcase text-lg mb-1"></i>
+            <span class="text-[10px]">行程</span>
+        </a>
+        <a href="map.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-map-marked-alt text-lg mb-1"></i>
+            <span class="text-[10px]">地圖</span>
+        </a>
+        <div class="flex flex-col items-center text-custom-green cursor-pointer">
+            <i class="fas fa-wallet text-lg mb-1"></i>
+            <span class="text-[10px] font-bold">記帳</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-shopping-bag text-lg mb-1"></i>
+            <span class="text-[10px]">購物</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-info-circle text-lg mb-1"></i>
+            <span class="text-[10px]">資訊</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // 🔴 請替換成您的 Firebase 設定
+        const firebaseConfig = {
+        apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
+        authDomain: "fukuoka-busan-trip.firebaseapp.com",
+        projectId: "fukuoka-busan-trip",
+        storageBucket: "fukuoka-busan-trip.firebasestorage.app",
+        messagingSenderId: "130540342304",
+        appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
+        measurementId: "G-XDV9S0066R"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 匯率設定 (可手動調整)
+        const RATES = {
+            JPY: 0.20,   // 1 JPY = 0.22 TWD (約 1:4.5)
+            KRW: 0.021,  // 1 KRW = 0.024 TWD (約 1:41)
+            TWD: 1
+        };
+
+        // 本地資料快取
+        let accountingData = [];
+
+        // 讀取資料
+        async function loadData() {
+            try {
+                // 從 'expenses' 集合抓取資料
+                const q = query(collection(db, "expenses"), orderBy("created_at", "desc"));
+                const snapshot = await getDocs(q);
+                
+                accountingData = [];
+                snapshot.forEach(doc => {
+                    accountingData.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderAll();
+                calculateTotal();
+            } catch (e) {
+                console.error("讀取失敗:", e);
+            }
+        }
+
+        // 渲染所有區塊
+        function renderAll() {
+            const container = document.getElementById('accounting-container');
+            container.innerHTML = '';
+
+            // 定義要顯示的區塊順序與名稱
+            const sections = [
+                { key: 'pre', name: '行前準備' },
+                { key: 'day1', name: 'Day 1 (02/24)' },
+                { key: 'day2', name: 'Day 2 (02/25)' },
+                { key: 'day3', name: 'Day 3 (02/26)' },
+                { key: 'day4', name: 'Day 4 (02/27)' },
+                { key: 'day5', name: 'Day 5 (02/28)' },
+                { key: 'day6', name: 'Day 6 (03/01)' },
+                { key: 'day7', name: 'Day 7 (03/02)' },
+                { key: 'day8', name: 'Day 8 (03/03)' },
+                { key: 'day9', name: 'Day 9 (03/04)' }
+            ];
+
+            sections.forEach(sec => {
+                // 篩選出該區塊的資料
+                const items = accountingData.filter(d => d.day === sec.key);
+                
+                // 計算該區塊的小計 (分幣別)
+                let subTWD = 0, subJPY = 0, subKRW = 0;
+                items.forEach(i => {
+                    const amt = parseFloat(i.amount);
+                    if(i.currency === 'TWD') subTWD += amt;
+                    if(i.currency === 'JPY') subJPY += amt;
+                    if(i.currency === 'KRW') subKRW += amt;
+                });
+
+                // 產生 HTML
+                let itemsHtml = items.map(item => `
+                    <div class="flex justify-between items-center py-2 border-b border-slate-50 last:border-0 group">
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-slate-700">${item.title}</div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="text-right">
+                                <div class="text-sm font-bold text-slate-800">${formatCurrency(item.amount)} <span class="text-[10px] text-slate-400">${item.currency}</span></div>
+                            </div>
+                            <div class="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity action-btns">
+                                <button onclick="editItem('${item.id}')" class="text-slate-300 hover:text-custom-green"><i class="fas fa-pen text-xs"></i></button>
+                                <button onclick="deleteItem('${item.id}')" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // 如果該區塊沒有資料，也可以選擇隱藏，這裡先預設顯示標題
+                const html = `
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="font-bold text-slate-800 text-sm">${sec.name}</h3>
+                            <button onclick="openModal('${sec.key}')" class="text-slate-400 hover:text-custom-green text-xs"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="p-4">
+                            ${itemsHtml || '<div class="text-center text-xs text-slate-300 py-2">尚無支出</div>'}
+                        </div>
+                        <div class="bg-green-50/50 px-5 py-2 flex justify-end space-x-4 text-xs border-t border-slate-100">
+                            ${subTWD > 0 ? `<span class="font-bold text-slate-600">TWD ${formatNumber(subTWD)}</span>` : ''}
+                            ${subJPY > 0 ? `<span class="font-bold text-blue-600">JPY ${formatNumber(subJPY)}</span>` : ''}
+                            ${subKRW > 0 ? `<span class="font-bold text-purple-600">KRW ${formatNumber(subKRW)}</span>` : ''}
+                            ${(subTWD+subJPY+subKRW) === 0 ? '<span class="text-slate-300">--</span>' : ''}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        // 計算總金額
+        function calculateTotal() {
+            let totalTWD = 0;
+            let sumJPY = 0, sumKRW = 0, sumTWD = 0;
+
+            accountingData.forEach(item => {
+                const amt = parseFloat(item.amount);
+                if (item.currency === 'TWD') {
+                    totalTWD += amt;
+                    sumTWD += amt;
+                } else if (item.currency === 'JPY') {
+                    totalTWD += amt * RATES.JPY;
+                    sumJPY += amt;
+                } else if (item.currency === 'KRW') {
+                    totalTWD += amt * RATES.KRW;
+                    sumKRW += amt;
+                }
+            });
+
+            document.getElementById('grand-total').innerText = 'NT$ ' + formatNumber(Math.round(totalTWD));
+            document.getElementById('total-jpy').innerText = '¥ ' + formatNumber(sumJPY);
+            document.getElementById('total-krw').innerText = '₩ ' + formatNumber(sumKRW);
+            document.getElementById('total-twd').innerText = '$ ' + formatNumber(sumTWD);
+        }
+
+        // 格式化數字 (三位一撇)
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        
+        // 格式化顯示 (有些小數點可以去掉)
+        function formatCurrency(num) {
+            return formatNumber(parseFloat(num)); // 簡單處理
+        }
+
+        // 新增/修改資料
+        window.handleFormSubmit = async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('input-id').value;
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true; btn.innerText = '處理中...';
+
+            const newItem = {
+                day: document.getElementById('input-day').value,
+                title: document.getElementById('input-title').value,
+                amount: parseFloat(document.getElementById('input-amount').value),
+                currency: document.getElementById('input-currency').value,
+                created_at: Date.now()
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "expenses", id), newItem);
+                } else {
+                    await addDoc(collection(db, "expenses"), newItem);
+                }
+                await loadData();
+                closeModal();
+            } catch (e) {
+                console.error(e);
+                alert('儲存失敗');
+            } finally {
+                btn.disabled = false; btn.innerText = '確認儲存';
+            }
+        }
+
+        // 刪除
+        window.deleteItem = async function(id) {
+            if(!confirm('確定刪除此筆支出？')) return;
+            try {
+                await deleteDoc(doc(db, "expenses", id));
+                await loadData();
+            } catch (e) { console.error(e); }
+        }
+
+        // 編輯 (填回表單)
+        window.editItem = function(id) {
+            const item = accountingData.find(i => i.id === id);
+            if(item) {
+                document.getElementById('input-id').value = item.id;
+                document.getElementById('input-day').value = item.day;
+                document.getElementById('input-title').value = item.title;
+                document.getElementById('input-amount').value = item.amount;
+                document.getElementById('input-currency').value = item.currency;
+                
+                document.getElementById('modal-title').innerText = '編輯支出';
+                document.getElementById('add-modal').classList.remove('hidden');
+            }
+        }
+
+        // Modal 操作
+        window.openModal = function(dayKey = 'day1') {
+            document.getElementById('add-form').reset();
+            document.getElementById('input-id').value = '';
+            document.getElementById('input-day').value = dayKey; // 自動選取點擊的日期
+            document.getElementById('modal-title').innerText = '新增支出';
+            document.getElementById('add-modal').classList.remove('hidden');
+        }
+        
+        window.closeModal = function() { document.getElementById('add-modal').classList.add('hidden'); }
+        document.getElementById('add-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
+
+        // 初始化
+        loadData();
+
+    </script>
+</body>
+</html>
