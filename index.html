@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>福岡&釜山9日遊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 自訂綠色變數 RGB(0, 140, 0) */
+        .text-custom-green { color: rgb(0, 140, 0); }
+        .bg-custom-green { background-color: rgb(0, 140, 0); }
+        .border-custom-green { border-color: rgb(0, 140, 0); }
+        .accent-custom-green { accent-color: rgb(0, 140, 0); }
+        
+        /* 漸層背景 */
+        .bg-gradient-custom { background: linear-gradient(135deg, rgb(0, 140, 0) 0%, rgb(0, 100, 0) 100%); }
+
+        /* Modal 動畫 */
+        .modal-enter { animation: slideUp 0.3s ease-out forwards; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 操作按鈕隱藏/顯示 */
+        .group:hover .action-btns { opacity: 1; }
+        .action-btns { opacity: 0; transition: opacity 0.2s; }
+        /* 手機版預設顯示操作按鈕，避免無法點擊 */
+        @media (max-width: 768px) { .action-btns { opacity: 1; } }
+    </style>
+</head>
+<body class="bg-green-50 text-slate-800 pb-24">
+
+    <div class="p-6 pt-10 flex justify-between items-end">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Fukuoka 🇯🇵 x Busan 🇰🇷</h1>
+        </div>
+        <div class="text-xs text-slate-500 text-right">
+            目前匯率<br>
+            <span class="font-bold text-custom-green">1 JPY ≈ 0.20 TWD</span>
+        </div>
+    </div>
+
+    <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2">
+        <div class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative transition-transform active:scale-95">
+            <i class="fas fa-clipboard-list mb-1 text-lg"></i>
+            <span class="text-xs font-bold">目錄</span>
+            <div class="absolute -bottom-1 w-1 h-1 bg-white rounded-full"></div>
+        </div>
+
+        <a href="day1.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block hover:bg-slate-50 transition">
+            <span class="text-[10px] text-slate-400">Day 1</span>
+            <span class="text-lg font-bold text-slate-700 my-0.5">02/24</span>
+            <span>(二)</span>
+        </a>
+        <div class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight">
+            <span class="text-[10px] text-slate-400">Day 2</span><span class="text-lg font-bold text-slate-700 my-0.5">02/25</span><span>(三)</span>
+        </div>
+        <div class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight">
+            <span class="text-[10px] text-slate-400">Day 3</span><span class="text-lg font-bold text-slate-700 my-0.5">02/26</span><span>(四)</span>
+        </div>
+        <div class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight">
+            <span class="text-[10px] text-slate-400">Day 4</span><span class="text-lg font-bold text-slate-700 my-0.5">02/27</span><span>(五)</span>
+        </div>
+        <div class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight">
+            <span class="text-[10px] text-slate-400">Day 5</span><span class="text-lg font-bold text-slate-700 my-0.5">02/28</span><span>(六)</span>
+        </div>
+        <div class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight">
+            <span class="text-[10px] text-slate-400">Day 6</span><span class="text-lg font-bold text-slate-700 my-0.5">03/01</span><span>(日)</span>
+        </div>
+        <div class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight">
+            <span class="text-[10px] text-slate-400">Day 7</span><span class="text-lg font-bold text-slate-700 my-0.5">03/02</span><span>(一)</span>
+        </div>
+        <div class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight">
+            <span class="text-[10px] text-slate-400">Day 8</span><span class="text-lg font-bold text-slate-700 my-0.5">03/03</span><span>(二)</span>
+        </div>
+        <div class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight">
+            <span class="text-[10px] text-slate-400">Day 9</span><span class="text-lg font-bold text-slate-700 my-0.5">03/04</span><span>(三)</span>
+        </div>
+    </div>
+
+    <div id="content-area" class="px-4 space-y-5 animate-fade-in">
+        
+        <div id="resources-container" class="grid grid-cols-2 gap-3"></div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-check-square text-custom-green mr-2"></i> 待辦事項</h3>
+                <button onclick="openModal('todo')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
+            </div>
+            <div id="todo-list" class="p-2">
+                </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-8">
+            <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-suitcase text-custom-green mr-2"></i> 行李清單</h3>
+                <button onclick="openModal('packing')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
+            </div>
+            <div class="p-4 grid grid-cols-3 gap-4 divide-x divide-slate-100">
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">👜 包包</h4>
+                    <div id="packing-bag" class="space-y-1"></div>
+                </div>
+                <div class="space-y-3 pl-2">
+                    <h4 class="text-xs font-bold text-slate-500 text-center bg-slate-100 py-1 rounded-lg">🎒 隨身</h4>
+                    <div id="packing-carry" class="space-y-1"></div>
+                </div>
+                <div class="space-y-3 pl-2">
+                    <h4 class="text-xs font-bold text-slate-500 text-center bg-slate-100 py-1 rounded-lg">🧳 託運</h4>
+                    <div id="packing-check" class="space-y-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="universal-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-bold text-slate-800">新增項目</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            
+            <form id="universal-form" onsubmit="handleFormSubmit(event)">
+                <input type="hidden" id="input-id">
+                <input type="hidden" id="input-mode"> <input type="hidden" id="input-group-id"> <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">內容 / 標題</label>
+                        <input type="text" id="input-text" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                    </div>
+
+                    <div id="field-link">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">連結網址 (選填)</label>
+                        <input type="url" id="input-url" placeholder="https://..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm">
+                    </div>
+
+                    <div id="field-date" class="hidden">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">日期 (選填)</label>
+                        <input type="date" id="input-date" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                    </div>
+
+                    <div id="field-category" class="hidden">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">分類</label>
+                        <select id="input-category" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green appearance-none">
+                            <option value="bag">👜 包包</option>
+                            <option value="carry">🎒 隨身</option>
+                            <option value="check">🧳 託運</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-custom-green text-white font-bold py-3 rounded-xl mt-6 shadow-lg shadow-green-300 active:scale-95 transition-transform hover:bg-[#008c00]">
+                    確認儲存
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="fixed bottom-6 left-4 right-4 bg-white rounded-full shadow-2xl py-3 px-6 flex justify-between items-center z-40">
+        <div class="flex flex-col items-center text-custom-green cursor-pointer">
+            <i class="fas fa-clipboard-list text-lg mb-1"></i>
+            <span class="text-[10px] font-bold">行程</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-map-marked-alt text-lg mb-1"></i>
+            <span class="text-[10px]">地圖</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-wallet text-lg mb-1"></i>
+            <span class="text-[10px]">記帳</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-shopping-bag text-lg mb-1"></i>
+            <span class="text-[10px]">購物</span>
+        </div>
+        <div class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer">
+            <i class="fas fa-info-circle text-lg mb-1"></i>
+            <span class="text-[10px]">資訊</span>
+        </div>
+    </div>
+
+    <script>
+        // 資料初始化
+        let resourcesData = [
+            {
+                id: 'traffic', title: '交通地圖', icon: 'fa-subway',
+                links: [
+                    { id: 1, text: '福岡地鐵圖', url: 'https://subway.city.fukuoka.lg.jp/cha_trad/route/deta/map.pdf' },
+                    { id: 2, text: '釜山地鐵圖', url: 'https://www.settour.com.tw/help/docs/pkg/%E9%87%9C%E5%B1%B1%E5%9C%B0%E9%90%B5%E5%9C%96.pdf' }
+                ]
+            },
+            {
+                id: 'stay', title: '住宿導航', icon: 'fa-bed',
+                links: [
+                    { id: 3, text: '福岡 UNPLAN', url: 'https://maps.app.goo.gl/F9gh33cWVJXq6LnQ6' },
+                    { id: 4, text: '釜山 Urbanstay', url: 'https://naver.me/xKEqBo0n' }
+                ]
+            },
+            {
+                id: 'coupon', title: '優惠券', icon: 'fa-ticket-alt', isSpecial: true,
+                links: [
+                    { id: 5, text: '唐吉訶德', url: 'https://japanportal.donki-global.com/coupon/cp001_zhtw.html' }
+                ]
+            }
+        ];
+
+        let todoData = [
+            { id: 1, text: '買 Greenland 門票', url: 'https://www.klook.com/zh-TW/activity/45735-greenland-kumamoto/', date: '', done: false },
+            { id: 2, text: '租車電話預約', url: 'https://www.pref.saga.lg.jp/airport/kiji00312799/index.html', date: '', done: false },
+            { id: 3, text: '膠囊列車預約', url: 'https://www.bluelinepark.com/eng/booking.do', date: '2026-02-03', done: false }
+        ];
+
+        // 這裡將您的 HTML 列表轉換為 JS 資料，以便支援編輯功能
+        let packingData = [
+            // 包包 (Bag)
+            { id: 101, text: '行動電源', category: 'bag', done: false },
+            { id: 102, text: '雨傘', category: 'bag', done: false },
+            { id: 103, text: '台灣駕照', category: 'bag', done: false },
+            { id: 104, text: '日文譯本', category: 'bag', done: false },
+            { id: 105, text: '信用卡', category: 'bag', done: false },
+            { id: 106, text: '現金', category: 'bag', done: false },
+            { id: 107, text: '感冒藥/胃散', category: 'bag', done: false },
+            { id: 108, text: '護照', category: 'bag', done: false },
+            { id: 109, text: '暈車/暈船藥', category: 'bag', done: false },
+            // 隨身 (Carry)
+            { id: 201, text: '充電器', category: 'carry', done: false },
+            { id: 202, text: 'Lightning線', category: 'carry', done: false },
+            { id: 203, text: 'Type C線', category: 'carry', done: false },
+            { id: 204, text: '隱眼', category: 'carry', done: false },
+            { id: 205, text: '眼鏡', category: 'carry', done: false },
+            { id: 206, text: '行李秤', category: 'carry', done: false },
+            { id: 207, text: '口罩', category: 'carry', done: false },
+            { id: 208, text: '平板', category: 'carry', done: false },
+            { id: 209, text: '轉接頭', category: 'carry', done: false },
+            // 託運 (Check)
+            { id: 301, text: '睡衣', category: 'check', done: false },
+            { id: 302, text: '牙刷', category: 'check', done: false },
+            { id: 303, text: '洗衣袋', category: 'check', done: false },
+            { id: 304, text: '浴巾', category: 'check', done: false },
+            { id: 305, text: '藍牙喇叭', category: 'check', done: false },
+            { id: 306, text: '牙膏', category: 'check', done: false },
+            { id: 307, text: '洗髮精', category: 'check', done: false },
+            { id: 308, text: '洗面乳', category: 'check', done: false },
+            { id: 309, text: '刮鬍刀', category: 'check', done: false },
+            { id: 310, text: '保養品', category: 'check', done: false },
+        ];
+
+        // 渲染函式：資源卡片
+        function renderResources() {
+            const container = document.getElementById('resources-container');
+            container.innerHTML = '';
+
+            resourcesData.forEach(group => {
+                let linksHtml = group.links.map(link => `
+                    <div class="flex items-center justify-between group/item p-2 hover:bg-green-50 rounded-xl transition">
+                        <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2">
+                             ${group.isSpecial ? '<i class="fas fa-chevron-right text-[10px] mr-1"></i>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-1"></span>'}
+                             ${link.text}
+                        </a>
+                        <div class="flex space-x-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                            <button onclick="editResource('${group.id}', ${link.id})" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
+                            <button onclick="deleteResource('${group.id}', ${link.id})" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+
+                let cardClass = group.isSpecial 
+                    ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' 
+                    : 'bg-white border-slate-100 flex flex-col';
+                
+                let titleColor = group.isSpecial ? 'text-orange-500' : 'text-custom-green';
+
+                const html = `
+                    <div class="${cardClass} p-4 rounded-3xl shadow-sm border relative group/card">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${titleColor} mr-1.5"></i> ${group.title}</h3>
+                            <button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div class="space-y-1 flex-1">
+                            ${linksHtml}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        // 渲染函式：待辦事項
+        function renderTodos() {
+            const container = document.getElementById('todo-list');
+            container.innerHTML = '';
+            
+            todoData.forEach(item => {
+                const dateBadge = item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : '';
+                const linkIcon = item.url ? `<a href="${item.url}" target="_blank"><i class="fas fa-external-link-alt text-xs text-slate-300 hover:text-custom-green ml-2"></i></a>` : '';
+
+                const html = `
+                <div class="flex items-center p-3 hover:bg-slate-50 rounded-xl transition group border-b border-slate-50 last:border-0">
+                    <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTodo(${item.id})" class="w-4 h-4 rounded border-gray-300 accent-custom-green mr-3 cursor-pointer">
+                    <div class="flex-1 cursor-pointer" onclick="editTodo(${item.id})">
+                        <div class="text-sm font-medium ${item.done ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.text}</div>
+                        ${dateBadge}
+                    </div>
+                    ${linkIcon}
+                    <div class="action-btns flex space-x-3 ml-2">
+                        <button onclick="editTodo(${item.id})" class="text-slate-300 hover:text-custom-green"><i class="fas fa-pen text-xs"></i></button>
+                        <button onclick="deleteTodo(${item.id})" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash text-xs"></i></button>
+                    </div>
+                </div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        // 渲染函式：行李清單
+        function renderPacking() {
+            ['bag', 'carry', 'check'].forEach(cat => {
+                const container = document.getElementById(`packing-${cat}`);
+                container.innerHTML = '';
+                const items = packingData.filter(i => i.category === cat);
+                
+                items.forEach(item => {
+                    const html = `
+                    <div class="flex items-center justify-between group py-1">
+                        <label class="flex items-center text-xs text-slate-700 cursor-pointer hover:text-custom-green flex-1">
+                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePacking(${item.id})" class="mr-1.5 accent-custom-green"> 
+                            <span class="${item.done ? 'text-slate-300 line-through' : ''}">${item.text}</span>
+                        </label>
+                        <div class="opacity-0 group-hover:opacity-100 flex space-x-1">
+                            <button onclick="editPacking(${item.id})" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
+                            <button onclick="deletePacking(${item.id})" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                    container.innerHTML += html;
+                });
+            });
+        }
+
+        // CRUD & Modal Logic
+        function openModal(mode, id = null, groupId = null) {
+            document.getElementById('universal-form').reset();
+            document.getElementById('input-mode').value = mode;
+            document.getElementById('input-id').value = id || '';
+            document.getElementById('input-group-id').value = groupId || '';
+            document.getElementById('universal-modal').classList.remove('hidden');
+
+            // 欄位顯示控制
+            const fieldLink = document.getElementById('field-link');
+            const fieldDate = document.getElementById('field-date');
+            const fieldCat = document.getElementById('field-category');
+            
+            fieldLink.classList.add('hidden');
+            fieldDate.classList.add('hidden');
+            fieldCat.classList.add('hidden');
+
+            if (mode === 'resource') {
+                document.getElementById('modal-title').innerText = id ? '編輯連結' : '新增連結';
+                fieldLink.classList.remove('hidden');
+            } else if (mode === 'todo') {
+                document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦';
+                fieldLink.classList.remove('hidden');
+                fieldDate.classList.remove('hidden');
+            } else if (mode === 'packing') {
+                document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品';
+                fieldCat.classList.remove('hidden');
+            }
+
+            // 填入既有資料 (編輯模式)
+            if (id) {
+                if (mode === 'resource') {
+                    const group = resourcesData.find(g => g.id === groupId);
+                    const item = group.links.find(i => i.id === id);
+                    document.getElementById('input-text').value = item.text;
+                    document.getElementById('input-url').value = item.url;
+                } else if (mode === 'todo') {
+                    const item = todoData.find(i => i.id === id);
+                    document.getElementById('input-text').value = item.text;
+                    document.getElementById('input-url').value = item.url || '';
+                    document.getElementById('input-date').value = item.date || '';
+                } else if (mode === 'packing') {
+                    const item = packingData.find(i => i.id === id);
+                    document.getElementById('input-text').value = item.text;
+                    document.getElementById('input-category').value = item.category;
+                }
+            }
+        }
+
+        function closeModal() { document.getElementById('universal-modal').classList.add('hidden'); }
+        document.getElementById('universal-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const mode = document.getElementById('input-mode').value;
+            const id = document.getElementById('input-id').value;
+            const text = document.getElementById('input-text').value;
+            const url = document.getElementById('input-url').value;
+            const date = document.getElementById('input-date').value;
+            const category = document.getElementById('input-category').value;
+            const groupId = document.getElementById('input-group-id').value;
+            const numId = id ? parseInt(id) : Date.now();
+
+            if (mode === 'resource') {
+                const groupIdx = resourcesData.findIndex(g => g.id === groupId);
+                if (id) {
+                    const itemIdx = resourcesData[groupIdx].links.findIndex(i => i.id == id);
+                    resourcesData[groupIdx].links[itemIdx] = { id: numId, text, url };
+                } else {
+                    resourcesData[groupIdx].links.push({ id: numId, text, url });
+                }
+                renderResources();
+            } else if (mode === 'todo') {
+                if (id) {
+                    const idx = todoData.findIndex(i => i.id == id);
+                    todoData[idx] = { ...todoData[idx], text, url, date };
+                } else {
+                    todoData.push({ id: numId, text, url, date, done: false });
+                }
+                renderTodos();
+            } else if (mode === 'packing') {
+                if (id) {
+                    const idx = packingData.findIndex(i => i.id == id);
+                    packingData[idx] = { ...packingData[idx], text, category };
+                } else {
+                    packingData.push({ id: numId, text, category, done: false });
+                }
+                renderPacking();
+            }
+            closeModal();
+        }
+
+        // Helper Functions
+        function editResource(groupId, id) { openModal('resource', id, groupId); }
+        function deleteResource(groupId, id) {
+            if(confirm('刪除連結？')) {
+                const idx = resourcesData.findIndex(g => g.id === groupId);
+                resourcesData[idx].links = resourcesData[idx].links.filter(i => i.id !== id);
+                renderResources();
+            }
+        }
+        function editTodo(id) { openModal('todo', id); }
+        function deleteTodo(id) {
+            if(confirm('刪除待辦？')) { todoData = todoData.filter(i => i.id !== id); renderTodos(); }
+        }
+        function toggleTodo(id) {
+            const item = todoData.find(i => i.id === id);
+            item.done = !item.done;
+            renderTodos();
+        }
+        function editPacking(id) { openModal('packing', id); }
+        function deletePacking(id) {
+            if(confirm('刪除物品？')) { packingData = packingData.filter(i => i.id !== id); renderPacking(); }
+        }
+        function togglePacking(id) {
+            const item = packingData.find(i => i.id === id);
+            item.done = !item.done;
+            renderPacking();
+        }
+
+        // Initial Render
+        renderResources();
+        renderTodos();
+        renderPacking();
+    </script>
+</body>
+</html>
