@@ -3,44 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 5: 飛釜山&西面</title>
+    <title>Day 5: 福岡 -> 釜山</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        
         .modal-enter { animation: slideUp 0.3s ease-out forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        /* 綠色主題 */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .text-custom-green { color: rgb(0, 140, 0); }
         .bg-custom-green { background-color: rgb(0, 140, 0); }
-        .border-custom-green { border-color: rgb(0, 140, 0); }
-        .ring-custom-green { --tw-ring-color: rgb(0, 140, 0); }
         .bg-gradient-custom { background: linear-gradient(135deg, rgb(0, 140, 0) 0%, rgb(0, 100, 0) 100%); }
     </style>
 </head>
 <body class="bg-green-50 text-slate-800 pb-24">
 
-    <div class="p-6 pt-10 flex justify-between items-end">
-        <div><h1 class="text-2xl font-bold text-slate-800">Fukuoka 🇯🇵 x Busan 🇰🇷</h1></div>
+    <div class="p-6 pt-10 flex justify-between items-center">
+        <div class="flex-1">
+            <h1 class="text-lg sm:text-2xl font-bold text-slate-800 whitespace-nowrap">
+                福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
+            </h1>
+        </div>
+        <div class="invisible bg-white border border-green-100 shadow-sm rounded-xl px-4 py-2 flex flex-col items-center justify-center">
+            <i class="fas fa-cloud-sun text-custom-green text-xl mb-1"></i>
+            <span class="text-[10px] font-bold text-slate-500">旅途氣象</span>
+        </div>
     </div>
 
     <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2">
         <a href="index.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-400 transition-transform active:scale-95">
-            <i class="fas fa-clipboard-list mb-1 text-lg"></i><span class="text-xs font-bold">目錄</span>
+            <i class="fas fa-clipboard-list mb-1 text-lg"></i>
+            <span class="text-xs font-bold">目錄</span>
         </a>
-        
-        <a href="day1.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95">
-            <span class="text-[10px] text-slate-400">Day 1</span><span class="text-lg font-bold text-slate-700 my-0.5">02/24</span><span>(二)</span>
-        </a>
-
+        <a href="day1.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 1</span><span class="text-lg font-bold text-slate-700 my-0.5">02/24</span><span>(二)</span></a>
         <a href="day2.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 2</span><span class="text-lg font-bold text-slate-700 my-0.5">02/25</span><span>(三)</span></a>
         <a href="day3.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 3</span><span class="text-lg font-bold text-slate-700 my-0.5">02/26</span><span>(四)</span></a>
         <a href="day4.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 4</span><span class="text-lg font-bold text-slate-700 my-0.5">02/27</span><span>(五)</span></a>
-
+        
         <div id="active-tab" class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative">
-            <span class="text-[10px] text-green-100">Day 5</span><span class="text-lg font-bold my-0.5">02/28</span><span>(六)</span>
+            <span class="text-[10px] text-green-100">Day 5</span>
+            <span class="text-lg font-bold my-0.5">02/28</span>
+            <span>(六)</span>
             <div class="absolute -bottom-1 w-1 h-1 bg-white rounded-full"></div>
         </div>
 
@@ -50,37 +59,109 @@
         <a href="day9.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 9</span><span class="text-lg font-bold text-slate-700 my-0.5">03/04</span><span>(三)</span></a>
     </div>
 
-    <div class="mx-4 mb-6 p-5 bg-green-100 rounded-3xl shadow-sm flex items-center justify-between relative overflow-hidden">
-        <div class="z-10"><div class="flex items-start"><span class="text-4xl font-bold text-slate-800">10°</span><span class="text-xl font-bold mt-1 ml-1">C</span></div><div class="text-xs text-slate-500 mt-1">體感 8° C · 多雲</div></div>
-        <div class="z-10 text-right"><span class="bg-white/50 px-2 py-1 rounded-lg text-xs font-bold text-slate-600"><i class="fas fa-map-marker-alt"></i> 福岡</span><i class="fas fa-cloud text-4xl text-slate-400 block mt-2"></i></div>
+    <div class="mx-4 mb-6 grid grid-cols-2 gap-3">
+        <div class="bg-red-50 p-4 rounded-3xl shadow-sm relative overflow-hidden h-32 flex justify-between items-center">
+            <div class="z-10">
+                <div class="flex items-baseline" id="temp-container-fuk">
+                    <span class="text-2xl font-bold text-slate-800">--°</span>
+                    <span class="text-sm text-slate-400 mx-1">/</span>
+                    <span class="text-xl font-bold text-slate-600">--°</span>
+                </div>
+                <div id="desc-fuk" class="text-[10px] font-bold text-slate-500 mt-1">載入中</div>
+            </div>
+            
+            <div class="z-10 text-right">
+                <div class="text-xs font-bold text-red-400 mb-1"><i class="fas fa-map-marker-alt mr-1"></i>福岡</div>
+                <i id="icon-fuk" class="fas fa-spinner fa-spin text-4xl text-red-200 mt-1 transition-all duration-500 drop-shadow-sm"></i>
+            </div>
+            <div class="absolute -right-6 -top-6 w-20 h-20 bg-red-100 rounded-full blur-xl"></div>
+        </div>
+
+        <div class="bg-blue-50 p-4 rounded-3xl shadow-sm relative overflow-hidden h-32 flex justify-between items-center">
+            <div class="z-10">
+                <div class="flex items-baseline" id="temp-container-pus">
+                    <span class="text-2xl font-bold text-slate-800">--°</span>
+                    <span class="text-sm text-slate-400 mx-1">/</span>
+                    <span class="text-xl font-bold text-slate-600">--°</span>
+                </div>
+                <div id="desc-pus" class="text-[10px] font-bold text-slate-500 mt-1">載入中</div>
+            </div>
+            
+            <div class="z-10 text-right">
+                <div class="text-xs font-bold text-blue-400 mb-1"><i class="fas fa-map-marker-alt mr-1"></i>釜山</div>
+                <i id="icon-pus" class="fas fa-spinner fa-spin text-4xl text-blue-200 mt-1 transition-all duration-500 drop-shadow-sm"></i>
+            </div>
+            <div class="absolute -right-6 -top-6 w-20 h-20 bg-blue-100 rounded-full blur-xl"></div>
+        </div>
     </div>
-    <div class="mx-4 mb-6 p-5 bg-green-100 rounded-3xl shadow-sm flex items-center justify-between relative overflow-hidden">
-        <div class="z-10"><div class="flex items-start"><span class="text-4xl font-bold text-slate-800">9°</span><span class="text-xl font-bold mt-1 ml-1">C</span></div><div class="text-xs text-slate-500 mt-1">體感 7° C · 多雲</div></div>
-        <div class="z-10 text-right"><span class="bg-white/50 px-2 py-1 rounded-lg text-xs font-bold text-slate-600"><i class="fas fa-map-marker-alt"></i> 釜山</span><i class="fas fa-cloud text-4xl text-slate-400 block mt-2"></i></div>
-    </div>    
 
     <div class="mx-4 flex justify-between items-center mb-4">
         <h2 class="text-lg font-bold bg-green-200/50 px-3 py-1 rounded-lg text-slate-700">行程安排</h2>
-        <button onclick="openModal()" class="bg-slate-700 text-white px-4 py-1.5 rounded-full text-sm shadow-md active:scale-95 transition-transform hover:bg-slate-800">+ 新增</button>
+        <button onclick="openModal()" class="bg-slate-700 text-white px-4 py-1.5 rounded-full text-sm shadow-md active:scale-95 transition-transform hover:bg-slate-800">
+            + 新增
+        </button>
     </div>
 
     <div id="schedule-container" class="space-y-4 pb-4"></div>
 
     <div id="add-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl modal-enter overflow-y-auto max-h-[90vh]">
-            <div class="flex justify-between items-center mb-4"><h3 id="modal-title" class="text-xl font-bold text-slate-800">新增行程</h3><button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button></div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-xl font-bold text-slate-800">新增行程</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
             <form id="add-form" onsubmit="handleFormSubmit(event)">
                 <input type="hidden" id="input-id">
+                
                 <div class="space-y-4">
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">類型</label>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">類型</label>
                         <select id="input-type" onchange="toggleFlightInputs()" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green appearance-none">
-                            <option value="spot">📍 景點</option><option value="food">🍜 餐飲</option><option value="train">🚆 交通</option><option value="bus">🚌 巴士</option><option value="ferry">🚢 船班</option><option value="flight">✈️ 航班</option><option value="shop">🛍️ 購物</option><option value="car">🚗 租車</option><option value="hotel">🏨 住宿</option>
+                            <option value="spot">📍 景點</option>
+                            <option value="food">🍜 餐飲</option>
+                            <option value="train">🚆 交通</option>
+                            <option value="bus">🚌 巴士</option>
+                            <option value="flight">✈️ 航班</option>
+                            <option value="shop">🛍️ 購物</option>
+                            <option value="car">🚗 租車</option>
+                            <option value="hotel">🏨 住宿</option>
                         </select>
                     </div>
-                    <div class="flex gap-3"><div class="flex-1"><label id="label-time-start" class="block text-xs font-bold text-slate-500 mb-1">時間</label><input type="time" id="input-time" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div><div id="arrival-time-block" class="flex-1 hidden"><label class="block text-xs font-bold text-slate-500 mb-1">抵達時間</label><input type="time" id="input-time-end" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div></div>
-                    <div><label id="label-title" class="block text-xs font-bold text-slate-500 mb-1">標題</label><input type="text" id="input-title" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div>
-                    <div><label id="label-sub" class="block text-xs font-bold text-slate-500 mb-1">地點 / 備註</label><input type="text" id="input-sub" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"><p id="flight-hint" class="text-[10px] text-slate-400 mt-1 hidden">格式：TPE 桃園 - FUK 福岡</p></div>
-                    <div class="pt-2 border-t border-slate-100"><div class="flex gap-3"><div class="flex-1"><label class="block text-xs font-bold text-slate-500 mb-1">連結名稱</label><input type="text" id="input-link-text" placeholder="地圖" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm"></div><div class="flex-[2]"><label class="block text-xs font-bold text-slate-500 mb-1">連結網址</label><input type="url" id="input-link" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm"></div></div></div>
+
+                    <div class="flex gap-3">
+                        <div class="flex-1">
+                            <label id="label-time-start" class="block text-xs font-bold text-slate-500 mb-1">時間</label>
+                            <input type="time" id="input-time" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                        </div>
+                        
+                        <div id="arrival-time-block" class="flex-1 hidden">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">抵達時間</label>
+                            <input type="time" id="input-time-end" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label id="label-title" class="block text-xs font-bold text-slate-500 mb-1">標題</label>
+                        <input type="text" id="input-title" placeholder="例如：HB320 或 前往新宿" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                    </div>
+                    <div>
+                        <label id="label-sub" class="block text-xs font-bold text-slate-500 mb-1">地點 / 備註</label>
+                        <input type="text" id="input-sub" placeholder="例如：TPE 台北(桃園) - HSG 佐賀" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+                        <p id="flight-hint" class="text-[10px] text-slate-400 mt-1 hidden">格式建議：TPE 台北(桃園) - HSG 佐賀 (將自動識別)</p>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-100">
+                        <div class="flex gap-3">
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-slate-500 mb-1">連結名稱</label>
+                                <input type="text" id="input-link-text" placeholder="例如：導航" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm">
+                            </div>
+                            <div class="flex-[2]">
+                                <label class="block text-xs font-bold text-slate-500 mb-1">連結網址</label>
+                                <input type="url" id="input-link" placeholder="https://..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" id="submit-btn" class="w-full bg-custom-green text-white font-bold py-3 rounded-xl mt-6 shadow-lg shadow-green-300 hover:bg-[#008c00] transition">確認新增</button>
             </form>
@@ -88,7 +169,10 @@
     </div>
 
     <div class="fixed bottom-6 left-4 right-4 bg-white rounded-full shadow-2xl py-3 px-6 flex justify-between items-center z-40">
-        <div class="flex flex-col items-center text-custom-green cursor-pointer w-1/4"><i class="fas fa-suitcase text-lg mb-1"></i><span class="text-[10px] font-bold">行程</span></div>
+        <div class="flex flex-col items-center text-custom-green cursor-pointer w-1/4">
+            <i class="fas fa-suitcase text-lg mb-1"></i>
+            <span class="text-[10px] font-bold">行程</span>
+        </div>
         <a href="map.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
             <i class="fas fa-map-marked-alt text-lg mb-1"></i>
             <span class="text-[10px]">地圖</span>
@@ -104,68 +188,100 @@
     </div>
 
     <script type="module">
-        // 1. 引入 Firebase 函式庫 (從 Google CDN)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
     
-        // 2. 貼上你的 Firebase 設定 (請替換這裡！)
         const firebaseConfig = {
-        apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
-        authDomain: "fukuoka-busan-trip.firebaseapp.com",
-        projectId: "fukuoka-busan-trip",
-        storageBucket: "fukuoka-busan-trip.firebasestorage.app",
-        messagingSenderId: "130540342304",
-        appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
-        measurementId: "G-XDV9S0066R"
+            apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
+            authDomain: "fukuoka-busan-trip.firebaseapp.com",
+            projectId: "fukuoka-busan-trip",
+            storageBucket: "fukuoka-busan-trip.firebasestorage.app",
+            messagingSenderId: "130540342304",
+            appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
+            measurementId: "G-XDV9S0066R"
         };
-
     
-        // 3. 初始化 Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const CURRENT_DAY = 'day5'; // 設定這是哪一天的頁面
+        const CURRENT_DAY = 'day5'; // Day 5
         
-        // 用來存放下載下來的資料
         let scheduleData = [];
     
-        // ==========================================
-        // 4. 讀取資料 (Read)
-        // ==========================================
-        async function loadSchedules() {
+        // ------------------------------
+        // 雙城天氣功能 (Fuk & Pus)
+        // ------------------------------
+        async function fetchWeather() {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=33.59,35.10&longitude=130.40,129.04&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+
             try {
-                // 建立查詢：只抓 day == 'day1' 的資料
-                const q = query(collection(db, "schedules"), where("day", "==", CURRENT_DAY));
-                const querySnapshot = await getDocs(q);
+                const response = await fetch(url);
+                const data = await response.json();
                 
-                scheduleData = [];
-                querySnapshot.forEach((doc) => {
-                    // 把 Firebase 的資料轉成我們需要的格式 (包含 ID)
-                    scheduleData.push({ id: doc.id, ...doc.data() });
-                });
-    
-                // 依照時間排序 (因為 Firestore 預設不保證順序)
-                scheduleData.sort((a, b) => a.time.localeCompare(b.time));
-                
-                renderSchedules(); // 畫出畫面
-            } catch (e) {
-                console.error("讀取錯誤: ", e);
-                alert("資料讀取失敗，請檢查 Console");
+                // data 是陣列: [0]為福岡, [1]為釜山
+                if (Array.isArray(data)) {
+                    updateWeatherUI('fuk', data[0]);
+                    updateWeatherUI('pus', data[1]);
+                }
+            } catch (error) {
+                console.error("天氣載入失敗:", error);
             }
         }
-    
-        // ==========================================
-        // 5. 新增/修改資料 (Create / Update)
-        // ==========================================
-        // 注意：因為是 module，要掛載到 window 才能被 HTML onclick 呼叫
+
+        function updateWeatherUI(city, data) {
+            if(!data.current_weather || !data.daily) return;
+
+            const current = data.current_weather;
+            const daily = data.daily;
+
+            // 1. 取得每日高/低溫
+            let high = '--';
+            let low = '--';
+            if(daily.temperature_2m_max.length) high = Math.round(daily.temperature_2m_max[0]);
+            if(daily.temperature_2m_min.length) low = Math.round(daily.temperature_2m_min[0]);
+
+            // 2. 更新溫度 (H/L)
+            document.getElementById(`temp-container-${city}`).innerHTML = `
+                <span class="text-2xl font-bold text-slate-800">${high}°</span>
+                <span class="text-sm text-slate-400 mx-1">/</span>
+                <span class="text-xl font-bold text-slate-600">${low}°</span>
+            `;
+
+            // 3. Icon 與 描述
+            const code = current.weathercode;
+            let iconClass = "fa-cloud";
+            let descText = "多雲";
+            let iconColor = "text-slate-400"; 
+
+            if (code === 0) { iconClass = "fa-sun"; descText = "晴朗"; iconColor = "text-yellow-500"; } 
+            else if (code >= 1 && code <= 3) { iconClass = "fa-cloud-sun"; descText = "多雲時晴"; iconColor = "text-yellow-400"; } 
+            else if (code === 45 || code === 48) { iconClass = "fa-smog"; descText = "有霧"; iconColor = "text-slate-400"; } 
+            else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) { iconClass = "fa-cloud-rain"; descText = "有雨"; iconColor = "text-blue-400"; } 
+            else if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) { iconClass = "fa-snowflake"; descText = "下雪"; iconColor = "text-blue-200"; } 
+            else if (code >= 95) { iconClass = "fa-bolt"; descText = "雷雨"; iconColor = "text-purple-500"; }
+
+            document.getElementById(`desc-${city}`).innerText = descText;
+            document.getElementById(`icon-${city}`).className = `fas ${iconClass} text-4xl mt-1 transition-all duration-500 drop-shadow-sm ${iconColor}`;
+        }
+
+        // ------------------------------
+        // Firebase 行程 (與 Day 1 相同)
+        // ------------------------------
+        async function loadSchedules() {
+            try {
+                const q = query(collection(db, "schedules"), where("day", "==", CURRENT_DAY));
+                const querySnapshot = await getDocs(q);
+                scheduleData = [];
+                querySnapshot.forEach((doc) => { scheduleData.push({ id: doc.id, ...doc.data() }); });
+                scheduleData.sort((a, b) => a.time.localeCompare(b.time));
+                renderSchedules();
+            } catch (e) { console.error("讀取錯誤: ", e); }
+        }
+        
         window.handleFormSubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-            btn.innerText = '處理中...';
-    
+            btn.disabled = true; btn.innerText = '處理中...';
             const id = document.getElementById('input-id').value;
-            
-            // 準備要存入的資料物件
             const newItem = {
                 day: CURRENT_DAY,
                 time: document.getElementById('input-time').value,
@@ -177,57 +293,24 @@
                 linkText: document.getElementById('input-link-text').value || '',
                 note: ''
             };
-    
             try {
-                if (id) {
-                    // --- 修改模式 (Update) ---
-                    // 找到該 ID 的文件並更新
-                    const scheduleRef = doc(db, "schedules", id);
-                    await updateDoc(scheduleRef, newItem);
-                } else {
-                    // --- 新增模式 (Create) ---
-                    // 新增到 'schedules' 集合
-                    await addDoc(collection(db, "schedules"), newItem);
-                }
-                
-                // 重新讀取並關閉視窗
-                await loadSchedules();
-                closeModal();
-            } catch (e) {
-                console.error("儲存錯誤: ", e);
-                alert("儲存失敗");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = id ? '儲存變更' : '確認新增';
-            }
+                if (id) { await updateDoc(doc(db, "schedules", id), newItem); } 
+                else { await addDoc(collection(db, "schedules"), newItem); }
+                await loadSchedules(); closeModal();
+            } catch (e) { alert("儲存失敗"); } 
+            finally { btn.disabled = false; btn.innerText = id ? '儲存變更' : '確認新增'; }
         }
     
-        // ==========================================
-        // 6. 刪除資料 (Delete)
-        // ==========================================
         window.deleteItem = async function(id) {
             if (!confirm('確定要刪除這個行程嗎？')) return;
-    
-            try {
-                await deleteDoc(doc(db, "schedules", id));
-                await loadSchedules(); // 重新整理畫面
-            } catch (e) {
-                console.error("刪除錯誤: ", e);
-                alert("刪除失敗");
-            }
+            try { await deleteDoc(doc(db, "schedules", id)); await loadSchedules(); } catch (e) { alert("刪除失敗"); }
         }
-    
-        // ==========================================
-        // 7. 渲染畫面 (Render)
-        // ==========================================
+
         function renderSchedules() {
             const container = document.getElementById('schedule-container');
             container.innerHTML = '';
-            
             scheduleData.forEach(item => {
                 let html = '';
-                
-                // Icon 邏輯
                 let icon = 'fa-map-marker-alt';
                 if(item.type==='train'||item.type==='subway') icon='fa-train'; 
                 if(item.type==='flight') icon='fa-plane'; 
@@ -238,18 +321,13 @@
                 if(item.type==='bus') icon='fa-bus';
                 if(item.type==='ferry') icon='fa-ship';
     
-                // 連結按鈕
-                const linkBtn = item.link ? 
-                    `<a href="${item.link}" target="_blank" class="mt-2 inline-block bg-slate-100 text-custom-green px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-100 transition"><i class="fas fa-external-link-alt mr-1"></i> ${item.linkText || '查看'}</a>` : '';
-    
-                // 操作按鈕 (編輯/刪除時傳入 Firebase 的 ID 字串)
+                const linkBtn = item.link ? `<a href="${item.link}" target="_blank" class="mt-2 inline-block bg-slate-100 text-custom-green px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-100 transition"><i class="fas fa-external-link-alt mr-1"></i> ${item.linkText || '查看'}</a>` : '';
                 const actionBtns = (isLight = false) => `
                     <div class="flex space-x-3 z-20 relative">
                         <button onclick="editItem('${item.id}')" class="${isLight ? 'text-white/70 hover:text-white' : 'text-slate-300 hover:text-custom-green'} transition"><i class="fas fa-pen"></i></button>
                         <button onclick="deleteItem('${item.id}')" class="${isLight ? 'text-white/70 hover:text-red-200' : 'text-slate-300 hover:text-red-500'} transition"><i class="fas fa-trash"></i></button>
                     </div>`;
     
-                // 渲染邏輯 (與原本相同)
                 if (item.type === 'flight') {
                     let fromCode = 'DEP', fromName = '', toCode = 'ARR', toName = '';
                     if (item.location && item.location.includes('-')) {
@@ -290,10 +368,6 @@
             });
         }
     
-        // ==========================================
-        // 8. 介面操作 (Modal, Edit, Toggle)
-        // ==========================================
-        // 這裡也要掛載到 window
         window.openModal = function() { 
             document.getElementById('add-form').reset(); 
             document.getElementById('input-id').value=''; 
@@ -304,20 +378,14 @@
         }
         
         window.closeModal = function() { document.getElementById('add-modal').classList.add('hidden'); }
-        
-        // 綁定背景點擊關閉
         document.getElementById('add-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
     
-        // 編輯 (將資料填回表單)
         window.editItem = function(id) {
             const item = scheduleData.find(x => x.id === id);
             if(item){
                 document.getElementById('input-id').value = item.id;
                 document.getElementById('input-type').value = item.type;
-                
-                // 觸發一下 toggle 以顯示/隱藏航班欄位
                 toggleFlightInputs();
-    
                 document.getElementById('input-time').value = item.time;
                 if(item.type === 'flight') {
                     document.getElementById('input-time-end').value = item.timeEnd || '';
@@ -326,14 +394,12 @@
                 document.getElementById('input-sub').value = item.location;
                 document.getElementById('input-link').value = item.link || '';
                 document.getElementById('input-link-text').value = item.linkText || '';
-                
                 document.getElementById('modal-title').innerText = '編輯行程';
                 document.getElementById('submit-btn').innerText = '儲存變更';
                 document.getElementById('add-modal').classList.remove('hidden');
             }
         }
     
-        // 航班輸入框切換
         window.toggleFlightInputs = function() {
             const type = document.getElementById('input-type').value;
             const arrivalBlock = document.getElementById('arrival-time-block');
@@ -349,15 +415,14 @@
                 hint.classList.add('hidden');
             }
         }
-    
-        // 自動導航捲動
+
         window.addEventListener('load', function() {
             const activeTab = document.getElementById('active-tab');
             if (activeTab) {
                 activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
             }
-            // 頁面載入後，開始抓取 Firebase 資料
             loadSchedules();
+            fetchWeather();
         });
     
     </script>

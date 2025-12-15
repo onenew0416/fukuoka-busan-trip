@@ -44,6 +44,13 @@
             max-height: 100px; opacity: 1; margin-top: 12px; padding-top: 12px;
             border-top: 1px dashed #e2e8f0;
         }
+
+        /* 圖片放大 Modal 動畫 */
+        .zoom-enter { animation: zoomIn 0.2s ease-out forwards; }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
 <body class="bg-green-50 text-slate-800 pb-32">
@@ -139,6 +146,11 @@
         </div>
     </div>
 
+    <div id="image-modal" class="fixed inset-0 z-[60] bg-black/90 hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeImageModal()">
+        <img id="modal-img" src="" class="max-w-full max-h-full rounded-lg shadow-2xl object-contain zoom-enter">
+        <button onclick="closeImageModal()" class="absolute top-6 right-6 text-white text-3xl hover:text-gray-300 w-10 h-10 flex items-center justify-center rounded-full bg-black/20"><i class="fas fa-times"></i></button>
+    </div>
+
     <button onclick="openModal()" class="fixed bottom-24 right-6 w-14 h-14 bg-custom-green text-white rounded-full shadow-lg flex items-center justify-center text-2xl hover:scale-110 transition z-40 active:scale-95 shadow-green-200">
         <i class="fas fa-plus"></i>
     </button>
@@ -166,7 +178,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 🔴 請替換成您的 Firebase 設定
         const firebaseConfig = {
             apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
             authDomain: "fukuoka-busan-trip.firebaseapp.com",
@@ -185,7 +196,6 @@
         // 讀取資料
         async function loadData() {
             try {
-                // 改存到 'shopping_list' 集合
                 const q = query(collection(db, "shopping_list"), orderBy("created_at", "desc"));
                 const snapshot = await getDocs(q);
                 
@@ -216,10 +226,11 @@
                 const isChecked = item.checked ? 'checked' : '';
                 const completedClass = item.checked ? 'item-completed' : '';
                 
-                // 圖片 HTML
+                // 圖片 HTML (修改處：加上 onclick 打開大圖)
+                // 傳遞 this.src 給 openImageModal 函數
                 let imgHtml = '';
                 if (item.image) {
-                    imgHtml = `<img src="${item.image}" class="w-16 h-16 rounded-lg object-cover border border-slate-100 flex-shrink-0">`;
+                    imgHtml = `<img src="${item.image}" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-16 h-16 rounded-lg object-cover border border-slate-100 flex-shrink-0 hover:opacity-80 transition cursor-zoom-in">`;
                 }
 
                 // 連結 HTML
@@ -264,6 +275,15 @@
             else busanContainer.innerHTML = busanItems.map(createItemHTML).join('');
         }
 
+        // 圖片放大功能 (新加入)
+        window.openImageModal = function(src) {
+            document.getElementById('modal-img').src = src;
+            document.getElementById('image-modal').classList.remove('hidden');
+        }
+        window.closeImageModal = function() {
+            document.getElementById('image-modal').classList.add('hidden');
+        }
+
         // 互動：切換 Checkbox 狀態
         window.toggleCheck = async function(id, isChecked) {
             // UI 先更新 (Optimistic UI)
@@ -280,6 +300,7 @@
             } catch(e) {
                 console.error(e);
                 alert("更新失敗");
+                // 失敗復原 UI (略)
             }
         }
 
@@ -334,7 +355,7 @@
                 desc: document.getElementById('input-desc').value,
                 link: document.getElementById('input-link').value,
                 image: document.getElementById('base64-storage').value,
-                checked: false, 
+                checked: false, // 預設未勾選 (編輯時不應重置，下面處理)
                 created_at: Date.now()
             };
 

@@ -22,8 +22,16 @@
 </head>
 <body class="bg-green-50 text-slate-800 pb-24">
 
-    <div class="p-6 pt-10 flex justify-between items-end">
-        <div><h1 class="text-2xl font-bold text-slate-800">Fukuoka 🇯🇵 x Busan 🇰🇷</h1></div>
+    <div class="p-6 pt-10 flex justify-between items-center">
+		<div class="flex-1">
+			<h1 class="text-lg sm:text-2xl font-bold text-slate-800 whitespace-nowrap">
+				福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
+			</h1>
+		</div>
+		<div class="invisible bg-white border border-green-100 shadow-sm rounded-xl px-4 py-2 flex flex-col items-center justify-center">
+            <i class="fas fa-cloud-sun text-custom-green text-xl mb-1"></i>
+            <span class="text-[10px] font-bold text-slate-500">旅途氣象</span>
+        </div>		
     </div>
 
     <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2">
@@ -50,9 +58,24 @@
         <a href="day9.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 9</span><span class="text-lg font-bold text-slate-700 my-0.5">03/04</span><span>(三)</span></a>
     </div>
 
-    <div class="mx-4 mb-6 p-5 bg-green-100 rounded-3xl shadow-sm flex items-center justify-between relative overflow-hidden">
-        <div class="z-10"><div class="flex items-start"><span class="text-4xl font-bold text-slate-800">9°</span><span class="text-xl font-bold mt-1 ml-1">C</span></div><div class="text-xs text-slate-500 mt-1">體感 7° C · 多雲</div></div>
-        <div class="z-10 text-right"><span class="bg-white/50 px-2 py-1 rounded-lg text-xs font-bold text-slate-600"><i class="fas fa-map-marker-alt"></i> 釜山</span><i class="fas fa-cloud text-4xl text-slate-400 block mt-2"></i></div>
+    <div class="mx-4 mb-6 p-5 bg-green-100 rounded-3xl shadow-sm flex items-center justify-between relative overflow-hidden" id="weather-widget">
+        <div class="z-10">
+            <div class="flex items-baseline" id="weather-temp-container">
+                <span class="text-3xl font-bold text-slate-800">--°</span>
+                <span class="text-xl text-slate-400 mx-1">/</span>
+                <span class="text-2xl font-bold text-slate-600">--°</span>
+            </div>
+            <div id="weather-desc" class="text-xs text-slate-500 mt-1 font-bold">
+                <i class="fas fa-spinner fa-spin"></i> 載入氣象中...
+            </div>
+        </div>
+        <div class="z-10 text-right">
+            <span class="bg-white/50 px-2 py-1 rounded-lg text-xs font-bold text-slate-600">
+                <i class="fas fa-map-marker-alt text-custom-green"></i> 釜山 Busan
+            </span>
+            <i id="weather-icon" class="fas fa-cloud text-5xl text-slate-400 block mt-3 transition-all duration-500 drop-shadow-sm"></i>
+        </div>
+        <div class="absolute -right-6 -top-6 w-24 h-24 bg-green-200/50 rounded-full blur-xl"></div>
     </div>    
 
     <div class="mx-4 flex justify-between items-center mb-4">
@@ -123,6 +146,78 @@
         
         // 用來存放下載下來的資料
         let scheduleData = [];
+
+        // ------------------------------
+        // 天氣功能 (Open-Meteo API)
+        // ------------------------------
+        async function fetchWeather() {
+            // 釜山座標: 35.10, 129.04
+            const lat = 35.10; 
+            const lon = 129.04;
+            // 請求目前天氣 + 每日天氣 (取得最高/最低溫)
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.current_weather && data.daily) {
+                    updateWeatherUI(data.current_weather, data.daily);
+                }
+            } catch (error) {
+                console.error("天氣載入失敗:", error);
+                document.getElementById('weather-desc').innerText = "暫時無法取得天氣";
+            }
+        }
+
+        function updateWeatherUI(current, daily) {
+            const tempContainer = document.getElementById('weather-temp-container');
+            const descEl = document.getElementById('weather-desc');
+            const iconEl = document.getElementById('weather-icon');
+
+            // 取得今日最高/最低溫
+            let high = '--';
+            let low = '--';
+
+            if (daily.temperature_2m_max && daily.temperature_2m_max.length > 0) {
+                high = Math.round(daily.temperature_2m_max[0]);
+            }
+            if (daily.temperature_2m_min && daily.temperature_2m_min.length > 0) {
+                low = Math.round(daily.temperature_2m_min[0]);
+            }
+
+            // 更新 HTML 顯示: High / Low
+            tempContainer.innerHTML = `
+                <span class="text-3xl font-bold text-slate-800">${high}°</span>
+                <span class="text-xl text-slate-400 mx-1">/</span>
+                <span class="text-2xl font-bold text-slate-600">${low}°</span>
+            `;
+
+            // WMO Weather Code 解析
+            const code = current.weathercode;
+            let iconClass = "fa-cloud";
+            let descText = "多雲";
+            let iconColor = "text-slate-400";
+
+            if (code === 0) { 
+                iconClass = "fa-sun"; descText = "晴朗"; iconColor = "text-yellow-500"; 
+            } else if (code >= 1 && code <= 3) { 
+                iconClass = "fa-cloud-sun"; descText = "多雲時晴"; iconColor = "text-yellow-400"; 
+            } else if (code === 45 || code === 48) { 
+                iconClass = "fa-smog"; descText = "有霧"; iconColor = "text-slate-400";
+            } else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) { 
+                iconClass = "fa-cloud-rain"; descText = "有雨"; iconColor = "text-blue-400";
+            } else if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) { 
+                iconClass = "fa-snowflake"; descText = "下雪"; iconColor = "text-blue-200";
+            } else if (code >= 95) { 
+                iconClass = "fa-bolt"; descText = "雷雨"; iconColor = "text-purple-500";
+            }
+
+            // 更新畫面
+            descEl.innerText = descText;
+            iconEl.className = `fas ${iconClass} text-5xl block mt-3 transition-all duration-500 ${iconColor} drop-shadow-sm`;
+        }
+
     
         // ==========================================
         // 4. 讀取資料 (Read)
@@ -354,6 +449,7 @@
             }
             // 頁面載入後，開始抓取 Firebase 資料
             loadSchedules();
+			fetchWeather(); // 啟動天氣功能
         });
     
     </script>

@@ -30,7 +30,6 @@
         /* 操作按鈕隱藏/顯示 */
         .group:hover .action-btns { opacity: 1; }
         .action-btns { opacity: 0; transition: opacity 0.2s; }
-        /* 手機版預設顯示操作按鈕 */
         @media (max-width: 768px) { .action-btns { opacity: 1; } }
 
         /* 行李區塊收合動畫 */
@@ -45,10 +44,16 @@
 </head>
 <body class="bg-green-50 text-slate-800 pb-24">
 
-    <div class="p-6 pt-10 flex justify-between items-end">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800">福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷</h1>
-        </div>
+    <div class="p-6 pt-10 flex justify-between items-center">
+		<div class="flex-1">
+			<h1 class="text-lg sm:text-2xl font-bold text-slate-800 whitespace-nowrap">
+				福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
+			</h1>
+		</div>
+        <button onclick="openWeatherModal()" class="bg-white border border-green-100 shadow-sm rounded-xl px-4 py-2 flex flex-col items-center justify-center active:scale-95 transition">
+            <i class="fas fa-cloud-sun text-custom-green text-xl mb-1"></i>
+            <span class="text-[10px] font-bold text-slate-500">旅途氣象</span>
+        </button>
     </div>
 
     <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2">
@@ -149,74 +154,72 @@
                 <h3 id="modal-title" class="text-xl font-bold text-slate-800">新增項目</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
             </div>
-            
             <form id="universal-form" onsubmit="handleFormSubmit(event)">
-                <input type="hidden" id="input-id">
-                <input type="hidden" id="input-mode">
-                <input type="hidden" id="input-group-id"> 
-                
+                <input type="hidden" id="input-id"> <input type="hidden" id="input-mode"> <input type="hidden" id="input-group-id"> 
                 <div class="space-y-4">
-                    <div id="field-owner-display" class="hidden mb-2 p-2 bg-slate-50 rounded-lg text-center">
-                        <span class="text-xs text-slate-400">擁有者：</span>
-                        <span id="display-owner-name" class="font-bold text-custom-green"></span>
-                    </div>
+                    <div id="field-owner-display" class="hidden mb-2 p-2 bg-slate-50 rounded-lg text-center"><span class="text-xs text-slate-400">擁有者：</span><span id="display-owner-name" class="font-bold text-custom-green"></span></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">內容 / 標題</label><input type="text" id="input-text" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div>
+                    <div id="field-link"><label class="block text-xs font-bold text-slate-500 mb-1">連結網址 (選填)</label><input type="url" id="input-url" placeholder="https://..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm"></div>
+                    <div id="field-date" class="hidden"><label class="block text-xs font-bold text-slate-500 mb-1">日期 (選填)</label><input type="date" id="input-date" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div>
+                    <div id="field-category" class="hidden"><label class="block text-xs font-bold text-slate-500 mb-1">分類</label><select id="input-category" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green appearance-none"><option value="bag">👜 包包 (隨身小包)</option><option value="carry">🎒 登機 (手提行李)</option><option value="check">🧳 託運 (大行李箱)</option></select></div>
+                </div>
+                <button type="submit" class="w-full bg-custom-green text-white font-bold py-3 rounded-xl mt-6 shadow-lg shadow-green-300 active:scale-95 transition-transform hover:bg-[#008c00]">確認儲存</button>
+            </form>
+        </div>
+    </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1">內容 / 標題</label>
-                        <input type="text" id="input-text" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
+    <div id="weather-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                <h3 class="text-xl font-bold text-slate-800">旅途天氣預報</h3>
+                <button onclick="closeWeatherModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            
+            <div class="overflow-y-auto hide-scroll flex-1 space-y-6 pr-1">
+                <div>
+                    <div class="flex items-center gap-2 mb-3 bg-red-50 p-2 rounded-lg sticky top-0 z-10">
+                        <span class="bg-red-500 w-1.5 h-4 rounded-full block"></span>
+                        <h4 class="font-bold text-red-800 text-sm">福岡 (02/24 - 02/28)</h4>
                     </div>
-
-                    <div id="field-link">
-                        <label class="block text-xs font-bold text-slate-500 mb-1">連結網址 (選填)</label>
-                        <input type="url" id="input-url" placeholder="https://..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm">
-                    </div>
-
-                    <div id="field-date" class="hidden">
-                        <label class="block text-xs font-bold text-slate-500 mb-1">日期 (選填)</label>
-                        <input type="date" id="input-date" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
-                    </div>
-
-                    <div id="field-category" class="hidden">
-                        <label class="block text-xs font-bold text-slate-500 mb-1">分類</label>
-                        <select id="input-category" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green appearance-none">
-                            <option value="bag">👜 包包</option>
-                            <option value="carry">🎒 隨身</option>
-                            <option value="check">🧳 託運</option>
-                        </select>
-                    </div>
+                    <div id="weather-list-fuk" class="space-y-2">
+                        </div>
                 </div>
 
-                <button type="submit" class="w-full bg-custom-green text-white font-bold py-3 rounded-xl mt-6 shadow-lg shadow-green-300 active:scale-95 transition-transform hover:bg-[#008c00]">
-                    確認儲存
-                </button>
-            </form>
+                <div>
+                    <div class="flex items-center gap-2 mb-3 bg-blue-50 p-2 rounded-lg sticky top-0 z-10">
+                        <span class="bg-blue-500 w-1.5 h-4 rounded-full block"></span>
+                        <h4 class="font-bold text-blue-800 text-sm">釜山 (02/28 - 03/04)</h4>
+                    </div>
+                    <div id="weather-list-pus" class="space-y-2">
+                        </div>
+                </div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-slate-100 text-center">
+                <p class="text-[10px] text-slate-400">目前顯示為該季節平均氣溫參考<br>出發前兩週將自動更新為即時預報</p>
+            </div>
         </div>
     </div>
 
     <div class="fixed bottom-6 left-4 right-4 bg-white rounded-full shadow-2xl py-3 px-6 flex justify-between items-center z-40">
         <div class="flex flex-col items-center text-custom-green cursor-pointer w-1/4">
-            <i class="fas fa-suitcase text-lg mb-1"></i>
-            <span class="text-[10px] font-bold">行程</span>
+            <i class="fas fa-suitcase text-lg mb-1"></i><span class="text-[10px] font-bold">行程</span>
         </div>
         <a href="map.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
-            <i class="fas fa-map-marked-alt text-lg mb-1"></i>
-            <span class="text-[10px]">地圖</span>
+            <i class="fas fa-map-marked-alt text-lg mb-1"></i><span class="text-[10px]">地圖</span>
         </a>
         <a href="accounting.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
-            <i class="fas fa-wallet text-lg mb-1"></i>
-            <span class="text-[10px]">記帳</span>
+            <i class="fas fa-wallet text-lg mb-1"></i><span class="text-[10px]">記帳</span>
         </a>
         <a href="shopping.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
-            <i class="fas fa-shopping-bag text-lg mb-1"></i>
-            <span class="text-[10px]">購物</span>
+            <i class="fas fa-shopping-bag text-lg mb-1"></i><span class="text-[10px]">購物</span>
         </a>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    
-        // 🔴 請替換成你的 Firebase 設定
+        
         const firebaseConfig = {
             apiKey: "AIzaSyA866R1dunG70pNX91BhvIVortnlB5QuHU",
             authDomain: "fukuoka-busan-trip.firebaseapp.com",
@@ -226,300 +229,154 @@
             appId: "1:130540342304:web:f4a3f225ab3f2b37f00045",
             measurementId: "G-XDV9S0066R"
         };
-    
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-    
-        // 本地資料暫存
-        let resourcesData = [];
-        let todoData = [];
-        let packingData = [];
-    
-        // ==========================================
-        // 1. 讀取功能
-        // ==========================================
-        async function loadAllData() {
-            await Promise.all([loadResources(), loadTodos(), loadPacking()]);
-        }
-    
+        
+        let resourcesData = [], todoData = [], packingData = [];
+
+        // 1. 讀取
+        async function loadAllData() { await Promise.all([loadResources(), loadTodos(), loadPacking()]); }
         async function loadResources() {
             try {
                 const q = query(collection(db, "resources"), orderBy("created_at"));
                 const snapshot = await getDocs(q);
                 let rawLinks = [];
                 snapshot.forEach(doc => rawLinks.push({ id: doc.id, ...doc.data() }));
-                
                 resourcesData = [
                     { id: 'traffic', title: '交通地圖', icon: 'fa-subway', links: rawLinks.filter(i => i.group === 'traffic') },
                     { id: 'stay', title: '住宿導航', icon: 'fa-bed', links: rawLinks.filter(i => i.group === 'stay') },
                     { id: 'coupon', title: '優惠券', icon: 'fa-ticket-alt', isSpecial: true, links: rawLinks.filter(i => i.group === 'coupon') }
                 ];
                 renderResources();
-            } catch(e) { console.error("Load Resource Error", e); }
+            } catch(e) { console.error(e); }
         }
-    
         async function loadTodos() {
             try {
-                // 建議加排序，這裡暫時全抓
                 const snapshot = await getDocs(collection(db, "todos"));
                 todoData = [];
                 snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
-                // 前端排序：完成的放後面
                 todoData.sort((a, b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
                 renderTodos();
-            } catch(e) { console.error("Load Todo Error", e); }
+            } catch(e) { console.error(e); }
         }
-    
         async function loadPacking() {
             try {
-                const snapshot = await getDocs(collection(db, "packing"));
+                const q = query(collection(db, "packing"), orderBy("created_at"));
+                const snapshot = await getDocs(q);
                 packingData = [];
                 snapshot.forEach(doc => packingData.push({ id: doc.id, ...doc.data() }));
                 renderPacking();
-            } catch(e) { console.error("Load Packing Error", e); }
+            } catch(e) { console.error(e); }
         }
-    
-        // ==========================================
-        // 2. 新增/修改
-        // ==========================================
+
+        // 2. 寫入
         window.handleFormSubmit = async function(e) {
             e.preventDefault();
             const mode = document.getElementById('input-mode').value;
             const id = document.getElementById('input-id').value;
-            const groupId = document.getElementById('input-group-id').value; // group 或是 owner(xin/kai)
-
-            let collectionName = '';
-            let payload = {
-                text: document.getElementById('input-text').value,
-                created_at: Date.now()
-            };
-    
-            if (mode === 'resource') {
-                collectionName = 'resources';
-                payload.url = document.getElementById('input-url').value;
-                payload.group = groupId; 
-            } else if (mode === 'todo') {
-                collectionName = 'todos';
-                payload.url = document.getElementById('input-url').value;
-                payload.date = document.getElementById('input-date').value;
-                if(!id) payload.done = false;
-            } else if (mode === 'packing') {
-                collectionName = 'packing';
-                payload.category = document.getElementById('input-category').value;
-                payload.owner = groupId; // 這裡存入 'xin' 或 'kai'
-                if(!id) payload.done = false;
-            }
-    
+            const groupId = document.getElementById('input-group-id').value; 
+            let collectionName = '', payload = { text: document.getElementById('input-text').value, created_at: Date.now() };
+            if (mode === 'resource') { collectionName = 'resources'; payload.url = document.getElementById('input-url').value; payload.group = groupId; }
+            else if (mode === 'todo') { collectionName = 'todos'; payload.url = document.getElementById('input-url').value; payload.date = document.getElementById('input-date').value; if(!id) payload.done = false; }
+            else if (mode === 'packing') { collectionName = 'packing'; payload.category = document.getElementById('input-category').value; payload.owner = groupId; if(!id) payload.done = false; }
             try {
-                if (id) {
-                    await updateDoc(doc(db, collectionName, id), payload);
-                } else {
-                    await addDoc(collection(db, collectionName), payload);
-                }
-                
-                if(mode === 'resource') loadResources();
-                if(mode === 'todo') loadTodos();
-                if(mode === 'packing') loadPacking();
-                
+                if (id) await updateDoc(doc(db, collectionName, id), payload); else await addDoc(collection(db, collectionName), payload);
+                if(mode === 'resource') loadResources(); if(mode === 'todo') loadTodos(); if(mode === 'packing') loadPacking();
                 closeModal();
-            } catch (err) {
-                console.error(err);
-                alert("儲存失敗");
-            }
+            } catch (err) { alert("儲存失敗"); }
         }
-    
-        // ==========================================
-        // 3. 刪除與狀態切換
-        // ==========================================
-        async function deleteItemGeneric(collectionName, id, callback) {
-            if(!confirm('確定刪除？')) return;
-            try {
-                await deleteDoc(doc(db, collectionName, id));
-                callback();
-            } catch(e) { console.error(e); }
-        }
-    
+
+        // 3. 刪除與狀態
+        async function deleteItemGeneric(collectionName, id, callback) { if(!confirm('確定刪除？')) return; await deleteDoc(doc(db, collectionName, id)); callback(); }
         window.deleteResource = (groupId, id) => deleteItemGeneric('resources', id, loadResources);
         window.deleteTodo = (id) => deleteItemGeneric('todos', id, loadTodos);
         window.deletePacking = (id) => deleteItemGeneric('packing', id, loadPacking);
-    
-        window.toggleTodo = async function(id) {
-            const item = todoData.find(i => i.id === id);
-            await updateDoc(doc(db, "todos", id), { done: !item.done });
-            loadTodos();
-        }
-    
-        window.togglePacking = async function(id) {
-            const item = packingData.find(i => i.id === id);
-            await updateDoc(doc(db, "packing", id), { done: !item.done });
-            loadPacking();
-        }
-    
-        // ==========================================
-        // 4. Modal 操作
-        // ==========================================
-        // groupId 用途：Resources 時是 group ID (traffic/stay...), Packing 時是 owner (xin/kai)
+        window.toggleTodo = async function(id) { const item = todoData.find(i => i.id === id); await updateDoc(doc(db, "todos", id), { done: !item.done }); loadTodos(); }
+        window.togglePacking = async function(id) { const item = packingData.find(i => i.id === id); await updateDoc(doc(db, "packing", id), { done: !item.done }); loadPacking(); }
+
+        // 4. Modal
         window.openModal = function(mode, id = null, groupId = null) {
             document.getElementById('universal-form').reset();
-            document.getElementById('input-mode').value = mode;
-            document.getElementById('input-id').value = id || '';
-            document.getElementById('input-group-id').value = groupId || '';
+            document.getElementById('input-mode').value = mode; document.getElementById('input-id').value = id || ''; document.getElementById('input-group-id').value = groupId || '';
             document.getElementById('universal-modal').classList.remove('hidden');
-    
-            const fieldLink = document.getElementById('field-link');
-            const fieldDate = document.getElementById('field-date');
-            const fieldCat = document.getElementById('field-category');
-            const fieldOwner = document.getElementById('field-owner-display');
-            
-            // 重置顯示狀態
-            fieldLink.classList.add('hidden'); 
-            fieldDate.classList.add('hidden'); 
-            fieldCat.classList.add('hidden');
-            fieldOwner.classList.add('hidden');
-    
-            if (mode === 'resource') {
-                document.getElementById('modal-title').innerText = id ? '編輯連結' : '新增連結';
-                fieldLink.classList.remove('hidden');
-                if(id) {
-                    const group = resourcesData.find(g => g.id === groupId);
-                    const item = group.links.find(i => i.id === id);
-                    if(item) {
-                        document.getElementById('input-text').value = item.text;
-                        document.getElementById('input-url').value = item.url;
-                    }
-                }
-            } else if (mode === 'todo') {
-                document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦';
-                fieldLink.classList.remove('hidden');
-                fieldDate.classList.remove('hidden');
-                if(id) {
-                    const item = todoData.find(i => i.id === id);
-                    if(item) {
-                        document.getElementById('input-text').value = item.text;
-                        document.getElementById('input-url').value = item.url || '';
-                        document.getElementById('input-date').value = item.date || '';
-                    }
-                }
-            } else if (mode === 'packing') {
-                document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品';
-                fieldCat.classList.remove('hidden');
-                fieldOwner.classList.remove('hidden');
-
-                // 判斷擁有人顯示
-                let ownerKey = groupId; // 預設新增時傳入的
-                if(id) {
-                    const item = packingData.find(i => i.id === id);
-                    if(item) {
-                        document.getElementById('input-text').value = item.text;
-                        document.getElementById('input-category').value = item.category;
-                        document.getElementById('input-group-id').value = item.owner; // 編輯時要確保 owner 不會跑掉
-                        ownerKey = item.owner;
-                    }
-                }
-                document.getElementById('display-owner-name').innerText = (ownerKey === 'xin') ? '新' : '凱';
-            }
+            const fl=document.getElementById('field-link'), fd=document.getElementById('field-date'), fc=document.getElementById('field-category'), fo=document.getElementById('field-owner-display');
+            fl.classList.add('hidden'); fd.classList.add('hidden'); fc.classList.add('hidden'); fo.classList.add('hidden');
+            if (mode === 'resource') { document.getElementById('modal-title').innerText = id ? '編輯連結' : '新增連結'; fl.classList.remove('hidden'); if(id) { const g=resourcesData.find(g=>g.id===groupId), i=g.links.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-url').value=i.url; } }
+            else if (mode === 'todo') { document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦'; fl.classList.remove('hidden'); fd.classList.remove('hidden'); if(id) { const i=todoData.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-url').value=i.url||''; document.getElementById('input-date').value=i.date||''; } }
+            else if (mode === 'packing') { document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品'; fc.classList.remove('hidden'); fo.classList.remove('hidden'); let ok=groupId; if(id) { const i=packingData.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-category').value=i.category; document.getElementById('input-group-id').value=i.owner; ok=i.owner; } document.getElementById('display-owner-name').innerText = (ok === 'xin') ? '新' : '凱'; }
         }
-    
         window.closeModal = function() { document.getElementById('universal-modal').classList.add('hidden'); }
         document.getElementById('universal-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
-        
-        window.editResource = (groupId, id) => openModal('resource', id, groupId);
-        window.editTodo = (id) => openModal('todo', id);
-        // 編輯 packing 時，groupId 參數沒那麼重要，因為會從 data 裡抓 owner，但保持介面一致傳個 null
-        window.editPacking = (id) => openModal('packing', id, null);
-    
-        // ==========================================
-        // 5. 渲染函式
-        // ==========================================
-        function renderResources() {
-            const container = document.getElementById('resources-container');
-            container.innerHTML = '';
-            resourcesData.forEach(group => {
-                let linksHtml = group.links.map(link => `
-                    <div class="flex items-center justify-between group/item p-2 hover:bg-green-50 rounded-xl transition">
-                        <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2">
-                             ${group.isSpecial ? '<i class="fas fa-chevron-right text-[10px] mr-1"></i>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-1"></span>'} ${link.text}
-                        </a>
-                        <div class="flex space-x-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                            <button onclick="editResource('${group.id}', '${link.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
-                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>`).join('');
-                let cardClass = group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col';
-                let titleColor = group.isSpecial ? 'text-orange-500' : 'text-custom-green';
-                const html = `
-                    <div class="${cardClass} p-4 rounded-3xl shadow-sm border relative group/card">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${titleColor} mr-1.5"></i> ${group.title}</h3>
-                            <button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button>
-                        </div>
-                        <div class="space-y-1 flex-1">${linksHtml}</div>
-                    </div>`;
-                container.innerHTML += html;
-            });
-        }
-    
-        function renderTodos() {
-            const container = document.getElementById('todo-list');
-            container.innerHTML = '';
-            if(todoData.length === 0) {
-                container.innerHTML = '<div class="text-center text-slate-300 text-xs py-4">目前沒有待辦事項</div>';
-                return;
-            }
-            todoData.forEach(item => {
-                const dateBadge = item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : '';
-                const linkIcon = item.url ? `<a href="${item.url}" target="_blank"><i class="fas fa-external-link-alt text-xs text-slate-300 hover:text-custom-green ml-2"></i></a>` : '';
-                const html = `
-                <div class="flex items-center p-3 hover:bg-slate-50 rounded-xl transition group border-b border-slate-50 last:border-0">
-                    <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTodo('${item.id}')" class="w-4 h-4 rounded border-gray-300 accent-custom-green mr-3 cursor-pointer">
-                    <div class="flex-1 cursor-pointer" onclick="editTodo('${item.id}')">
-                        <div class="text-sm font-medium ${item.done ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.text}</div>${dateBadge}
-                    </div>${linkIcon}
-                    <div class="action-btns flex space-x-3 ml-2">
-                        <button onclick="editTodo('${item.id}')" class="text-slate-300 hover:text-custom-green"><i class="fas fa-pen text-xs"></i></button>
-                        <button onclick="deleteTodo('${item.id}')" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash text-xs"></i></button>
-                    </div>
-                </div>`;
-                container.innerHTML += html;
-            });
-        }
-    
-        // 核心修改：渲染行李清單 (區分 Xin 和 Kai)
-        function renderPacking() {
-            const owners = ['xin', 'kai'];
-            const categories = ['bag', 'carry', 'check'];
-            
-            owners.forEach(owner => {
-                categories.forEach(cat => {
-                    const container = document.getElementById(`packing-${owner}-${cat}`);
-                    if(!container) return;
-                    
-                    container.innerHTML = '';
-                    // 篩選出該擁有者 且 該類別 的項目
-                    const items = packingData.filter(i => i.owner === owner && i.category === cat);
-                    
-                    if (items.length === 0) {
-                        // 留白或顯示空狀態，這裡選擇留白保持整潔
-                    }
+        window.editResource = (groupId, id) => openModal('resource', id, groupId); window.editTodo = (id) => openModal('todo', id); window.editPacking = (id) => openModal('packing', id, null);
 
-                    items.forEach(item => {
-                        const html = `
-                        <div class="flex items-center justify-between group py-1">
-                            <label class="flex items-center text-xs text-slate-700 cursor-pointer hover:text-custom-green flex-1 min-w-0">
-                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePacking('${item.id}')" class="mr-1.5 accent-custom-green flex-shrink-0"> 
-                                <span class="truncate ${item.done ? 'text-slate-300 line-through' : ''}">${item.text}</span>
-                            </label>
-                            <div class="opacity-0 group-hover:opacity-100 flex space-x-1 flex-shrink-0 bg-white pl-1">
-                                <button onclick="editPacking('${item.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button>
-                                <button onclick="deletePacking('${item.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>`;
-                        container.innerHTML += html;
-                    });
-                });
+        // 5. Render
+        function renderResources() {
+            const container = document.getElementById('resources-container'); container.innerHTML = '';
+            resourcesData.forEach(group => {
+                let linksHtml = group.links.map(link => `<div class="flex items-center justify-between group/item p-2 hover:bg-green-50 rounded-xl transition"><a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2">${group.isSpecial ? '<i class="fas fa-chevron-right text-[10px] mr-1"></i>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-1"></span>'} ${link.text}</a><div class="flex space-x-2 opacity-0 group-hover/item:opacity-100 transition-opacity"><button onclick="editResource('${group.id}', '${link.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button><button onclick="deleteResource('${group.id}', '${link.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button></div></div>`).join('');
+                const html = `<div class="${group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col'} p-4 rounded-3xl shadow-sm border relative group/card"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${group.isSpecial ? 'text-orange-500' : 'text-custom-green'} mr-1.5"></i> ${group.title}</h3><button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button></div><div class="space-y-1 flex-1">${linksHtml}</div></div>`; container.innerHTML += html;
             });
         }
-    
+        function renderTodos() {
+            const container = document.getElementById('todo-list'); container.innerHTML = '';
+            if(todoData.length === 0) { container.innerHTML = '<div class="text-center text-slate-300 text-xs py-4">目前沒有待辦事項</div>'; return; }
+            todoData.forEach(item => { container.innerHTML += `<div class="flex items-center p-3 hover:bg-slate-50 rounded-xl transition group border-b border-slate-50 last:border-0"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTodo('${item.id}')" class="w-4 h-4 rounded border-gray-300 accent-custom-green mr-3 cursor-pointer"><div class="flex-1 cursor-pointer" onclick="editTodo('${item.id}')"><div class="text-sm font-medium ${item.done ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.text}</div>${item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : ''}</div>${item.url ? `<a href="${item.url}" target="_blank"><i class="fas fa-external-link-alt text-xs text-slate-300 hover:text-custom-green ml-2"></i></a>` : ''}<div class="action-btns flex space-x-3 ml-2"><button onclick="editTodo('${item.id}')" class="text-slate-300 hover:text-custom-green"><i class="fas fa-pen text-xs"></i></button><button onclick="deleteTodo('${item.id}')" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash text-xs"></i></button></div></div>`; });
+        }
+        function renderPacking() {
+            ['xin', 'kai'].forEach(owner => { ['bag', 'carry', 'check'].forEach(cat => {
+                const container = document.getElementById(`packing-${owner}-${cat}`); if(!container) return; container.innerHTML = '';
+                const items = packingData.filter(i => i.owner === owner && i.category === cat);
+                items.forEach(item => { container.innerHTML += `<div class="flex items-center justify-between group py-1"><label class="flex items-center text-xs text-slate-700 cursor-pointer hover:text-custom-green flex-1 min-w-0"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePacking('${item.id}')" class="mr-1.5 accent-custom-green flex-shrink-0"> <span class="truncate ${item.done ? 'text-slate-300 line-through' : ''}">${item.text}</span></label><div class="opacity-0 group-hover:opacity-100 flex space-x-1 flex-shrink-0 bg-white pl-1"><button onclick="editPacking('${item.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button><button onclick="deletePacking('${item.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button></div></div>`; });
+            }); });
+        }
+
+        // ==========================================
+        // 6. 天氣功能 (Mock Data for Future Trip)
+        // ==========================================
+        const tripWeather = {
+            fukuoka: [
+                { date: '02/24 (二)', icon: 'fa-sun', color: 'text-orange-400', high: 11, low: 4 },
+                { date: '02/25 (三)', icon: 'fa-cloud-sun', color: 'text-slate-400', high: 12, low: 5 },
+                { date: '02/26 (四)', icon: 'fa-cloud-rain', color: 'text-blue-400', high: 10, low: 6 },
+                { date: '02/27 (五)', icon: 'fa-cloud', color: 'text-slate-400', high: 9, low: 3 },
+                { date: '02/28 (六)', icon: 'fa-sun', color: 'text-orange-400', high: 12, low: 4 }
+            ],
+            busan: [
+                { date: '02/28 (六)', icon: 'fa-sun', color: 'text-orange-400', high: 10, low: 2 },
+                { date: '03/01 (日)', icon: 'fa-cloud-sun', color: 'text-slate-400', high: 11, low: 3 },
+                { date: '03/02 (一)', icon: 'fa-cloud', color: 'text-slate-400', high: 9, low: 1 },
+                { date: '03/03 (二)', icon: 'fa-cloud-rain', color: 'text-blue-400', high: 8, low: 2 },
+                { date: '03/04 (三)', icon: 'fa-sun', color: 'text-orange-400', high: 11, low: 3 }
+            ]
+        };
+
+        window.openWeatherModal = function() {
+            document.getElementById('weather-modal').classList.remove('hidden');
+            renderWeatherList('fuk', tripWeather.fukuoka);
+            renderWeatherList('pus', tripWeather.busan);
+        }
+        window.closeWeatherModal = function() { document.getElementById('weather-modal').classList.add('hidden'); }
+        document.getElementById('weather-modal').addEventListener('click', function(e){if(e.target===this)closeWeatherModal()});
+
+        function renderWeatherList(elementId, data) {
+            const container = document.getElementById(`weather-list-${elementId}`);
+            container.innerHTML = '';
+            data.forEach(day => {
+                const html = `
+                    <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg border-b border-slate-50 last:border-0">
+                        <div class="text-xs font-bold text-slate-600 w-20">${day.date}</div>
+                        <div class="flex-1 flex justify-center"><i class="fas ${day.icon} ${day.color} text-lg"></i></div>
+                        <div class="flex items-center gap-3 w-20 justify-end">
+                            <span class="text-red-500 font-bold text-sm">${day.high}°</span>
+                            <span class="text-slate-300 text-xs">/</span>
+                            <span class="text-blue-500 font-bold text-sm">${day.low}°</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
         window.addEventListener('load', function() {
             const activeTab = document.getElementById('active-tab');
             if (activeTab) { activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' }); }
