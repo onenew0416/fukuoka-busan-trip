@@ -28,10 +28,10 @@
                 福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
             </h1>
 		</div>
-		<div class="invisible bg-white border border-green-100 shadow-sm rounded-xl px-4 py-2 flex flex-col items-center justify-center">
-            <i class="fas fa-cloud-sun text-custom-green text-xl mb-1"></i>
+		<div class="invisible bg-white border border-green-100 shadow-sm rounded-xl px-3 py-1.5 flex flex-col items-center justify-center active:scale-95 transition flex-shrink-0">
+            <i class="fas fa-cloud-sun text-custom-green text-lg mb-0.5"></i>
             <span class="text-[10px] font-bold text-slate-500">旅途氣象</span>
-        </div>		
+        </div>				
     </div>
 
     <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2">
@@ -441,15 +441,25 @@
             }
         }
     
-        // 自動導航捲動
+        // 找到原本的 window.addEventListener，替換成這段：
         window.addEventListener('load', function() {
             const activeTab = document.getElementById('active-tab');
             if (activeTab) {
-                activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+                // 取得導航列容器
+                const container = document.getElementById('date-nav'); // 注意：請確認您的 HTML <div class="flex overflow-x-auto..." id="date-nav"> 有加上 id="date-nav"
+                
+                // 計算捲動位置：讓 activeTab 左邊留約 80px (剛好露出前一個日期的寬度)
+                const targetScroll = activeTab.offsetLeft - 80;
+                
+                // 執行平滑捲動
+                if (container) {
+                    container.scrollTo({ left: targetScroll, behavior: 'smooth' });
+                }
             }
-            // 頁面載入後，開始抓取 Firebase 資料
-            loadSchedules();
-			fetchWeather(); // 啟動天氣功能
+            
+            // 下面這兩行依據原本頁面功能保留 (Day 5 有 fetchWeather，其他天可能有 loadSchedules)
+            if (typeof loadSchedules === 'function') loadSchedules();
+            if (typeof fetchWeather === 'function') fetchWeather(); 
         });
     
     </script>

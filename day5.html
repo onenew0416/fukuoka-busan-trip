@@ -25,18 +25,18 @@
 <body class="bg-green-50 text-slate-800 pb-24">
 
     <div class="p-6 pt-10 flex justify-between items-center">
-        <div class="flex-1">
+        <div class="flex-1 overflow-hidden"> 
             <h1 class="text-xl sm:text-2xl font-bold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis mr-2">
                 福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
             </h1>
         </div>
-        <div class="invisible bg-white border border-green-100 shadow-sm rounded-xl px-4 py-2 flex flex-col items-center justify-center">
-            <i class="fas fa-cloud-sun text-custom-green text-xl mb-1"></i>
-            <span class="text-[10px] font-bold text-slate-500">旅途氣象</span>
+        <div class="invisible bg-white border border-green-100 shadow-sm rounded-xl px-3 py-1.5 flex flex-col items-center justify-center">
+            <i class="fas fa-cloud-sun text-custom-green text-lg mb-0.5"></i>
+            <span class="text-[10px] font-bold text-slate-500">天氣</span>
         </div>
     </div>
 
-    <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2">
+    <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2" id="date-nav">
         <a href="index.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-400 transition-transform active:scale-95">
             <i class="fas fa-clipboard-list mb-1 text-lg"></i>
             <span class="text-xs font-bold">目錄</span>
@@ -69,7 +69,6 @@
                 </div>
                 <div id="desc-fuk" class="text-[10px] font-bold text-slate-500 mt-1">載入中</div>
             </div>
-            
             <div class="z-10 text-right">
                 <div class="text-xs font-bold text-red-400 mb-1"><i class="fas fa-map-marker-alt mr-1"></i>福岡</div>
                 <i id="icon-fuk" class="fas fa-spinner fa-spin text-4xl text-red-200 mt-1 transition-all duration-500 drop-shadow-sm"></i>
@@ -86,7 +85,6 @@
                 </div>
                 <div id="desc-pus" class="text-[10px] font-bold text-slate-500 mt-1">載入中</div>
             </div>
-            
             <div class="z-10 text-right">
                 <div class="text-xs font-bold text-blue-400 mb-1"><i class="fas fa-map-marker-alt mr-1"></i>釜山</div>
                 <i id="icon-pus" class="fas fa-spinner fa-spin text-4xl text-blue-200 mt-1 transition-all duration-500 drop-shadow-sm"></i>
@@ -207,51 +205,36 @@
         
         let scheduleData = [];
     
-        // ------------------------------
-        // 雙城天氣功能 (Fuk & Pus)
-        // ------------------------------
         async function fetchWeather() {
             const url = `https://api.open-meteo.com/v1/forecast?latitude=33.59,35.10&longitude=130.40,129.04&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
-
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                
-                // data 是陣列: [0]為福岡, [1]為釜山
                 if (Array.isArray(data)) {
                     updateWeatherUI('fuk', data[0]);
                     updateWeatherUI('pus', data[1]);
                 }
-            } catch (error) {
-                console.error("天氣載入失敗:", error);
-            }
+            } catch (error) { console.error("天氣載入失敗:", error); }
         }
 
         function updateWeatherUI(city, data) {
             if(!data.current_weather || !data.daily) return;
-
             const current = data.current_weather;
             const daily = data.daily;
-
-            // 1. 取得每日高/低溫
-            let high = '--';
-            let low = '--';
+            let high = '--'; let low = '--';
             if(daily.temperature_2m_max.length) high = Math.round(daily.temperature_2m_max[0]);
             if(daily.temperature_2m_min.length) low = Math.round(daily.temperature_2m_min[0]);
 
-            // 2. 更新溫度 (H/L)
             document.getElementById(`temp-container-${city}`).innerHTML = `
                 <span class="text-2xl font-bold text-slate-800">${high}°</span>
                 <span class="text-sm text-slate-400 mx-1">/</span>
                 <span class="text-xl font-bold text-slate-600">${low}°</span>
             `;
 
-            // 3. Icon 與 描述
             const code = current.weathercode;
             let iconClass = "fa-cloud";
             let descText = "多雲";
             let iconColor = "text-slate-400"; 
-
             if (code === 0) { iconClass = "fa-sun"; descText = "晴朗"; iconColor = "text-yellow-500"; } 
             else if (code >= 1 && code <= 3) { iconClass = "fa-cloud-sun"; descText = "多雲時晴"; iconColor = "text-yellow-400"; } 
             else if (code === 45 || code === 48) { iconClass = "fa-smog"; descText = "有霧"; iconColor = "text-slate-400"; } 
@@ -263,9 +246,6 @@
             document.getElementById(`icon-${city}`).className = `fas ${iconClass} text-4xl mt-1 transition-all duration-500 drop-shadow-sm ${iconColor}`;
         }
 
-        // ------------------------------
-        // Firebase 行程 (與 Day 1 相同)
-        // ------------------------------
         async function loadSchedules() {
             try {
                 const q = query(collection(db, "schedules"), where("day", "==", CURRENT_DAY));
@@ -419,7 +399,11 @@
         window.addEventListener('load', function() {
             const activeTab = document.getElementById('active-tab');
             if (activeTab) {
-                activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+                // 自動捲動到 "當前分頁為第二個" 的位置
+                // 邏輯: 目前分頁左邊留約 80px (一個項目的寬度+間距)
+                const container = document.getElementById('date-nav');
+                const targetScroll = activeTab.offsetLeft - 80;
+                container.scrollTo({ left: targetScroll, behavior: 'smooth' });
             }
             loadSchedules();
             fetchWeather();

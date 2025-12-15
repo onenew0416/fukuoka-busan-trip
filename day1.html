@@ -424,13 +424,25 @@
             }
         }
     
+        // 找到原本的 window.addEventListener，替換成這段：
         window.addEventListener('load', function() {
             const activeTab = document.getElementById('active-tab');
             if (activeTab) {
-                activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+                // 取得導航列容器
+                const container = document.getElementById('date-nav'); // 注意：請確認您的 HTML <div class="flex overflow-x-auto..." id="date-nav"> 有加上 id="date-nav"
+                
+                // 計算捲動位置：讓 activeTab 左邊留約 80px (剛好露出前一個日期的寬度)
+                const targetScroll = activeTab.offsetLeft - 80;
+                
+                // 執行平滑捲動
+                if (container) {
+                    container.scrollTo({ left: targetScroll, behavior: 'smooth' });
+                }
             }
-            loadSchedules();
-            fetchWeather(); // 啟動天氣功能
+            
+            // 下面這兩行依據原本頁面功能保留 (Day 5 有 fetchWeather，其他天可能有 loadSchedules)
+            if (typeof loadSchedules === 'function') loadSchedules();
+            if (typeof fetchWeather === 'function') fetchWeather(); 
         });
     
     </script>
