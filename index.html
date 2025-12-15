@@ -11,26 +11,35 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 自訂綠色變數 RGB(0, 140, 0) */
+        /* 自訂綠色變數 */
         .text-custom-green { color: rgb(0, 140, 0); }
         .bg-custom-green { background-color: rgb(0, 140, 0); }
         .border-custom-green { border-color: rgb(0, 140, 0); }
-        .accent-custom-green { accent-color: rgb(0, 140, 0); }
         
-        /* 漸層背景 */
-        .bg-gradient-custom { background: linear-gradient(135deg, rgb(0, 140, 0) 0%, rgb(0, 100, 0) 100%); }
-
         /* Modal 動畫 */
         .modal-enter { animation: slideUp 0.3s ease-out forwards; }
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* 展開動畫 (Action Area) */
+        .action-area {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        .action-area.open {
+            max-height: 100px;
+            opacity: 1;
+            margin-top: 0.5rem;
+            padding-bottom: 0.25rem;
+        }
         
-        /* 操作按鈕隱藏/顯示 */
-        .group:hover .action-btns { opacity: 1; }
-        .action-btns { opacity: 0; transition: opacity 0.2s; }
-        @media (max-width: 768px) { .action-btns { opacity: 1; } }
+        /* 箭頭旋轉動畫 */
+        .chevron-icon { transition: transform 0.3s; }
+        .chevron-icon.rotate { transform: rotate(180deg); }
 
         /* 行李區塊收合動畫 */
         details > summary { list-style: none; }
@@ -45,7 +54,7 @@
 <body class="bg-green-50 text-slate-800 pb-24">
 
     <div class="p-6 pt-10 flex justify-between items-center">
-        <div class="flex-1">
+        <div class="flex-1 overflow-hidden"> 
             <h1 class="text-xl sm:text-2xl font-bold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis mr-2">
                 福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
             </h1>
@@ -62,7 +71,6 @@
             <span class="text-xs font-bold">目錄</span>
             <div class="absolute -bottom-1 w-1 h-1 bg-white rounded-full"></div>
         </div>
-
         <a href="day1.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 1</span><span class="text-lg font-bold text-slate-700 my-0.5">02/24</span><span>(二)</span></a>        
         <a href="day2.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 2</span><span class="text-lg font-bold text-slate-700 my-0.5">02/25</span><span>(三)</span></a>        
         <a href="day3.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 3</span><span class="text-lg font-bold text-slate-700 my-0.5">02/26</span><span>(四)</span></a>
@@ -83,7 +91,7 @@
                 <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-check-square text-custom-green mr-2"></i> 待辦事項</h3>
                 <button onclick="openModal('todo')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
             </div>
-            <div id="todo-list" class="p-2"></div>
+            <div id="todo-list" class="p-2 space-y-1"></div>
         </div>
 
         <div class="space-y-4 mb-8">
@@ -174,30 +182,11 @@
                 <h3 class="text-xl font-bold text-slate-800">旅途天氣預報</h3>
                 <button onclick="closeWeatherModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
             </div>
-            
             <div class="overflow-y-auto hide-scroll flex-1 space-y-6 pr-1">
-                <div>
-                    <div class="flex items-center gap-2 mb-3 bg-red-50 p-2 rounded-lg sticky top-0 z-10">
-                        <span class="bg-red-500 w-1.5 h-4 rounded-full block"></span>
-                        <h4 class="font-bold text-red-800 text-sm">福岡 (02/24 - 02/28)</h4>
-                    </div>
-                    <div id="weather-list-fuk" class="space-y-2">
-                        </div>
-                </div>
-
-                <div>
-                    <div class="flex items-center gap-2 mb-3 bg-blue-50 p-2 rounded-lg sticky top-0 z-10">
-                        <span class="bg-blue-500 w-1.5 h-4 rounded-full block"></span>
-                        <h4 class="font-bold text-blue-800 text-sm">釜山 (02/28 - 03/04)</h4>
-                    </div>
-                    <div id="weather-list-pus" class="space-y-2">
-                        </div>
-                </div>
+                <div><div class="flex items-center gap-2 mb-3 bg-red-50 p-2 rounded-lg sticky top-0 z-10"><span class="bg-red-500 w-1.5 h-4 rounded-full block"></span><h4 class="font-bold text-red-800 text-sm">福岡 (02/24 - 02/28)</h4></div><div id="weather-list-fuk" class="space-y-2"></div></div>
+                <div><div class="flex items-center gap-2 mb-3 bg-blue-50 p-2 rounded-lg sticky top-0 z-10"><span class="bg-blue-500 w-1.5 h-4 rounded-full block"></span><h4 class="font-bold text-blue-800 text-sm">釜山 (02/28 - 03/04)</h4></div><div id="weather-list-pus" class="space-y-2"></div></div>
             </div>
-            
-            <div class="mt-4 pt-3 border-t border-slate-100 text-center">
-                <p class="text-[10px] text-slate-400">目前顯示為該季節平均氣溫參考<br>出發前兩週將自動更新為即時預報</p>
-            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 text-center"><p class="text-[10px] text-slate-400">目前顯示為該季節平均氣溫參考<br>出發前兩週將自動更新為即時預報</p></div>
         </div>
     </div>
 
@@ -236,6 +225,7 @@
 
         // 1. 讀取
         async function loadAllData() { await Promise.all([loadResources(), loadTodos(), loadPacking()]); }
+        
         async function loadResources() {
             try {
                 const q = query(collection(db, "resources"), orderBy("created_at"));
@@ -255,7 +245,8 @@
                 const snapshot = await getDocs(collection(db, "todos"));
                 todoData = [];
                 snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
-                todoData.sort((a, b) => (a.done === b.done) ? 0 : a.done ? 1 : -1);
+                // 移除自動排序
+                // todoData.sort((a, b) => (a.done === b.done) ? 0 : a.done ? 1 : -1); 
                 renderTodos();
             } catch(e) { console.error(e); }
         }
@@ -269,7 +260,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // 2. 寫入
+        // 2. 寫入與狀態更新
         window.handleFormSubmit = async function(e) {
             e.preventDefault();
             const mode = document.getElementById('input-mode').value;
@@ -286,53 +277,171 @@
             } catch (err) { alert("儲存失敗"); }
         }
 
-        // 3. 刪除與狀態
-        async function deleteItemGeneric(collectionName, id, callback) { if(!confirm('確定刪除？')) return; await deleteDoc(doc(db, collectionName, id)); callback(); }
+        window.toggleTodo = async function(id) { 
+            const item = todoData.find(i => i.id === id); 
+            item.done = !item.done;
+            renderTodos();
+            await updateDoc(doc(db, "todos", id), { done: item.done }); 
+        }
+        window.togglePacking = async function(id) { 
+            const item = packingData.find(i => i.id === id); 
+            item.done = !item.done;
+            renderPacking();
+            await updateDoc(doc(db, "packing", id), { done: item.done }); 
+        }
+
+        // 3. 通用刪除與編輯 (透過展開選單觸發)
+        async function deleteItemGeneric(collectionName, id, callback) { 
+            if(!confirm('確定刪除？')) return; 
+            await deleteDoc(doc(db, collectionName, id)); 
+            callback(); 
+        }
         window.deleteResource = (groupId, id) => deleteItemGeneric('resources', id, loadResources);
         window.deleteTodo = (id) => deleteItemGeneric('todos', id, loadTodos);
         window.deletePacking = (id) => deleteItemGeneric('packing', id, loadPacking);
-        window.toggleTodo = async function(id) { const item = todoData.find(i => i.id === id); await updateDoc(doc(db, "todos", id), { done: !item.done }); loadTodos(); }
-        window.togglePacking = async function(id) { const item = packingData.find(i => i.id === id); await updateDoc(doc(db, "packing", id), { done: !item.done }); loadPacking(); }
+        window.editResource = (groupId, id) => { openModal('resource', id, groupId); };
+        window.editTodo = (id) => { openModal('todo', id); };
+        window.editPacking = (id) => { openModal('packing', id, null); };
 
-        // 4. Modal
+        // 4. 下拉展開 (Accordion) 控制
+        window.toggleActions = function(id, btn) {
+            const area = document.getElementById(`actions-${id}`);
+            const icon = btn.querySelector('i');
+            area.classList.toggle('open');
+            icon.classList.toggle('rotate');
+        }
+
+        // 5. Modal 控制
         window.openModal = function(mode, id = null, groupId = null) {
             document.getElementById('universal-form').reset();
             document.getElementById('input-mode').value = mode; document.getElementById('input-id').value = id || ''; document.getElementById('input-group-id').value = groupId || '';
             document.getElementById('universal-modal').classList.remove('hidden');
             const fl=document.getElementById('field-link'), fd=document.getElementById('field-date'), fc=document.getElementById('field-category'), fo=document.getElementById('field-owner-display');
             fl.classList.add('hidden'); fd.classList.add('hidden'); fc.classList.add('hidden'); fo.classList.add('hidden');
-            if (mode === 'resource') { document.getElementById('modal-title').innerText = id ? '編輯連結' : '新增連結'; fl.classList.remove('hidden'); if(id) { const g=resourcesData.find(g=>g.id===groupId), i=g.links.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-url').value=i.url; } }
-            else if (mode === 'todo') { document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦'; fl.classList.remove('hidden'); fd.classList.remove('hidden'); if(id) { const i=todoData.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-url').value=i.url||''; document.getElementById('input-date').value=i.date||''; } }
-            else if (mode === 'packing') { document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品'; fc.classList.remove('hidden'); fo.classList.remove('hidden'); let ok=groupId; if(id) { const i=packingData.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-category').value=i.category; document.getElementById('input-group-id').value=i.owner; ok=i.owner; } document.getElementById('display-owner-name').innerText = (ok === 'xin') ? '新' : '凱'; }
+            
+            if (mode === 'resource') { 
+                document.getElementById('modal-title').innerText = id ? '編輯連結' : '新增連結'; 
+                fl.classList.remove('hidden'); 
+                if(id) { const g=resourcesData.find(g=>g.id===groupId), i=g.links.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-url').value=i.url; } 
+            }
+            else if (mode === 'todo') { 
+                document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦'; 
+                fl.classList.remove('hidden'); fd.classList.remove('hidden'); 
+                if(id) { const i=todoData.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-url').value=i.url||''; document.getElementById('input-date').value=i.date||''; } 
+            }
+            else if (mode === 'packing') { 
+                document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品'; 
+                fc.classList.remove('hidden'); fo.classList.remove('hidden'); 
+                let ok=groupId; 
+                if(id) { const i=packingData.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-category').value=i.category; document.getElementById('input-group-id').value=i.owner; ok=i.owner; } 
+                document.getElementById('display-owner-name').innerText = (ok === 'xin') ? '新' : '凱'; 
+            }
         }
         window.closeModal = function() { document.getElementById('universal-modal').classList.add('hidden'); }
         document.getElementById('universal-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
-        window.editResource = (groupId, id) => openModal('resource', id, groupId); window.editTodo = (id) => openModal('todo', id); window.editPacking = (id) => openModal('packing', id, null);
 
-        // 5. Render
+        // 6. 渲染 UI
         function renderResources() {
             const container = document.getElementById('resources-container'); container.innerHTML = '';
             resourcesData.forEach(group => {
-                let linksHtml = group.links.map(link => `<div class="flex items-center justify-between group/item p-2 hover:bg-green-50 rounded-xl transition"><a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2">${group.isSpecial ? '<i class="fas fa-chevron-right text-[10px] mr-1"></i>' : '<span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-1"></span>'} ${link.text}</a><div class="flex space-x-2 opacity-0 group-hover/item:opacity-100 transition-opacity"><button onclick="editResource('${group.id}', '${link.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button><button onclick="deleteResource('${group.id}', '${link.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button></div></div>`).join('');
-                const html = `<div class="${group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col'} p-4 rounded-3xl shadow-sm border relative group/card"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${group.isSpecial ? 'text-orange-500' : 'text-custom-green'} mr-1.5"></i> ${group.title}</h3><button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button></div><div class="space-y-1 flex-1">${linksHtml}</div></div>`; container.innerHTML += html;
+                let linksHtml = group.links.map(link => `
+                    <div class="p-2 hover:bg-green-50 rounded-xl transition">
+                        <div class="flex items-center justify-between">
+                            <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2 flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-2 flex-shrink-0"></span> ${link.text}
+                            </a>
+                            <button onclick="toggleActions('res-${link.id}', this)" class="text-slate-300 hover:text-custom-green px-2">
+                                <i class="fas fa-chevron-down chevron-icon text-xs"></i>
+                            </button>
+                        </div>
+                        <div id="actions-res-${link.id}" class="action-area flex gap-2">
+                            <button onclick="editResource('${group.id}', '${link.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200">
+                                <i class="fas fa-pen mr-1"></i> 編輯
+                            </button>
+                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200">
+                                <i class="fas fa-trash mr-1"></i> 刪除
+                            </button>
+                        </div>
+                    </div>`).join('');
+                
+                const html = `<div class="${group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col'} p-4 rounded-3xl shadow-sm border relative group/card"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${group.isSpecial ? 'text-orange-500' : 'text-custom-green'} mr-1.5"></i> ${group.title}</h3><button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button></div><div class="space-y-1 flex-1">${linksHtml}</div></div>`; 
+                container.innerHTML += html;
             });
         }
+
         function renderTodos() {
             const container = document.getElementById('todo-list'); container.innerHTML = '';
             if(todoData.length === 0) { container.innerHTML = '<div class="text-center text-slate-300 text-xs py-4">目前沒有待辦事項</div>'; return; }
-            todoData.forEach(item => { container.innerHTML += `<div class="flex items-center p-3 hover:bg-slate-50 rounded-xl transition group border-b border-slate-50 last:border-0"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTodo('${item.id}')" class="w-4 h-4 rounded border-gray-300 accent-custom-green mr-3 cursor-pointer"><div class="flex-1 cursor-pointer" onclick="editTodo('${item.id}')"><div class="text-sm font-medium ${item.done ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.text}</div>${item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : ''}</div>${item.url ? `<a href="${item.url}" target="_blank"><i class="fas fa-external-link-alt text-xs text-slate-300 hover:text-custom-green ml-2"></i></a>` : ''}<div class="action-btns flex space-x-3 ml-2"><button onclick="editTodo('${item.id}')" class="text-slate-300 hover:text-custom-green"><i class="fas fa-pen text-xs"></i></button><button onclick="deleteTodo('${item.id}')" class="text-slate-300 hover:text-red-400"><i class="fas fa-trash text-xs"></i></button></div></div>`; });
+            
+            todoData.forEach(item => { 
+                container.innerHTML += `
+                <div class="p-3 hover:bg-slate-50 rounded-xl transition border-b border-slate-50 last:border-0">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center flex-1 cursor-pointer min-w-0" onclick="toggleTodo('${item.id}')">
+                            <div class="w-5 h-5 rounded border-2 flex-shrink-0 mr-3 flex items-center justify-center transition-colors ${item.done ? 'bg-custom-green border-custom-green' : 'bg-white border-slate-300'}">
+                                ${item.done ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm font-medium truncate ${item.done ? 'text-slate-400 line-through' : 'text-slate-700'}">${item.text}</div>
+                                ${item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1 ml-2">
+                            ${item.url ? `<a href="${item.url}" target="_blank" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-custom-green hover:bg-green-50 transition"><i class="fas fa-link text-xs"></i></a>` : ''}
+                            <button onclick="toggleActions('todo-${item.id}', this)" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-300 hover:text-slate-500 transition">
+                                <i class="fas fa-chevron-down chevron-icon text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="actions-todo-${item.id}" class="action-area flex gap-2">
+                        <button onclick="editTodo('${item.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200">
+                            <i class="fas fa-pen mr-1"></i> 編輯
+                        </button>
+                        <button onclick="deleteTodo('${item.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200">
+                            <i class="fas fa-trash mr-1"></i> 刪除
+                        </button>
+                    </div>
+                </div>`; 
+            });
         }
+
         function renderPacking() {
             ['xin', 'kai'].forEach(owner => { ['bag', 'carry', 'check'].forEach(cat => {
                 const container = document.getElementById(`packing-${owner}-${cat}`); if(!container) return; container.innerHTML = '';
                 const items = packingData.filter(i => i.owner === owner && i.category === cat);
-                items.forEach(item => { container.innerHTML += `<div class="flex items-center justify-between group py-1"><label class="flex items-center text-xs text-slate-700 cursor-pointer hover:text-custom-green flex-1 min-w-0"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="togglePacking('${item.id}')" class="mr-1.5 accent-custom-green flex-shrink-0"> <span class="truncate ${item.done ? 'text-slate-300 line-through' : ''}">${item.text}</span></label><div class="opacity-0 group-hover:opacity-100 flex space-x-1 flex-shrink-0 bg-white pl-1"><button onclick="editPacking('${item.id}')" class="text-slate-300 hover:text-custom-green text-[10px]"><i class="fas fa-pen"></i></button><button onclick="deletePacking('${item.id}')" class="text-slate-300 hover:text-red-400 text-[10px]"><i class="fas fa-trash"></i></button></div></div>`; });
+                
+                items.forEach(item => { 
+                    container.innerHTML += `
+                    <div class="py-1.5 px-1 hover:bg-slate-50 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center flex-1 cursor-pointer min-w-0" onclick="togglePacking('${item.id}')">
+                                <div class="w-4 h-4 rounded border flex-shrink-0 mr-2 flex items-center justify-center transition-colors ${item.done ? 'bg-custom-green border-custom-green' : 'bg-white border-slate-300'}">
+                                    ${item.done ? '<i class="fas fa-check text-[10px] text-white"></i>' : ''}
+                                </div>
+                                <span class="truncate text-xs ${item.done ? 'text-slate-300 line-through' : 'text-slate-700'}">${item.text}</span>
+                            </div>
+
+                            <button onclick="toggleActions('pack-${item.id}', this)" class="text-slate-300 hover:text-slate-500 px-1">
+                                <i class="fas fa-chevron-down chevron-icon text-[10px]"></i>
+                            </button>
+                        </div>
+
+                        <div id="actions-pack-${item.id}" class="action-area flex gap-2">
+                            <button onclick="editPacking('${item.id}')" class="flex-1 bg-green-100 text-green-700 py-1 rounded text-[10px] font-bold hover:bg-green-200">
+                                <i class="fas fa-pen mr-1"></i> 編輯
+                            </button>
+                            <button onclick="deletePacking('${item.id}')" class="flex-1 bg-red-100 text-red-600 py-1 rounded text-[10px] font-bold hover:bg-red-200">
+                                <i class="fas fa-trash mr-1"></i> 刪除
+                            </button>
+                        </div>
+                    </div>`; 
+                });
             }); });
         }
 
-        // ==========================================
-        // 6. 天氣功能 (Mock Data for Future Trip)
-        // ==========================================
+        // 天氣 Widget (Mock Data)
         const tripWeather = {
             fukuoka: [
                 { date: '02/24 (二)', icon: 'fa-sun', color: 'text-orange-400', high: 11, low: 4 },
@@ -362,7 +471,7 @@
             const container = document.getElementById(`weather-list-${elementId}`);
             container.innerHTML = '';
             data.forEach(day => {
-                const html = `
+                container.innerHTML += `
                     <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg border-b border-slate-50 last:border-0">
                         <div class="text-xs font-bold text-slate-600 w-20">${day.date}</div>
                         <div class="flex-1 flex justify-center"><i class="fas ${day.icon} ${day.color} text-lg"></i></div>
@@ -371,9 +480,7 @@
                             <span class="text-slate-300 text-xs">/</span>
                             <span class="text-blue-500 font-bold text-sm">${day.low}°</span>
                         </div>
-                    </div>
-                `;
-                container.innerHTML += html;
+                    </div>`;
             });
         }
 
@@ -382,7 +489,6 @@
             if (activeTab) { activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' }); }
             loadAllData();
         });
-    
     </script>
 </body>
 </html>
