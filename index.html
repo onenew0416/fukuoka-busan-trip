@@ -239,7 +239,7 @@
         
         let resourcesData = [], todoData = [], packingData = [];
 
-        // 1. 讀取
+        // 1. 讀取資料 (Firebase)
         async function loadAllData() { await Promise.all([loadResources(), loadTodos(), loadPacking()]); }
         
         async function loadResources() {
@@ -261,7 +261,6 @@
                 const snapshot = await getDocs(collection(db, "todos"));
                 todoData = [];
                 snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
-                // 移除自動排序，保持原本位置
                 renderTodos();
             } catch(e) { console.error(e); }
         }
@@ -294,7 +293,6 @@
 
         window.toggleTodo = async function(id) { 
             const item = todoData.find(i => i.id === id); 
-            // 樂觀更新
             item.done = !item.done;
             renderTodos();
             await updateDoc(doc(db, "todos", id), { done: item.done }); 
@@ -319,7 +317,7 @@
         window.editTodo = (id) => { openModal('todo', id); };
         window.editPacking = (id) => { openModal('packing', id, null); };
 
-        // 4. 下拉展開 (Accordion) 控制
+        // 4. UI 互動功能
         window.toggleActions = function(id, btn) {
             const area = document.getElementById(`actions-${id}`);
             const icon = btn.querySelector('i');
@@ -327,13 +325,11 @@
             icon.classList.toggle('rotate');
         }
 
-        // 5. Modal 控制
         window.openModal = function(mode, id = null, groupId = null, preCategory = null) {
             document.getElementById('universal-form').reset();
             document.getElementById('input-mode').value = mode; 
             document.getElementById('input-id').value = id || ''; 
             document.getElementById('input-group-id').value = groupId || '';
-            
             document.getElementById('universal-modal').classList.remove('hidden');
             const fl=document.getElementById('field-link'), fd=document.getElementById('field-date'), fc=document.getElementById('field-category'), fo=document.getElementById('field-owner-display');
             fl.classList.add('hidden'); fd.classList.add('hidden'); fc.classList.add('hidden'); fo.classList.add('hidden');
@@ -352,10 +348,7 @@
                 document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品'; 
                 fc.classList.remove('hidden'); fo.classList.remove('hidden'); 
                 let ok=groupId; 
-                
-                // 處理預設分類
-                if (preCategory) { document.getElementById('input-category').value = preCategory; }
-
+                if(preCategory) { document.getElementById('input-category').value = preCategory; }
                 if(id) { const i=packingData.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-category').value=i.category; document.getElementById('input-group-id').value=i.owner; ok=i.owner; } 
                 document.getElementById('display-owner-name').innerText = (ok === 'xin') ? '新' : '凱'; 
             }
@@ -363,7 +356,6 @@
         window.closeModal = function() { document.getElementById('universal-modal').classList.add('hidden'); }
         document.getElementById('universal-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
 
-        // 6. 渲染 UI
         function renderResources() {
             const container = document.getElementById('resources-container'); container.innerHTML = '';
             resourcesData.forEach(group => {
@@ -373,21 +365,13 @@
                             <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2 flex items-center">
                                 <span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-2 flex-shrink-0"></span> ${link.text}
                             </a>
-                            <button onclick="toggleActions('res-${link.id}', this)" class="text-slate-300 hover:text-custom-green px-2">
-                                <i class="fas fa-chevron-down chevron-icon text-xs"></i>
-                            </button>
+                            <button onclick="toggleActions('res-${link.id}', this)" class="text-slate-300 hover:text-custom-green px-2"><i class="fas fa-chevron-down chevron-icon text-xs"></i></button>
                         </div>
-                        
                         <div id="actions-res-${link.id}" class="action-area flex gap-2">
-                            <button onclick="editResource('${group.id}', '${link.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200">
-                                <i class="fas fa-pen mr-1"></i> 編輯
-                            </button>
-                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200">
-                                <i class="fas fa-trash mr-1"></i> 刪除
-                            </button>
+                            <button onclick="editResource('${group.id}', '${link.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200"><i class="fas fa-pen mr-1"></i> 編輯</button>
+                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200"><i class="fas fa-trash mr-1"></i> 刪除</button>
                         </div>
                     </div>`).join('');
-                
                 const html = `<div class="${group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col'} p-4 rounded-3xl shadow-sm border relative group/card"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${group.isSpecial ? 'text-orange-500' : 'text-custom-green'} mr-1.5"></i> ${group.title}</h3><button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button></div><div class="space-y-1 flex-1">${linksHtml}</div></div>`; 
                 container.innerHTML += html;
             });
@@ -396,7 +380,6 @@
         function renderTodos() {
             const container = document.getElementById('todo-list'); container.innerHTML = '';
             if(todoData.length === 0) { container.innerHTML = '<div class="text-center text-slate-300 text-xs py-4">目前沒有待辦事項</div>'; return; }
-            
             todoData.forEach(item => { 
                 container.innerHTML += `
                 <div class="p-3 hover:bg-slate-50 rounded-xl transition border-b border-slate-50 last:border-0">
@@ -410,22 +393,14 @@
                                 ${item.date ? `<span class="text-[10px] text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded mt-0.5 inline-block">${item.date}</span>` : ''}
                             </div>
                         </div>
-
                         <div class="flex items-center gap-1 ml-2">
                             ${item.url ? `<a href="${item.url}" target="_blank" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-custom-green hover:bg-green-50 transition"><i class="fas fa-link text-xs"></i></a>` : ''}
-                            <button onclick="toggleActions('todo-${item.id}', this)" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-300 hover:text-slate-500 transition">
-                                <i class="fas fa-chevron-down chevron-icon text-xs"></i>
-                            </button>
+                            <button onclick="toggleActions('todo-${item.id}', this)" class="w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-300 hover:text-slate-500 transition"><i class="fas fa-chevron-down chevron-icon text-xs"></i></button>
                         </div>
                     </div>
-
                     <div id="actions-todo-${item.id}" class="action-area flex gap-2">
-                        <button onclick="editTodo('${item.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200">
-                            <i class="fas fa-pen mr-1"></i> 編輯
-                        </button>
-                        <button onclick="deleteTodo('${item.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200">
-                            <i class="fas fa-trash mr-1"></i> 刪除
-                        </button>
+                        <button onclick="editTodo('${item.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200"><i class="fas fa-pen mr-1"></i> 編輯</button>
+                        <button onclick="deleteTodo('${item.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200"><i class="fas fa-trash mr-1"></i> 刪除</button>
                     </div>
                 </div>`; 
             });
@@ -435,69 +410,155 @@
             ['xin', 'kai'].forEach(owner => { ['bag', 'carry', 'check'].forEach(cat => {
                 const container = document.getElementById(`packing-${owner}-${cat}`); if(!container) return; container.innerHTML = '';
                 const items = packingData.filter(i => i.owner === owner && i.category === cat);
-                
                 items.forEach(item => { 
                     container.innerHTML += `
                     <div class="py-1.5 px-1 hover:bg-slate-50 rounded-lg">
-                        <div class="flex items-start justify-between"> <div class="flex items-start flex-1 cursor-pointer min-w-0 gap-2" onclick="togglePacking('${item.id}')">
+                        <div class="flex items-start justify-between"> 
+                            <div class="flex items-start flex-1 cursor-pointer min-w-0 gap-2" onclick="togglePacking('${item.id}')">
                                 <div class="w-4 h-4 rounded border flex-shrink-0 mt-0.5 flex items-center justify-center transition-colors ${item.done ? 'bg-custom-green border-custom-green' : 'bg-white border-slate-300'}">
                                     ${item.done ? '<i class="fas fa-check text-[10px] text-white"></i>' : ''}
                                 </div>
                                 <span class="text-xs break-words leading-snug ${item.done ? 'text-slate-300 line-through' : 'text-slate-700'}">${item.text}</span>
                             </div>
-
-                            <button onclick="toggleActions('pack-${item.id}', this)" class="text-slate-300 hover:text-slate-500 px-1 flex-shrink-0 ml-1">
-                                <i class="fas fa-chevron-down chevron-icon text-[10px]"></i>
-                            </button>
+                            <button onclick="toggleActions('pack-${item.id}', this)" class="text-slate-300 hover:text-slate-500 px-1 flex-shrink-0 ml-1"><i class="fas fa-chevron-down chevron-icon text-[10px]"></i></button>
                         </div>
-
                         <div id="actions-pack-${item.id}" class="action-area flex gap-2">
-                            <button onclick="editPacking('${item.id}')" class="flex-1 bg-green-100 text-green-700 py-1 rounded text-[10px] font-bold hover:bg-green-200">
-                                <i class="fas fa-pen mr-1"></i> 編輯
-                            </button>
-                            <button onclick="deletePacking('${item.id}')" class="flex-1 bg-red-100 text-red-600 py-1 rounded text-[10px] font-bold hover:bg-red-200">
-                                <i class="fas fa-trash mr-1"></i> 刪除
-                            </button>
+                            <button onclick="editPacking('${item.id}')" class="flex-1 bg-green-100 text-green-700 py-1 rounded text-[10px] font-bold hover:bg-green-200"><i class="fas fa-pen mr-1"></i> 編輯</button>
+                            <button onclick="deletePacking('${item.id}')" class="flex-1 bg-red-100 text-red-600 py-1 rounded text-[10px] font-bold hover:bg-red-200"><i class="fas fa-trash mr-1"></i> 刪除</button>
                         </div>
                     </div>`; 
                 });
             }); });
         }
 
-        // 天氣 Widget (Mock Data)
-        const tripWeather = {
+        // ==========================================
+        // 6. 智慧天氣功能：自動切換 歷史資料 vs 即時預報
+        // ==========================================
+        
+        // 歷史統計資料 (備案) - 您設定好的資料
+        const historicalWeather = {
             fukuoka: [
-                { date: '02/24 (二)', icon: 'fa-sun', color: 'text-orange-400', high: 11, low: 4 },
-                { date: '02/25 (三)', icon: 'fa-cloud-sun', color: 'text-slate-400', high: 12, low: 5 },
-                { date: '02/26 (四)', icon: 'fa-cloud-rain', color: 'text-blue-400', high: 10, low: 6 },
-                { date: '02/27 (五)', icon: 'fa-cloud', color: 'text-slate-400', high: 9, low: 3 },
-                { date: '02/28 (六)', icon: 'fa-sun', color: 'text-orange-400', high: 12, low: 4 }
+                { date: '02/24 (二)', icon: 'fa-sun', color: 'text-orange-400', high: 11, low: 4, rain: 10 },
+                { date: '02/25 (三)', icon: 'fa-cloud-sun', color: 'text-yellow-400', high: 12, low: 5, rain: 20 },
+                { date: '02/26 (四)', icon: 'fa-cloud-rain', color: 'text-blue-400', high: 10, low: 6, rain: 60 },
+                { date: '02/27 (五)', icon: 'fa-cloud', color: 'text-slate-400', high: 9, low: 3, rain: 30 },
+                { date: '02/28 (六)', icon: 'fa-sun', color: 'text-orange-400', high: 12, low: 4, rain: 0 }
             ],
             busan: [
-                { date: '02/28 (六)', icon: 'fa-sun', color: 'text-orange-400', high: 10, low: 2 },
-                { date: '03/01 (日)', icon: 'fa-cloud-sun', color: 'text-slate-400', high: 11, low: 3 },
-                { date: '03/02 (一)', icon: 'fa-cloud', color: 'text-slate-400', high: 9, low: 1 },
-                { date: '03/03 (二)', icon: 'fa-cloud-rain', color: 'text-blue-400', high: 8, low: 2 },
-                { date: '03/04 (三)', icon: 'fa-sun', color: 'text-orange-400', high: 11, low: 3 }
+                { date: '02/28 (六)', icon: 'fa-sun', color: 'text-orange-400', high: 10, low: 2, rain: 0 },
+                { date: '03/01 (日)', icon: 'fa-cloud-sun', color: 'text-yellow-400', high: 11, low: 3, rain: 10 },
+                { date: '03/02 (一)', icon: 'fa-cloud', color: 'text-slate-400', high: 9, low: 1, rain: 20 },
+                { date: '03/03 (二)', icon: 'fa-cloud-rain', color: 'text-blue-400', high: 8, low: 2, rain: 70 },
+                { date: '03/04 (三)', icon: 'fa-sun', color: 'text-orange-400', high: 11, low: 3, rain: 10 }
             ]
         };
 
-        window.openWeatherModal = function() {
-            document.getElementById('weather-modal').classList.remove('hidden');
-            renderWeatherList('fuk', tripWeather.fukuoka);
-            renderWeatherList('pus', tripWeather.busan);
-        }
-        window.closeWeatherModal = function() { document.getElementById('weather-modal').classList.add('hidden'); }
-        document.getElementById('weather-modal').addEventListener('click', function(e){if(e.target===this)closeWeatherModal()});
+        // 主要判斷函式
+        async function initWeather() {
+            // 您的出發日期
+            const tripStart = new Date('2026-02-24');
+            const today = new Date();
+            
+            // 計算相差天數 (毫秒 -> 天)
+            const diffDays = (tripStart - today) / (1000 * 60 * 60 * 24);
 
+            // 邏輯：如果在出發前 14 天以內 (或者旅程中)，就去抓 API
+            // diffDays <= 14 代表快到了
+            // diffDays >= -10 代表還在旅程中 (沒超過結束日太久)
+            if (diffDays <= 14 && diffDays >= -10) {
+                console.log("切換模式：即時預報 (Fetching Live Data)");
+                await fetchRealWeather();
+            } else {
+                console.log("切換模式：歷史資料 (Showing Historical Data)");
+                // 直接顯示歷史資料
+                renderWeatherList('fuk', historicalWeather.fukuoka);
+                renderWeatherList('pus', historicalWeather.busan);
+            }
+        }
+
+        // 抓取真實 API (指定日期區間)
+        async function fetchRealWeather() {
+            // 定義日期區間 (API 格式 YYYY-MM-DD)
+            const fukStart = '2026-02-24', fukEnd = '2026-02-28';
+            const pusStart = '2026-02-28', pusEnd = '2026-03-04';
+
+            // 抓福岡
+            await fetchCityWeather('fuk', 33.59, 130.40, fukStart, fukEnd);
+            // 抓釜山
+            await fetchCityWeather('pus', 35.10, 129.04, pusStart, pusEnd);
+        }
+
+        async function fetchCityWeather(id, lat, lon, start, end) {
+            // Open-Meteo 支援 start_date / end_date 參數
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&start_date=${start}&end_date=${end}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+            
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if(data.daily) {
+                    // 轉換 API 資料格式為我們 render 需要的格式
+                    const formattedData = convertApiData(data.daily);
+                    renderWeatherList(id, formattedData);
+                }
+            } catch(e) {
+                console.error("API Error, falling back to history", e);
+                // 如果 API 失敗 (例如日期太遠)，自動退回歷史資料
+                renderWeatherList(id, id === 'fuk' ? historicalWeather.fukuoka : historicalWeather.busan);
+            }
+        }
+
+        // 資料格式轉換器 (API -> App 格式)
+        function convertApiData(daily) {
+            const result = [];
+            for(let i=0; i < daily.time.length; i++) {
+                const dateObj = new Date(daily.time[i]);
+                const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][dateObj.getDay()];
+                const dateStr = `${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')} (${dayOfWeek})`;
+                
+                const w = getWeatherIcon(daily.weathercode[i]);
+                
+                result.push({
+                    date: dateStr,
+                    icon: w.icon,
+                    color: w.color,
+                    high: Math.round(daily.temperature_2m_max[i]),
+                    low: Math.round(daily.temperature_2m_min[i]),
+                    rain: daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : 0
+                });
+            }
+            return result;
+        }
+
+        // 天氣圖示對照
+        function getWeatherIcon(code) {
+            if (code === 0) return { icon: 'fa-sun', color: 'text-yellow-500' };
+            if (code >= 1 && code <= 3) return { icon: 'fa-cloud-sun', color: 'text-yellow-400' };
+            if (code === 45 || code === 48) return { icon: 'fa-smog', color: 'text-slate-400' };
+            if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return { icon: 'fa-cloud-rain', color: 'text-blue-400' };
+            if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return { icon: 'fa-snowflake', color: 'text-blue-200' };
+            if (code >= 95) return { icon: 'fa-bolt', color: 'text-purple-500' };
+            return { icon: 'fa-cloud', color: 'text-slate-400' };
+        }
+
+        // 渲染清單 (共用)
         function renderWeatherList(elementId, data) {
             const container = document.getElementById(`weather-list-${elementId}`);
+            if(!container) return;
             container.innerHTML = '';
+            
             data.forEach(day => {
+                // 如果日期字串包含星期幾 (如 "02/24 (二)")，只取前面 "02/24"
+                const shortDate = day.date.split(' ')[0]; 
+                
                 container.innerHTML += `
                     <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg border-b border-slate-50 last:border-0">
                         <div class="text-xs font-bold text-slate-600 w-20">${day.date}</div>
-                        <div class="flex-1 flex justify-center"><i class="fas ${day.icon} ${day.color} text-lg"></i></div>
+                        
+                        <div class="flex-1 flex justify-center items-center gap-2">
+                            <i class="fas ${day.icon} ${day.color} text-lg"></i>
+                            <span class="text-xs font-bold text-blue-500">${day.rain}%</span>
+                        </div>
+
                         <div class="flex items-center gap-3 w-20 justify-end">
                             <span class="text-red-500 font-bold text-sm">${day.high}°</span>
                             <span class="text-slate-300 text-xs">/</span>
@@ -507,29 +568,26 @@
             });
         }
 
-        // 修改 1: 改用 DOMContentLoaded，讓它一讀完 HTML 就執行，不用等圖片
+        // 天氣 Modal 開關 (觸發 initWeather)
+        window.openWeatherModal = function() {
+            document.getElementById('weather-modal').classList.remove('hidden');
+            initWeather(); 
+        }
+        window.closeWeatherModal = function() { document.getElementById('weather-modal').classList.add('hidden'); }
+        document.getElementById('weather-modal').addEventListener('click', function(e){if(e.target===this)closeWeatherModal()});
+
+        // 頁面載入區
         document.addEventListener('DOMContentLoaded', function() {
             const activeTab = document.getElementById('active-tab');
             const container = document.getElementById('date-nav');
-            
             if (activeTab && container) {
-                // 計算位置：保留左邊約 80px 的空間
                 const targetScroll = activeTab.offsetLeft - 80;
-                
-                // 修改 2: 將 behavior 改為 'auto' (瞬間跳轉)，這樣使用者就不會看到滑動的過程
-                container.scrollTo({
-                    left: targetScroll,
-                    behavior: 'auto' 
-                });
+                container.scrollTo({ left: targetScroll, behavior: 'auto' });
             }
         });
 
-        // 其他載入函式維持在 load 事件 (避免影響定位)
         window.addEventListener('load', function() {
-            if (typeof loadAllData === 'function') loadAllData();     // Index 用的
-            if (typeof renderWeatherWidget === 'function') renderWeatherWidget(); // Index 用的
-            if (typeof loadSchedules === 'function') loadSchedules(); // Day 分頁用的
-            if (typeof fetchWeather === 'function') fetchWeather();   // Day 分頁用的
+            loadAllData();
         });
     </script>
 </body>

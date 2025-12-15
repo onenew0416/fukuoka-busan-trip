@@ -147,75 +147,77 @@
         // 用來存放下載下來的資料
         let scheduleData = [];
 
-        // ------------------------------
-        // 天氣功能 (Open-Meteo API)
-        // ------------------------------
-        async function fetchWeather() {
-            // 釜山座標: 35.10, 129.04
-            const lat = 35.10; 
-            const lon = 129.04;
-            // 請求目前天氣 + 每日天氣 (取得最高/最低溫)
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+        // ==========================================
+        // 智慧天氣功能 (單城市 - 釜山)
+        // ==========================================
+        
+        // ⚠️ 請依照不同分頁修改這裡的日期！
+        const TARGET_DATE = '2026-03-02'; // Day 6=01, Day 7=02, Day 8=03, Day 9=04
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (data.current_weather && data.daily) {
-                    updateWeatherUI(data.current_weather, data.daily);
-                }
-            } catch (error) {
-                console.error("天氣載入失敗:", error);
-                document.getElementById('weather-desc').innerText = "暫時無法取得天氣";
+        // 釜山座標
+        const CITY_GEO = { lat: 35.10, lon: 129.04 };
+
+        // 歷史備份資料 (依日期對照)
+        const HISTORY_DATA = {
+            '2026-03-01': { high: 11, low: 3, rain: 10, code: 2 },  // Day 6
+            '2026-03-02': { high: 9, low: 1, rain: 20, code: 3 },   // Day 7
+            '2026-03-03': { high: 8, low: 2, rain: 70, code: 63 },  // Day 8
+            '2026-03-04': { high: 11, low: 3, rain: 10, code: 0 }   // Day 9
+        };
+
+        async function fetchWeather() {
+            const tripDate = new Date(TARGET_DATE);
+            const today = new Date();
+            const diffDays = (tripDate - today) / (1000 * 60 * 60 * 24);
+
+            if (diffDays <= 14 && diffDays >= -1) {
+                console.log(`Day Page: Fetching live weather for ${TARGET_DATE}`);
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${CITY_GEO.lat}&longitude=${CITY_GEO.lon}&start_date=${TARGET_DATE}&end_date=${TARGET_DATE}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+                try {
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    if(data.daily) {
+                        updateWeatherUI({
+                            high: Math.round(data.daily.temperature_2m_max[0]),
+                            low: Math.round(data.daily.temperature_2m_min[0]),
+                            rain: data.daily.precipitation_probability_max ? data.daily.precipitation_probability_max[0] : 0,
+                            code: data.daily.weathercode[0]
+                        });
+                        return;
+                    }
+                } catch(e) { console.error("API Error, using history", e); }
             }
+
+            console.log(`Day Page: Using history data for ${TARGET_DATE}`);
+            const history = HISTORY_DATA[TARGET_DATE] || { high: '--', low: '--', rain: 0, code: 0 };
+            updateWeatherUI(history);
         }
 
-        function updateWeatherUI(current, daily) {
+        function updateWeatherUI(data) {
             const tempContainer = document.getElementById('weather-temp-container');
             const descEl = document.getElementById('weather-desc');
             const iconEl = document.getElementById('weather-icon');
 
-            // 取得今日最高/最低溫
-            let high = '--';
-            let low = '--';
-
-            if (daily.temperature_2m_max && daily.temperature_2m_max.length > 0) {
-                high = Math.round(daily.temperature_2m_max[0]);
-            }
-            if (daily.temperature_2m_min && daily.temperature_2m_min.length > 0) {
-                low = Math.round(daily.temperature_2m_min[0]);
-            }
-
-            // 更新 HTML 顯示: High / Low
             tempContainer.innerHTML = `
-                <span class="text-3xl font-bold text-slate-800">${high}°</span>
+                <span class="text-3xl font-bold text-slate-800">${data.high}°</span>
                 <span class="text-xl text-slate-400 mx-1">/</span>
-                <span class="text-2xl font-bold text-slate-600">${low}°</span>
+                <span class="text-2xl font-bold text-slate-600">${data.low}°</span>
             `;
 
-            // WMO Weather Code 解析
-            const code = current.weathercode;
-            let iconClass = "fa-cloud";
-            let descText = "多雲";
-            let iconColor = "text-slate-400";
+            const w = getWeatherIcon(data.code);
 
-            if (code === 0) { 
-                iconClass = "fa-sun"; descText = "晴朗"; iconColor = "text-yellow-500"; 
-            } else if (code >= 1 && code <= 3) { 
-                iconClass = "fa-cloud-sun"; descText = "多雲時晴"; iconColor = "text-yellow-400"; 
-            } else if (code === 45 || code === 48) { 
-                iconClass = "fa-smog"; descText = "有霧"; iconColor = "text-slate-400";
-            } else if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) { 
-                iconClass = "fa-cloud-rain"; descText = "有雨"; iconColor = "text-blue-400";
-            } else if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) { 
-                iconClass = "fa-snowflake"; descText = "下雪"; iconColor = "text-blue-200";
-            } else if (code >= 95) { 
-                iconClass = "fa-bolt"; descText = "雷雨"; iconColor = "text-purple-500";
-            }
+            descEl.innerHTML = `${w.text} <span class="ml-2 text-blue-500 font-bold">${data.rain}%</span>`;
+            iconEl.className = `fas ${w.icon} text-5xl block mt-3 transition-all duration-500 ${w.color} drop-shadow-sm`;
+        }
 
-            // 更新畫面
-            descEl.innerText = descText;
-            iconEl.className = `fas ${iconClass} text-5xl block mt-3 transition-all duration-500 ${iconColor} drop-shadow-sm`;
+        function getWeatherIcon(code) {
+            if (code === 0) return { icon: 'fa-sun', color: 'text-orange-400', text: '晴朗' };
+            if (code >= 1 && code <= 3) return { icon: 'fa-cloud-sun', color: 'text-yellow-400', text: '多雲時晴' };
+            if (code === 45 || code === 48) return { icon: 'fa-smog', color: 'text-slate-400', text: '有霧' };
+            if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return { icon: 'fa-cloud-rain', color: 'text-blue-400', text: '有雨' };
+            if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return { icon: 'fa-snowflake', color: 'text-blue-200', text: '下雪' };
+            if (code >= 95) return { icon: 'fa-bolt', color: 'text-purple-500', text: '雷雨' };
+            return { icon: 'fa-cloud', color: 'text-slate-400', text: '多雲' };
         }
 
     
