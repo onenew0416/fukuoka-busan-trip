@@ -70,7 +70,7 @@
                 <div id="desc-fuk" class="text-[10px] font-bold text-slate-500 mt-1">載入中</div>
             </div>
             <div class="z-10 text-right">
-                <div class="text-xs font-bold text-red-400 mb-1"><i class="fas fa-map-marker-alt mr-1"></i>福岡</div>
+                <div class="text-xs font-bold text-red-400 mb-1"><i class="fas fa-map-marker-alt mr-1"></i>福岡 Fukuoka</div>
                 <i id="icon-fuk" class="fas fa-spinner fa-spin text-4xl text-red-200 mt-1 transition-all duration-500 drop-shadow-sm"></i>
             </div>
             <div class="absolute -right-6 -top-6 w-20 h-20 bg-red-100 rounded-full blur-xl"></div>
@@ -86,7 +86,7 @@
                 <div id="desc-pus" class="text-[10px] font-bold text-slate-500 mt-1">載入中</div>
             </div>
             <div class="z-10 text-right">
-                <div class="text-xs font-bold text-blue-400 mb-1"><i class="fas fa-map-marker-alt mr-1"></i>釜山</div>
+                <div class="text-xs font-bold text-blue-400 mb-1"><i class="fas fa-map-marker-alt mr-1"></i>釜山 Busan</div>
                 <i id="icon-pus" class="fas fa-spinner fa-spin text-4xl text-blue-200 mt-1 transition-all duration-500 drop-shadow-sm"></i>
             </div>
             <div class="absolute -right-6 -top-6 w-20 h-20 bg-blue-100 rounded-full blur-xl"></div>
@@ -396,17 +396,29 @@
             }
         }
 
-        window.addEventListener('load', function() {
+        // 修改 1: 改用 DOMContentLoaded，讓它一讀完 HTML 就執行，不用等圖片
+        document.addEventListener('DOMContentLoaded', function() {
             const activeTab = document.getElementById('active-tab');
-            if (activeTab) {
-                // 自動捲動到 "當前分頁為第二個" 的位置
-                // 邏輯: 目前分頁左邊留約 80px (一個項目的寬度+間距)
-                const container = document.getElementById('date-nav');
+            const container = document.getElementById('date-nav');
+            
+            if (activeTab && container) {
+                // 計算位置：保留左邊約 80px 的空間
                 const targetScroll = activeTab.offsetLeft - 80;
-                container.scrollTo({ left: targetScroll, behavior: 'smooth' });
+                
+                // 修改 2: 將 behavior 改為 'auto' (瞬間跳轉)，這樣使用者就不會看到滑動的過程
+                container.scrollTo({
+                    left: targetScroll,
+                    behavior: 'auto' 
+                });
             }
-            loadSchedules();
-            fetchWeather();
+        });
+
+        // 其他載入函式維持在 load 事件 (避免影響定位)
+        window.addEventListener('load', function() {
+            if (typeof loadAllData === 'function') loadAllData();     // Index 用的
+            if (typeof renderWeatherWidget === 'function') renderWeatherWidget(); // Index 用的
+            if (typeof loadSchedules === 'function') loadSchedules(); // Day 分頁用的
+            if (typeof fetchWeather === 'function') fetchWeather();   // Day 分頁用的
         });
     
     </script>

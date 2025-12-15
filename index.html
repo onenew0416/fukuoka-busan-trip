@@ -507,10 +507,29 @@
             });
         }
 
-        window.addEventListener('load', function() {
+        // 修改 1: 改用 DOMContentLoaded，讓它一讀完 HTML 就執行，不用等圖片
+        document.addEventListener('DOMContentLoaded', function() {
             const activeTab = document.getElementById('active-tab');
-            if (activeTab) { activeTab.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' }); }
-            loadAllData();
+            const container = document.getElementById('date-nav');
+            
+            if (activeTab && container) {
+                // 計算位置：保留左邊約 80px 的空間
+                const targetScroll = activeTab.offsetLeft - 80;
+                
+                // 修改 2: 將 behavior 改為 'auto' (瞬間跳轉)，這樣使用者就不會看到滑動的過程
+                container.scrollTo({
+                    left: targetScroll,
+                    behavior: 'auto' 
+                });
+            }
+        });
+
+        // 其他載入函式維持在 load 事件 (避免影響定位)
+        window.addEventListener('load', function() {
+            if (typeof loadAllData === 'function') loadAllData();     // Index 用的
+            if (typeof renderWeatherWidget === 'function') renderWeatherWidget(); // Index 用的
+            if (typeof loadSchedules === 'function') loadSchedules(); // Day 分頁用的
+            if (typeof fetchWeather === 'function') fetchWeather();   // Day 分頁用的
         });
     </script>
 </body>
