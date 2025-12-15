@@ -107,21 +107,29 @@
                         <span class="font-bold text-slate-700 text-sm">的行李</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button onclick="event.preventDefault(); openModal('packing', null, 'xin')" class="bg-white text-blue-500 w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-blue-100"><i class="fas fa-plus"></i></button>
                         <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
                     </div>
                 </summary>
-                <div class="p-4 grid grid-cols-3 gap-4 divide-x divide-slate-100">
-                    <div class="space-y-3">
-                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">👜 包包</h4>
+                <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg">
+                            <span class="text-sm font-bold text-custom-green">👜 包包</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
                         <div id="packing-xin-bag" class="space-y-1 min-h-[20px]"></div>
                     </div>
-                    <div class="space-y-3 pl-2">
-                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🎒 隨身</h4>
+                    <div class="space-y-2 pl-2">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg">
+                            <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
                         <div id="packing-xin-carry" class="space-y-1 min-h-[20px]"></div>
                     </div>
-                    <div class="space-y-3 pl-2">
-                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🧳 託運</h4>
+                    <div class="space-y-2 pl-2">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg">
+                            <span class="text-sm font-bold text-custom-green">🧳 託運</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
                         <div id="packing-xin-check" class="space-y-1 min-h-[20px]"></div>
                     </div>
                 </div>
@@ -134,21 +142,29 @@
                         <span class="font-bold text-slate-700 text-sm">的行李</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button onclick="event.preventDefault(); openModal('packing', null, 'kai')" class="bg-white text-orange-500 w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-orange-100"><i class="fas fa-plus"></i></button>
                         <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
                     </div>
                 </summary>
-                <div class="p-4 grid grid-cols-3 gap-4 divide-x divide-slate-100">
-                    <div class="space-y-3">
-                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">👜 包包</h4>
+                <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg">
+                            <span class="text-sm font-bold text-custom-green">👜 包包</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
                         <div id="packing-kai-bag" class="space-y-1 min-h-[20px]"></div>
                     </div>
-                    <div class="space-y-3 pl-2">
-                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🎒 隨身</h4>
+                    <div class="space-y-2 pl-2">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg">
+                            <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
                         <div id="packing-kai-carry" class="space-y-1 min-h-[20px]"></div>
                     </div>
-                    <div class="space-y-3 pl-2">
-                        <h4 class="text-xs font-bold text-slate-500 text-center bg-green-50 text-custom-green py-1 rounded-lg">🧳 託運</h4>
+                    <div class="space-y-2 pl-2">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg">
+                            <span class="text-sm font-bold text-custom-green">🧳 託運</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
                         <div id="packing-kai-check" class="space-y-1 min-h-[20px]"></div>
                     </div>
                 </div>
@@ -311,10 +327,13 @@
             icon.classList.toggle('rotate');
         }
 
-        // 5. Modal 控制
-        window.openModal = function(mode, id = null, groupId = null) {
+        // 5. Modal 控制 (新增 preCategory 參數)
+        window.openModal = function(mode, id = null, groupId = null, preCategory = null) {
             document.getElementById('universal-form').reset();
-            document.getElementById('input-mode').value = mode; document.getElementById('input-id').value = id || ''; document.getElementById('input-group-id').value = groupId || '';
+            document.getElementById('input-mode').value = mode; 
+            document.getElementById('input-id').value = id || ''; 
+            document.getElementById('input-group-id').value = groupId || '';
+            
             document.getElementById('universal-modal').classList.remove('hidden');
             const fl=document.getElementById('field-link'), fd=document.getElementById('field-date'), fc=document.getElementById('field-category'), fo=document.getElementById('field-owner-display');
             fl.classList.add('hidden'); fd.classList.add('hidden'); fc.classList.add('hidden'); fo.classList.add('hidden');
@@ -333,6 +352,12 @@
                 document.getElementById('modal-title').innerText = id ? '編輯物品' : '新增物品'; 
                 fc.classList.remove('hidden'); fo.classList.remove('hidden'); 
                 let ok=groupId; 
+                
+                // 處理預設分類
+                if (preCategory) {
+                    document.getElementById('input-category').value = preCategory;
+                }
+
                 if(id) { const i=packingData.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-category').value=i.category; document.getElementById('input-group-id').value=i.owner; ok=i.owner; } 
                 document.getElementById('display-owner-name').innerText = (ok === 'xin') ? '新' : '凱'; 
             }
