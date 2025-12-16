@@ -51,128 +51,138 @@
         }
     </style>
 </head>
-<body class="bg-green-50 text-slate-800 pb-24">
+<body class="bg-green-50 text-slate-800 pb-24 min-h-screen relative">
 
-    <div class="p-6 pt-10 flex justify-between items-center">
-        <div class="flex-1"> 
-            <h1 class="text-xl sm:text-2xl font-bold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis mr-2">
-                福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
-            </h1>
-        </div>
-        <button onclick="openWeatherModal()" class="bg-white border border-green-100 shadow-sm rounded-xl px-3 py-1.5 flex flex-col items-center justify-center active:scale-95 transition flex-shrink-0">
-            <i class="fas fa-cloud-sun text-custom-green text-lg mb-0.5"></i>
-            <span class="text-[10px] font-bold text-slate-500">天氣</span>
-        </button>
+    <div class="fixed inset-0 z-0 pointer-events-none" 
+         style="background-image: url('bg_index.jpg'); 
+                background-size: cover; 
+                background-position: center; 
+                opacity: 0.25;"> 
     </div>
 
-    <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2">
-        <div id="active-tab" class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative transition-transform active:scale-95">
-            <i class="fas fa-clipboard-list mb-1 text-lg"></i>
-            <span class="text-xs font-bold">目錄</span>
-            <div class="absolute -bottom-1 w-1 h-1 bg-white rounded-full"></div>
-        </div>
-        <a href="day1.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 1</span><span class="text-lg font-bold text-slate-700 my-0.5">02/24</span><span>(二)</span></a>        
-        <a href="day2.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 2</span><span class="text-lg font-bold text-slate-700 my-0.5">02/25</span><span>(三)</span></a>        
-        <a href="day3.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 3</span><span class="text-lg font-bold text-slate-700 my-0.5">02/26</span><span>(四)</span></a>
-        <a href="day4.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 4</span><span class="text-lg font-bold text-slate-700 my-0.5">02/27</span><span>(五)</span></a>
-        <a href="day5.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 5</span><span class="text-lg font-bold text-slate-700 my-0.5">02/28</span><span>(六)</span></a>
-        <a href="day6.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 6</span><span class="text-lg font-bold text-slate-700 my-0.5">03/01</span><span>(日)</span></a>
-        <a href="day7.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 7</span><span class="text-lg font-bold text-slate-700 my-0.5">03/02</span><span>(一)</span></a>
-        <a href="day8.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 8</span><span class="text-lg font-bold text-slate-700 my-0.5">03/03</span><span>(二)</span></a>
-        <a href="day9.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-sm text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 9</span><span class="text-lg font-bold text-slate-700 my-0.5">03/04</span><span>(三)</span></a>
-    </div>
-
-    <div id="content-area" class="px-4 space-y-5 animate-fade-in">
+    <div class="relative z-10">
         
-        <div id="resources-container" class="grid grid-cols-2 gap-3"></div>
-
-        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-check-square text-custom-green mr-2"></i> 待辦事項</h3>
-                <button onclick="openModal('todo')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
+        <div class="p-6 pt-10 flex justify-between items-center">
+            <div class="flex-1"> 
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis mr-2 drop-shadow-sm">
+                    福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
+                </h1>
             </div>
-            <div id="todo-list" class="p-2 space-y-1"></div>
+            <button onclick="openWeatherModal()" class="bg-white border border-green-100 shadow-md rounded-xl px-3 py-1.5 flex flex-col items-center justify-center active:scale-95 transition flex-shrink-0">
+                <i class="fas fa-cloud-sun text-custom-green text-lg mb-0.5"></i>
+                <span class="text-[10px] font-bold text-slate-500">天氣</span>
+            </button>
         </div>
 
-        <div class="space-y-4 mb-8">
-            <div class="flex items-center gap-2 px-1">
-                <i class="fas fa-suitcase text-custom-green"></i>
-                <h3 class="font-bold text-slate-800 text-sm">行李清單</h3>
+        <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2" id="date-nav">
+            <div id="active-tab" class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative transition-transform active:scale-95">
+                <i class="fas fa-clipboard-list mb-1 text-lg"></i>
+                <span class="text-xs font-bold">目錄</span>
+                <div class="absolute -bottom-1 w-1 h-1 bg-white rounded-full"></div>
+            </div>
+            <a href="day1.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 1</span><span class="text-lg font-bold text-slate-700 my-0.5">02/24</span><span>(二)</span></a>        
+            <a href="day2.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 2</span><span class="text-lg font-bold text-slate-700 my-0.5">02/25</span><span>(三)</span></a>        
+            <a href="day3.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 3</span><span class="text-lg font-bold text-slate-700 my-0.5">02/26</span><span>(四)</span></a>
+            <a href="day4.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 4</span><span class="text-lg font-bold text-slate-700 my-0.5">02/27</span><span>(五)</span></a>
+            <a href="day5.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 5</span><span class="text-lg font-bold text-slate-700 my-0.5">02/28</span><span>(六)</span></a>
+            <a href="day6.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 6</span><span class="text-lg font-bold text-slate-700 my-0.5">03/01</span><span>(日)</span></a>
+            <a href="day7.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 7</span><span class="text-lg font-bold text-slate-700 my-0.5">03/02</span><span>(一)</span></a>
+            <a href="day8.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 8</span><span class="text-lg font-bold text-slate-700 my-0.5">03/03</span><span>(二)</span></a>
+            <a href="day9.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 9</span><span class="text-lg font-bold text-slate-700 my-0.5">03/04</span><span>(三)</span></a>
+        </div>
+
+        <div id="content-area" class="px-4 space-y-5 animate-fade-in">
+            
+            <div id="resources-container" class="grid grid-cols-2 gap-3"></div>
+
+            <div class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden">
+                <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-check-square text-custom-green mr-2"></i> 待辦事項</h3>
+                    <button onclick="openModal('todo')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
+                </div>
+                <div id="todo-list" class="p-2 space-y-1"></div>
             </div>
 
-            <details class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden group/details" open>
-                <summary class="bg-blue-50/50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-blue-50 transition">
-                    <div class="flex items-center gap-2">
-                        <span class="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">新</span>
-                        <span class="font-bold text-slate-700 text-sm">的行李</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
-                    </div>
-                </summary>
-                <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
-                    <div class="space-y-2 flex flex-col h-full">
-                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                            <span class="text-sm font-bold text-custom-green">👜 包包</span>
-                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                        </div>
-                        <div id="packing-xin-bag" class="space-y-1 min-h-[20px] flex-1"></div>
-                    </div>
-                    <div class="space-y-2 pl-2 flex flex-col h-full">
-                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                            <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
-                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                        </div>
-                        <div id="packing-xin-carry" class="space-y-1 min-h-[20px] flex-1"></div>
-                    </div>
-                    <div class="space-y-2 pl-2 flex flex-col h-full">
-                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                            <span class="text-sm font-bold text-custom-green">🧳 託運</span>
-                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                        </div>
-                        <div id="packing-xin-check" class="space-y-1 min-h-[20px] flex-1"></div>
-                    </div>
+            <div class="space-y-4 mb-8">
+                <div class="flex items-center gap-2 px-1">
+                    <i class="fas fa-suitcase text-custom-green"></i>
+                    <h3 class="font-bold text-slate-800 text-sm drop-shadow-sm">行李清單</h3>
                 </div>
-            </details>
 
-            <details class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden group/details" open>
-                <summary class="bg-orange-50/50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-orange-50 transition">
-                    <div class="flex items-center gap-2">
-                        <span class="bg-orange-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">凱</span>
-                        <span class="font-bold text-slate-700 text-sm">的行李</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
-                    </div>
-                </summary>
-                <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
-                    <div class="space-y-2 flex flex-col h-full">
-                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                            <span class="text-sm font-bold text-custom-green">👜 包包</span>
-                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                <details class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden group/details" open>
+                    <summary class="bg-blue-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-blue-100 transition">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">新</span>
+                            <span class="font-bold text-slate-700 text-sm">的行李</span>
                         </div>
-                        <div id="packing-kai-bag" class="space-y-1 min-h-[20px] flex-1"></div>
-                    </div>
-                    <div class="space-y-2 pl-2 flex flex-col h-full">
-                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                            <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
-                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
                         </div>
-                        <div id="packing-kai-carry" class="space-y-1 min-h-[20px] flex-1"></div>
-                    </div>
-                    <div class="space-y-2 pl-2 flex flex-col h-full">
-                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                            <span class="text-sm font-bold text-custom-green">🧳 託運</span>
-                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                    </summary>
+                    <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
+                        <div class="space-y-2 flex flex-col h-full">
+                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                                <span class="text-sm font-bold text-custom-green">👜 包包</span>
+                                <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div id="packing-xin-bag" class="space-y-1 min-h-[20px] flex-1"></div>
                         </div>
-                        <div id="packing-kai-check" class="space-y-1 min-h-[20px] flex-1"></div>
+                        <div class="space-y-2 pl-2 flex flex-col h-full">
+                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                                <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
+                                <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div id="packing-xin-carry" class="space-y-1 min-h-[20px] flex-1"></div>
+                        </div>
+                        <div class="space-y-2 pl-2 flex flex-col h-full">
+                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                                <span class="text-sm font-bold text-custom-green">🧳 託運</span>
+                                <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div id="packing-xin-check" class="space-y-1 min-h-[20px] flex-1"></div>
+                        </div>
                     </div>
-                </div>
-            </details>
+                </details>
+
+                <details class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden group/details" open>
+                    <summary class="bg-orange-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-orange-100 transition">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-orange-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">凱</span>
+                            <span class="font-bold text-slate-700 text-sm">的行李</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
+                        </div>
+                    </summary>
+                    <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
+                        <div class="space-y-2 flex flex-col h-full">
+                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                                <span class="text-sm font-bold text-custom-green">👜 包包</span>
+                                <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div id="packing-kai-bag" class="space-y-1 min-h-[20px] flex-1"></div>
+                        </div>
+                        <div class="space-y-2 pl-2 flex flex-col h-full">
+                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                                <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
+                                <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div id="packing-kai-carry" class="space-y-1 min-h-[20px] flex-1"></div>
+                        </div>
+                        <div class="space-y-2 pl-2 flex flex-col h-full">
+                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                                <span class="text-sm font-bold text-custom-green">🧳 託運</span>
+                                <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                            </div>
+                            <div id="packing-kai-check" class="space-y-1 min-h-[20px] flex-1"></div>
+                        </div>
+                    </div>
+                </details>
+            </div>
         </div>
     </div>
 
-    <div id="universal-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+    <div id="universal-modal" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="modal-title" class="text-xl font-bold text-slate-800">新增項目</h3>
@@ -192,7 +202,7 @@
         </div>
     </div>
 
-    <div id="weather-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+    <div id="weather-modal" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl modal-enter overflow-hidden flex flex-col max-h-[85vh]">
             <div class="flex justify-between items-center mb-4 flex-shrink-0">
                 <h3 class="text-xl font-bold text-slate-800">旅途天氣預報</h3>
@@ -202,26 +212,26 @@
                 <div><div class="flex items-center gap-2 mb-3 bg-red-50 p-2 rounded-lg sticky top-0 z-10"><span class="bg-red-500 w-1.5 h-4 rounded-full block"></span><h4 class="font-bold text-red-800 text-sm">福岡 (02/24 - 02/28)</h4></div><div id="weather-list-fuk" class="space-y-2"></div></div>
                 <div><div class="flex items-center gap-2 mb-3 bg-blue-50 p-2 rounded-lg sticky top-0 z-10"><span class="bg-blue-500 w-1.5 h-4 rounded-full block"></span><h4 class="font-bold text-blue-800 text-sm">釜山 (02/28 - 03/04)</h4></div><div id="weather-list-pus" class="space-y-2"></div></div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 text-center"><p class="text-[10px] text-slate-400">目前顯示為該季節平均氣溫參考<br>出發前兩週將自動更新為即時預報</p></div>
+            <div class="mt-4 pt-3 border-t border-slate-100 text-center"><p class="text-[10px] text-slate-400">系統將於出發前 14 天<br>自動切換為即時天氣預報</p></div>
         </div>
     </div>
 
     <div class="fixed bottom-6 left-4 right-4 bg-white rounded-full shadow-2xl py-3 px-6 flex justify-between items-center z-40">
-        <div class="flex flex-col items-center text-custom-green cursor-pointer w-1/4">
+        <div class="flex flex-col items-center text-custom-green cursor-pointer w-1/3">
             <i class="fas fa-suitcase text-lg mb-1"></i><span class="text-[10px] font-bold">行程</span>
         </div>
-        <a href="map.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
-            <i class="fas fa-map-marked-alt text-lg mb-1"></i><span class="text-[10px]">地圖</span>
-        </a>
-        <a href="accounting.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
+        <a href="accounting.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/3">
             <i class="fas fa-wallet text-lg mb-1"></i><span class="text-[10px]">記帳</span>
         </a>
-        <a href="shopping.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
+        <a href="shopping.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/3">
             <i class="fas fa-shopping-bag text-lg mb-1"></i><span class="text-[10px]">購物</span>
         </a>
     </div>
 
     <script type="module">
+        // ... (這裡請放我們上一輪最後確認的完整 Script，不需要變動) ...
+        // 為了節省篇幅，請直接沿用您目前 index.html 的 script 區塊
+        // 記得是包含 loadAllData, fetchRealWeather, initWeather 的那個版本
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
@@ -239,6 +249,9 @@
         
         let resourcesData = [], todoData = [], packingData = [];
 
+        // ... (以下維持您最新的 Script 內容) ...
+        // (如果您需要我再貼一次完整的 Script 請告訴我，不然直接保留原本的即可)
+        
         // 1. 讀取資料 (Firebase)
         async function loadAllData() { await Promise.all([loadResources(), loadTodos(), loadPacking()]); }
         
@@ -248,6 +261,7 @@
                 const snapshot = await getDocs(q);
                 let rawLinks = [];
                 snapshot.forEach(doc => rawLinks.push({ id: doc.id, ...doc.data() }));
+                // 修改：確保 "+" 按鈕是實心 (原本在 renderResources 裡處理)
                 resourcesData = [
                     { id: 'traffic', title: '交通地圖', icon: 'fa-subway', links: rawLinks.filter(i => i.group === 'traffic') },
                     { id: 'stay', title: '住宿導航', icon: 'fa-bed', links: rawLinks.filter(i => i.group === 'stay') },
@@ -256,6 +270,35 @@
                 renderResources();
             } catch(e) { console.error(e); }
         }
+        
+        // ... (中間省略 loadTodos, loadPacking, handleFormSubmit, delete functions ...) ...
+
+        // 修改 renderResources 以確保按鈕是實心
+        function renderResources() {
+            const container = document.getElementById('resources-container'); container.innerHTML = '';
+            resourcesData.forEach(group => {
+                let linksHtml = group.links.map(link => `
+                    <div class="p-2 hover:bg-green-50 rounded-xl transition">
+                        <div class="flex items-center justify-between">
+                            <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2 flex items-center">
+                                <span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-2 flex-shrink-0"></span> ${link.text}
+                            </a>
+                            <button onclick="toggleActions('res-${link.id}', this)" class="text-slate-300 hover:text-custom-green px-2"><i class="fas fa-chevron-down chevron-icon text-xs"></i></button>
+                        </div>
+                        <div id="actions-res-${link.id}" class="action-area flex gap-2">
+                            <button onclick="editResource('${group.id}', '${link.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200"><i class="fas fa-pen mr-1"></i> 編輯</button>
+                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200"><i class="fas fa-trash mr-1"></i> 刪除</button>
+                        </div>
+                    </div>`).join('');
+                // 注意：這裡移除了 bg-white/50 改成 bg-white
+                const html = `<div class="${group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col'} p-4 rounded-3xl shadow-sm border relative group/card"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${group.isSpecial ? 'text-orange-500' : 'text-custom-green'} mr-1.5"></i> ${group.title}</h3><button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white w-6 h-6 shadow-sm rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button></div><div class="space-y-1 flex-1">${linksHtml}</div></div>`; 
+                container.innerHTML += html;
+            });
+        }
+
+        // ... (後面的 renderTodos, renderPacking, initWeather 等邏輯完全不用變) ...
+        
+        // 為了確保完整性，請將之前提供的完整 Script 貼在下面即可
         async function loadTodos() {
             try {
                 const snapshot = await getDocs(collection(db, "todos"));
@@ -274,7 +317,6 @@
             } catch(e) { console.error(e); }
         }
 
-        // 2. 寫入與狀態更新
         window.handleFormSubmit = async function(e) {
             e.preventDefault();
             const mode = document.getElementById('input-mode').value;
@@ -304,7 +346,6 @@
             await updateDoc(doc(db, "packing", id), { done: item.done }); 
         }
 
-        // 3. 通用刪除與編輯
         async function deleteItemGeneric(collectionName, id, callback) { 
             if(!confirm('確定刪除？')) return; 
             await deleteDoc(doc(db, collectionName, id)); 
@@ -317,7 +358,6 @@
         window.editTodo = (id) => { openModal('todo', id); };
         window.editPacking = (id) => { openModal('packing', id, null); };
 
-        // 4. UI 互動功能
         window.toggleActions = function(id, btn) {
             const area = document.getElementById(`actions-${id}`);
             const icon = btn.querySelector('i');
@@ -355,27 +395,6 @@
         }
         window.closeModal = function() { document.getElementById('universal-modal').classList.add('hidden'); }
         document.getElementById('universal-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
-
-        function renderResources() {
-            const container = document.getElementById('resources-container'); container.innerHTML = '';
-            resourcesData.forEach(group => {
-                let linksHtml = group.links.map(link => `
-                    <div class="p-2 hover:bg-green-50 rounded-xl transition">
-                        <div class="flex items-center justify-between">
-                            <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2 flex items-center">
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-2 flex-shrink-0"></span> ${link.text}
-                            </a>
-                            <button onclick="toggleActions('res-${link.id}', this)" class="text-slate-300 hover:text-custom-green px-2"><i class="fas fa-chevron-down chevron-icon text-xs"></i></button>
-                        </div>
-                        <div id="actions-res-${link.id}" class="action-area flex gap-2">
-                            <button onclick="editResource('${group.id}', '${link.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200"><i class="fas fa-pen mr-1"></i> 編輯</button>
-                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200"><i class="fas fa-trash mr-1"></i> 刪除</button>
-                        </div>
-                    </div>`).join('');
-                const html = `<div class="${group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col'} p-4 rounded-3xl shadow-sm border relative group/card"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${group.isSpecial ? 'text-orange-500' : 'text-custom-green'} mr-1.5"></i> ${group.title}</h3><button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white/50 w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button></div><div class="space-y-1 flex-1">${linksHtml}</div></div>`; 
-                container.innerHTML += html;
-            });
-        }
 
         function renderTodos() {
             const container = document.getElementById('todo-list'); container.innerHTML = '';
@@ -430,12 +449,7 @@
                 });
             }); });
         }
-
-        // ==========================================
-        // 6. 智慧天氣功能：自動切換 歷史資料 vs 即時預報
-        // ==========================================
         
-        // 歷史統計資料 (備案) - 您設定好的資料
         const historicalWeather = {
             fukuoka: [
                 { date: '02/24 (二)', icon: 'fa-sun', color: 'text-orange-400', high: 11, low: 4, rain: 10 },
@@ -453,70 +467,50 @@
             ]
         };
 
-        // 主要判斷函式
         async function initWeather() {
-            // 您的出發日期
             const tripStart = new Date('2026-02-24');
             const today = new Date();
-            
-            // 計算相差天數 (毫秒 -> 天)
             const diffDays = (tripStart - today) / (1000 * 60 * 60 * 24);
 
-            // 邏輯：如果在出發前 14 天以內 (或者旅程中)，就去抓 API
-            // diffDays <= 14 代表快到了
-            // diffDays >= -10 代表還在旅程中 (沒超過結束日太久)
             if (diffDays <= 14 && diffDays >= -10) {
                 console.log("切換模式：即時預報 (Fetching Live Data)");
                 await fetchRealWeather();
             } else {
                 console.log("切換模式：歷史資料 (Showing Historical Data)");
-                // 直接顯示歷史資料
                 renderWeatherList('fuk', historicalWeather.fukuoka);
                 renderWeatherList('pus', historicalWeather.busan);
             }
         }
 
-        // 抓取真實 API (指定日期區間)
         async function fetchRealWeather() {
-            // 定義日期區間 (API 格式 YYYY-MM-DD)
             const fukStart = '2026-02-24', fukEnd = '2026-02-28';
             const pusStart = '2026-02-28', pusEnd = '2026-03-04';
-
-            // 抓福岡
             await fetchCityWeather('fuk', 33.59, 130.40, fukStart, fukEnd);
-            // 抓釜山
             await fetchCityWeather('pus', 35.10, 129.04, pusStart, pusEnd);
         }
 
         async function fetchCityWeather(id, lat, lon, start, end) {
-            // Open-Meteo 支援 start_date / end_date 參數
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&start_date=${start}&end_date=${end}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
-            
             try {
                 const res = await fetch(url);
                 const data = await res.json();
                 if(data.daily) {
-                    // 轉換 API 資料格式為我們 render 需要的格式
                     const formattedData = convertApiData(data.daily);
                     renderWeatherList(id, formattedData);
                 }
             } catch(e) {
                 console.error("API Error, falling back to history", e);
-                // 如果 API 失敗 (例如日期太遠)，自動退回歷史資料
                 renderWeatherList(id, id === 'fuk' ? historicalWeather.fukuoka : historicalWeather.busan);
             }
         }
 
-        // 資料格式轉換器 (API -> App 格式)
         function convertApiData(daily) {
             const result = [];
             for(let i=0; i < daily.time.length; i++) {
                 const dateObj = new Date(daily.time[i]);
                 const dayOfWeek = ['日', '一', '二', '三', '四', '五', '六'][dateObj.getDay()];
                 const dateStr = `${String(dateObj.getMonth()+1).padStart(2,'0')}/${String(dateObj.getDate()).padStart(2,'0')} (${dayOfWeek})`;
-                
                 const w = getWeatherIcon(daily.weathercode[i]);
-                
                 result.push({
                     date: dateStr,
                     icon: w.icon,
@@ -529,7 +523,6 @@
             return result;
         }
 
-        // 天氣圖示對照
         function getWeatherIcon(code) {
             if (code === 0) return { icon: 'fa-sun', color: 'text-yellow-500' };
             if (code >= 1 && code <= 3) return { icon: 'fa-cloud-sun', color: 'text-yellow-400' };
@@ -540,25 +533,19 @@
             return { icon: 'fa-cloud', color: 'text-slate-400' };
         }
 
-        // 渲染清單 (共用)
         function renderWeatherList(elementId, data) {
             const container = document.getElementById(`weather-list-${elementId}`);
             if(!container) return;
             container.innerHTML = '';
-            
             data.forEach(day => {
-                // 如果日期字串包含星期幾 (如 "02/24 (二)")，只取前面 "02/24"
                 const shortDate = day.date.split(' ')[0]; 
-                
                 container.innerHTML += `
                     <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg border-b border-slate-50 last:border-0">
                         <div class="text-xs font-bold text-slate-600 w-20">${day.date}</div>
-                        
                         <div class="flex-1 flex justify-center items-center gap-2">
                             <i class="fas ${day.icon} ${day.color} text-lg"></i>
                             <span class="text-xs font-bold text-blue-500">${day.rain}%</span>
                         </div>
-
                         <div class="flex items-center gap-3 w-20 justify-end">
                             <span class="text-red-500 font-bold text-sm">${day.high}°</span>
                             <span class="text-slate-300 text-xs">/</span>
@@ -568,7 +555,6 @@
             });
         }
 
-        // 天氣 Modal 開關 (觸發 initWeather)
         window.openWeatherModal = function() {
             document.getElementById('weather-modal').classList.remove('hidden');
             initWeather(); 
@@ -576,7 +562,6 @@
         window.closeWeatherModal = function() { document.getElementById('weather-modal').classList.add('hidden'); }
         document.getElementById('weather-modal').addEventListener('click', function(e){if(e.target===this)closeWeatherModal()});
 
-        // 頁面載入區
         document.addEventListener('DOMContentLoaded', function() {
             const activeTab = document.getElementById('active-tab');
             const container = document.getElementById('date-nav');
@@ -590,5 +575,4 @@
             loadAllData();
         });
     </script>
-</body>
-</html>
+</body></html>
