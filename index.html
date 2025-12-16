@@ -304,6 +304,10 @@
                 const snapshot = await getDocs(collection(db, "todos"));
                 todoData = [];
                 snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
+                
+                // 🌟 新增這行：依照名稱 (text) 進行中文/英文筆畫排序
+                todoData.sort((a, b) => a.text.localeCompare(b.text, "zh-Hant"));
+                
                 renderTodos();
             } catch(e) { console.error(e); }
         }
