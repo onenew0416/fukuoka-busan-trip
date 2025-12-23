@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡&釜山9日遊</title>
+    <title>福岡 x 釜山 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -11,179 +11,161 @@
         .hide-scroll::-webkit-scrollbar { display: none; }
         .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 自訂綠色變數 */
-        .text-custom-green { color: rgb(0, 140, 0); }
-        .bg-custom-green { background-color: rgb(0, 140, 0); }
-        .border-custom-green { border-color: rgb(0, 140, 0); }
-        
-        /* Modal 動畫 */
+        /* Modal 進場動畫 */
         .modal-enter { animation: slideUp 0.3s ease-out forwards; }
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 展開動畫 (Action Area) */
-        .action-area {
-            max-height: 0;
+        /* 圖片放大動畫 */
+        .animate-zoom-in { animation: zoomIn 0.2s ease-out forwards; }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* 旋轉動畫 */
+        .rotate { transform: rotate(180deg); }
+        .action-area { 
+            max-height: 0; overflow: hidden; 
+            transition: max-height 0.3s ease-out, opacity 0.3s;
             opacity: 0;
-            overflow: hidden;
-            transition: all 0.3s ease-in-out;
         }
         .action-area.open {
-            max-height: 100px;
-            opacity: 1;
-            margin-top: 0.5rem;
-            padding-bottom: 0.25rem;
+            max-height: 100px; opacity: 1; margin-top: 8px;
         }
-        
-        /* 箭頭旋轉動畫 */
-        .chevron-icon { transition: transform 0.3s; }
-        .chevron-icon.rotate { transform: rotate(180deg); }
 
-        /* 行李區塊收合動畫 */
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
-        details[open] summary ~ * { animation: slideDown 0.3s ease-in-out; }
-        @keyframes slideDown {
-            0% { opacity: 0; transform: translateY(-10px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+        /* 自定義顏色 */
+        .text-custom-green { color: rgb(0, 140, 0); }
+        .bg-custom-green { background-color: rgb(0, 140, 0); }
+        .border-custom-green { border-color: rgb(0, 140, 0); }
+        .ring-custom-green { --tw-ring-color: rgb(0, 140, 0); }
     </style>
 </head>
-<body class="bg-green-50 text-slate-800 pb-24 min-h-screen relative">
+<body class="bg-green-50 text-slate-800 pb-24 min-h-screen">
 
-    <div class="fixed inset-0 z-0 pointer-events-none" 
-         style="background-image: url('bg_index.jpg'); 
-                background-size: cover; 
-                background-position: center; 
-                opacity: 0.25;"> 
+    <div class="p-6 pt-10 flex justify-between items-center">
+        <div class="flex-1"> 
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis mr-2">
+                福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
+            </h1>
+        </div>
+        <button onclick="openWeatherModal()" class="bg-white border border-green-100 shadow-md rounded-xl px-3 py-1.5 flex flex-col items-center justify-center active:scale-95 transition flex-shrink-0">
+            <i class="fas fa-cloud-sun text-custom-green text-lg mb-0.5"></i>
+            <span class="text-[10px] font-bold text-slate-500">天氣</span>
+        </button>
     </div>
 
-    <div class="relative z-10">
+    <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2" id="date-nav">
+        <div id="active-tab" class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative transition-transform active:scale-95">
+            <i class="fas fa-clipboard-list mb-1 text-lg"></i>
+            <span class="text-xs font-bold">目錄</span>
+            <div class="absolute -bottom-1 w-1 h-1 bg-white rounded-full"></div>
+        </div>
+        <a href="day1.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 1</span><span class="text-lg font-bold text-slate-700 my-0.5">02/24</span><span>(二)</span></a>        
+        <a href="day2.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 2</span><span class="text-lg font-bold text-slate-700 my-0.5">02/25</span><span>(三)</span></a>        
+        <a href="day3.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 3</span><span class="text-lg font-bold text-slate-700 my-0.5">02/26</span><span>(四)</span></a>
+        <a href="day4.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 4</span><span class="text-lg font-bold text-slate-700 my-0.5">02/27</span><span>(五)</span></a>
+        <a href="day5.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 5</span><span class="text-lg font-bold text-slate-700 my-0.5">02/28</span><span>(六)</span></a>
+        <a href="day6.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 6</span><span class="text-lg font-bold text-slate-700 my-0.5">03/01</span><span>(日)</span></a>
+        <a href="day7.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 7</span><span class="text-lg font-bold text-slate-700 my-0.5">03/02</span><span>(一)</span></a>
+        <a href="day8.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 8</span><span class="text-lg font-bold text-slate-700 my-0.5">03/03</span><span>(二)</span></a>
+        <a href="day9.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 9</span><span class="text-lg font-bold text-slate-700 my-0.5">03/04</span><span>(三)</span></a>
+    </div>
+
+    <div id="content-area" class="px-4 space-y-5 animate-fade-in">
         
-        <div class="p-6 pt-10 flex justify-between items-center">
-            <div class="flex-1"> 
-                <h1 class="text-xl sm:text-2xl font-bold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis mr-2 drop-shadow-sm">
-                    福岡 Fukuoka 🇯🇵 x 釜山 Busan 🇰🇷
-                </h1>
+        <div id="resources-container" class="grid grid-cols-2 gap-3"></div>
+
+        <div class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden">
+            <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-check-square text-custom-green mr-2"></i> 待辦事項</h3>
+                <button onclick="openModal('todo')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
             </div>
-            <button onclick="openWeatherModal()" class="bg-white border border-green-100 shadow-md rounded-xl px-3 py-1.5 flex flex-col items-center justify-center active:scale-95 transition flex-shrink-0">
-                <i class="fas fa-cloud-sun text-custom-green text-lg mb-0.5"></i>
-                <span class="text-[10px] font-bold text-slate-500">天氣</span>
-            </button>
+            <div id="todo-list" class="p-2 space-y-1"></div>
         </div>
 
-        <div class="flex overflow-x-auto px-4 space-x-3 hide-scroll mb-6 pb-2" id="date-nav">
-            <div id="active-tab" class="flex-shrink-0 w-16 h-24 bg-custom-green rounded-2xl flex flex-col justify-center items-center shadow-lg shadow-green-200 text-white relative transition-transform active:scale-95">
-                <i class="fas fa-clipboard-list mb-1 text-lg"></i>
-                <span class="text-xs font-bold">目錄</span>
-                <div class="absolute -bottom-1 w-1 h-1 bg-white rounded-full"></div>
-            </div>
-            <a href="day1.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 1</span><span class="text-lg font-bold text-slate-700 my-0.5">02/24</span><span>(二)</span></a>        
-            <a href="day2.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 2</span><span class="text-lg font-bold text-slate-700 my-0.5">02/25</span><span>(三)</span></a>        
-            <a href="day3.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 3</span><span class="text-lg font-bold text-slate-700 my-0.5">02/26</span><span>(四)</span></a>
-            <a href="day4.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 4</span><span class="text-lg font-bold text-slate-700 my-0.5">02/27</span><span>(五)</span></a>
-            <a href="day5.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 5</span><span class="text-lg font-bold text-slate-700 my-0.5">02/28</span><span>(六)</span></a>
-            <a href="day6.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 6</span><span class="text-lg font-bold text-slate-700 my-0.5">03/01</span><span>(日)</span></a>
-            <a href="day7.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 7</span><span class="text-lg font-bold text-slate-700 my-0.5">03/02</span><span>(一)</span></a>
-            <a href="day8.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 8</span><span class="text-lg font-bold text-slate-700 my-0.5">03/03</span><span>(二)</span></a>
-            <a href="day9.html" class="flex-shrink-0 w-16 h-24 bg-white rounded-2xl flex flex-col justify-center items-center shadow-md text-slate-500 text-xs leading-tight block transition active:scale-95"><span class="text-[10px] text-slate-400">Day 9</span><span class="text-lg font-bold text-slate-700 my-0.5">03/04</span><span>(三)</span></a>
-        </div>
-
-        <div id="content-area" class="px-4 space-y-5 animate-fade-in">
-            
-            <div id="resources-container" class="grid grid-cols-2 gap-3"></div>
-
-            <div class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden">
-                <div class="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-800 text-sm"><i class="fas fa-check-square text-custom-green mr-2"></i> 待辦事項</h3>
-                    <button onclick="openModal('todo')" class="bg-white text-custom-green w-6 h-6 rounded-full shadow flex items-center justify-center text-xs hover:bg-green-50"><i class="fas fa-plus"></i></button>
-                </div>
-                <div id="todo-list" class="p-2 space-y-1"></div>
+        <div class="space-y-4 mb-8">
+            <div class="flex items-center gap-2 px-1">
+                <i class="fas fa-suitcase text-custom-green"></i>
+                <h3 class="font-bold text-slate-800 text-sm">行李清單</h3>
             </div>
 
-            <div class="space-y-4 mb-8">
-                <div class="flex items-center gap-2 px-1">
-                    <i class="fas fa-suitcase text-custom-green"></i>
-                    <h3 class="font-bold text-slate-800 text-sm drop-shadow-sm">行李清單</h3>
-                </div>
-
-                <details class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden group/details" open>
-                    <summary class="bg-blue-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-blue-100 transition">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">新</span>
-                            <span class="font-bold text-slate-700 text-sm">的行李</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
-                        </div>
-                    </summary>
-                    <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
-                        <div class="space-y-2 flex flex-col h-full">
-                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                                <span class="text-sm font-bold text-custom-green">👜 包包</span>
-                                <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                            </div>
-                            <div id="packing-xin-bag" class="space-y-1 min-h-[20px] flex-1"></div>
-                        </div>
-                        <div class="space-y-2 pl-2 flex flex-col h-full">
-                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                                <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
-                                <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                            </div>
-                            <div id="packing-xin-carry" class="space-y-1 min-h-[20px] flex-1"></div>
-                        </div>
-                        <div class="space-y-2 pl-2 flex flex-col h-full">
-                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                                <span class="text-sm font-bold text-custom-green">🧳 託運</span>
-                                <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                            </div>
-                            <div id="packing-xin-check" class="space-y-1 min-h-[20px] flex-1"></div>
-                        </div>
+            <details class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden group/details" open>
+                <summary class="bg-blue-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-blue-100 transition">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-blue-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">新</span>
+                        <span class="font-bold text-slate-700 text-sm">的行李</span>
                     </div>
-                </details>
-
-                <details class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden group/details" open>
-                    <summary class="bg-orange-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-orange-100 transition">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-orange-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">凱</span>
-                            <span class="font-bold text-slate-700 text-sm">的行李</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
-                        </div>
-                    </summary>
-                    <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
-                        <div class="space-y-2 flex flex-col h-full">
-                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                                <span class="text-sm font-bold text-custom-green">👜 包包</span>
-                                <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                            </div>
-                            <div id="packing-kai-bag" class="space-y-1 min-h-[20px] flex-1"></div>
-                        </div>
-                        <div class="space-y-2 pl-2 flex flex-col h-full">
-                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                                <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
-                                <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                            </div>
-                            <div id="packing-kai-carry" class="space-y-1 min-h-[20px] flex-1"></div>
-                        </div>
-                        <div class="space-y-2 pl-2 flex flex-col h-full">
-                            <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
-                                <span class="text-sm font-bold text-custom-green">🧳 託運</span>
-                                <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
-                            </div>
-                            <div id="packing-kai-check" class="space-y-1 min-h-[20px] flex-1"></div>
-                        </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
                     </div>
-                </details>
-            </div>
+                </summary>
+                <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
+                    <div class="space-y-2 flex flex-col h-full">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                            <span class="text-sm font-bold text-custom-green">👜 包包</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="packing-xin-bag" class="space-y-1 min-h-[20px] flex-1"></div>
+                    </div>
+                    <div class="space-y-2 pl-2 flex flex-col h-full">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                            <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="packing-xin-carry" class="space-y-1 min-h-[20px] flex-1"></div>
+                    </div>
+                    <div class="space-y-2 pl-2 flex flex-col h-full">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                            <span class="text-sm font-bold text-custom-green">🧳 託運</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'xin', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="packing-xin-check" class="space-y-1 min-h-[20px] flex-1"></div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="bg-white rounded-3xl shadow-md border border-slate-100 overflow-hidden group/details" open>
+                <summary class="bg-orange-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center cursor-pointer hover:bg-orange-100 transition">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-orange-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center">凱</span>
+                        <span class="font-bold text-slate-700 text-sm">的行李</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-chevron-down text-slate-300 transition-transform group-open/details:rotate-180 text-xs"></i>
+                    </div>
+                </summary>
+                <div class="p-4 grid grid-cols-3 gap-3 divide-x divide-slate-100">
+                    <div class="space-y-2 flex flex-col h-full">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                            <span class="text-sm font-bold text-custom-green">👜 包包</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'bag')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="packing-kai-bag" class="space-y-1 min-h-[20px] flex-1"></div>
+                    </div>
+                    <div class="space-y-2 pl-2 flex flex-col h-full">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                            <span class="text-sm font-bold text-custom-green">🎒 隨身</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'carry')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="packing-kai-carry" class="space-y-1 min-h-[20px] flex-1"></div>
+                    </div>
+                    <div class="space-y-2 pl-2 flex flex-col h-full">
+                        <div class="flex items-center justify-center gap-2 bg-green-50 px-1 py-1.5 rounded-lg flex-shrink-0">
+                            <span class="text-sm font-bold text-custom-green">🧳 託運</span>
+                            <button onclick="event.preventDefault(); openModal('packing', null, 'kai', 'check')" class="w-5 h-5 bg-white text-custom-green rounded-full shadow-sm flex items-center justify-center text-xs hover:scale-110 transition flex-shrink-0"><i class="fas fa-plus"></i></button>
+                        </div>
+                        <div id="packing-kai-check" class="space-y-1 min-h-[20px] flex-1"></div>
+                    </div>
+                </div>
+            </details>
         </div>
     </div>
 
     <div id="universal-modal" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl modal-enter">
+        <div class="bg-white w-[90%] max-w-sm rounded-3xl p-6 shadow-2xl modal-enter max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
                 <h3 id="modal-title" class="text-xl font-bold text-slate-800">新增項目</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
@@ -192,6 +174,17 @@
                 <input type="hidden" id="input-id"> <input type="hidden" id="input-mode"> <input type="hidden" id="input-group-id"> 
                 <div class="space-y-4">
                     <div id="field-owner-display" class="hidden mb-2 p-2 bg-slate-50 rounded-lg text-center"><span class="text-xs text-slate-400">擁有者：</span><span id="display-owner-name" class="font-bold text-custom-green"></span></div>
+                    
+                    <div id="field-resource-image" class="hidden">
+                        <label class="block text-xs font-bold text-slate-500 mb-1">圖片 (選填，適用於優惠券等)</label>
+                        <input type="file" id="input-res-image" accept="image/*" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-custom-green hover:file:bg-green-100">
+                        <div id="res-img-preview-container" class="mt-2 hidden relative w-fit">
+                            <img id="res-img-preview" src="" class="h-20 w-auto rounded-lg border border-slate-200 object-cover">
+                            <button type="button" onclick="clearResourceImage()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow-sm"><i class="fas fa-times"></i></button>
+                        </div>
+                        <input type="hidden" id="res-base64-storage">
+                    </div>
+
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">內容 / 標題</label><input type="text" id="input-text" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div>
                     <div id="field-link"><label class="block text-xs font-bold text-slate-500 mb-1">連結網址 (選填)</label><input type="url" id="input-url" placeholder="https://..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm"></div>
                     <div id="field-date" class="hidden"><label class="block text-xs font-bold text-slate-500 mb-1">日期 (選填)</label><input type="date" id="input-date" class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div>
@@ -215,23 +208,28 @@
             <div class="mt-4 pt-3 border-t border-slate-100 text-center"><p class="text-[10px] text-slate-400">系統將於出發前 14 天<br>自動切換為即時天氣預報</p></div>
         </div>
     </div>
+    
+    <div id="image-zoom-modal" class="fixed inset-0 z-[150] bg-black/90 hidden flex items-center justify-center p-4 backdrop-blur-sm" onclick="closeImageModal()">
+        <img id="zoomed-image" src="" class="max-w-full max-h-full rounded-lg shadow-2xl object-contain scale-90 animate-zoom-in">
+        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-xl bg-black/30 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
+    </div>
 
     <div class="fixed bottom-6 left-4 right-4 bg-white rounded-full shadow-2xl py-3 px-6 flex justify-between items-center z-40">
-        <div class="flex flex-col items-center text-custom-green cursor-pointer w-1/3">
+        <div class="flex flex-col items-center text-custom-green cursor-pointer w-1/4">
             <i class="fas fa-suitcase text-lg mb-1"></i><span class="text-[10px] font-bold">行程</span>
         </div>
-        <a href="accounting.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/3">
+        <a href="map.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
+            <i class="fas fa-map-marked-alt text-lg mb-1"></i><span class="text-[10px]">地圖</span>
+        </a>
+        <a href="accounting.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
             <i class="fas fa-wallet text-lg mb-1"></i><span class="text-[10px]">記帳</span>
         </a>
-        <a href="shopping.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/3">
+        <a href="shopping.html" class="flex flex-col items-center text-slate-400 hover:text-custom-green cursor-pointer w-1/4">
             <i class="fas fa-shopping-bag text-lg mb-1"></i><span class="text-[10px]">購物</span>
         </a>
     </div>
 
     <script type="module">
-        // ... (這裡請放我們上一輪最後確認的完整 Script，不需要變動) ...
-        // 為了節省篇幅，請直接沿用您目前 index.html 的 script 區塊
-        // 記得是包含 loadAllData, fetchRealWeather, initWeather 的那個版本
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
@@ -249,10 +247,6 @@
         
         let resourcesData = [], todoData = [], packingData = [];
 
-        // ... (以下維持您最新的 Script 內容) ...
-        // (如果您需要我再貼一次完整的 Script 請告訴我，不然直接保留原本的即可)
-        
-        // 1. 讀取資料 (Firebase)
         async function loadAllData() { await Promise.all([loadResources(), loadTodos(), loadPacking()]); }
         
         async function loadResources() {
@@ -261,7 +255,6 @@
                 const snapshot = await getDocs(q);
                 let rawLinks = [];
                 snapshot.forEach(doc => rawLinks.push({ id: doc.id, ...doc.data() }));
-                // 修改：確保 "+" 按鈕是實心 (原本在 renderResources 裡處理)
                 resourcesData = [
                     { id: 'traffic', title: '交通地圖', icon: 'fa-subway', links: rawLinks.filter(i => i.group === 'traffic') },
                     { id: 'stay', title: '住宿導航', icon: 'fa-bed', links: rawLinks.filter(i => i.group === 'stay') },
@@ -271,46 +264,17 @@
             } catch(e) { console.error(e); }
         }
         
-        // ... (中間省略 loadTodos, loadPacking, handleFormSubmit, delete functions ...) ...
-
-        // 修改 renderResources 以確保按鈕是實心
-        function renderResources() {
-            const container = document.getElementById('resources-container'); container.innerHTML = '';
-            resourcesData.forEach(group => {
-                let linksHtml = group.links.map(link => `
-                    <div class="p-2 hover:bg-green-50 rounded-xl transition">
-                        <div class="flex items-center justify-between">
-                            <a href="${link.url}" target="_blank" class="flex-1 text-xs text-slate-600 hover:text-custom-green font-medium truncate pr-2 flex items-center">
-                                <span class="w-1.5 h-1.5 rounded-full bg-slate-300 inline-block mr-2 flex-shrink-0"></span> ${link.text}
-                            </a>
-                            <button onclick="toggleActions('res-${link.id}', this)" class="text-slate-300 hover:text-custom-green px-2"><i class="fas fa-chevron-down chevron-icon text-xs"></i></button>
-                        </div>
-                        <div id="actions-res-${link.id}" class="action-area flex gap-2">
-                            <button onclick="editResource('${group.id}', '${link.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200"><i class="fas fa-pen mr-1"></i> 編輯</button>
-                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200"><i class="fas fa-trash mr-1"></i> 刪除</button>
-                        </div>
-                    </div>`).join('');
-                // 注意：這裡移除了 bg-white/50 改成 bg-white
-                const html = `<div class="${group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col'} p-4 rounded-3xl shadow-sm border relative group/card"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-slate-800 text-sm"><i class="fas ${group.icon} ${group.isSpecial ? 'text-orange-500' : 'text-custom-green'} mr-1.5"></i> ${group.title}</h3><button onclick="openModal('resource', null, '${group.id}')" class="text-slate-300 hover:text-custom-green text-xs bg-white w-6 h-6 shadow-sm rounded-full flex items-center justify-center"><i class="fas fa-plus"></i></button></div><div class="space-y-1 flex-1">${linksHtml}</div></div>`; 
-                container.innerHTML += html;
-            });
-        }
-
-        // ... (後面的 renderTodos, renderPacking, initWeather 等邏輯完全不用變) ...
-        
-        // 為了確保完整性，請將之前提供的完整 Script 貼在下面即可
         async function loadTodos() {
             try {
                 const snapshot = await getDocs(collection(db, "todos"));
                 todoData = [];
                 snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
-                
-                // 🌟 新增這行：依照名稱 (text) 進行中文/英文筆畫排序
+                // 依照名稱排序
                 todoData.sort((a, b) => a.text.localeCompare(b.text, "zh-Hant"));
-                
                 renderTodos();
             } catch(e) { console.error(e); }
         }
+
         async function loadPacking() {
             try {
                 const q = query(collection(db, "packing"), orderBy("created_at"));
@@ -327,14 +291,26 @@
             const id = document.getElementById('input-id').value;
             const groupId = document.getElementById('input-group-id').value; 
             let collectionName = '', payload = { text: document.getElementById('input-text').value, created_at: Date.now() };
-            if (mode === 'resource') { collectionName = 'resources'; payload.url = document.getElementById('input-url').value; payload.group = groupId; }
+            
+            if (mode === 'resource') { 
+                collectionName = 'resources'; 
+                payload.url = document.getElementById('input-url').value; 
+                payload.group = groupId; 
+                payload.image = document.getElementById('res-base64-storage').value || null;
+            }
             else if (mode === 'todo') { collectionName = 'todos'; payload.url = document.getElementById('input-url').value; payload.date = document.getElementById('input-date').value; if(!id) payload.done = false; }
             else if (mode === 'packing') { collectionName = 'packing'; payload.category = document.getElementById('input-category').value; payload.owner = groupId; if(!id) payload.done = false; }
+            
             try {
-                if (id) await updateDoc(doc(db, collectionName, id), payload); else await addDoc(collection(db, collectionName), payload);
+                if (id) {
+                     delete payload.created_at; 
+                     await updateDoc(doc(db, collectionName, id), payload); 
+                } else {
+                     await addDoc(collection(db, collectionName), payload);
+                }
                 if(mode === 'resource') loadResources(); if(mode === 'todo') loadTodos(); if(mode === 'packing') loadPacking();
                 closeModal();
-            } catch (err) { alert("儲存失敗"); }
+            } catch (err) { console.error(err); alert("儲存失敗：可能是圖片太大了"); }
         }
 
         window.toggleTodo = async function(id) { 
@@ -369,19 +345,121 @@
             icon.classList.toggle('rotate');
         }
 
+		// 圖片處理：智慧判斷 + 高畫質壓縮
+        function setupImageInput() {
+            const fileInput = document.getElementById('input-res-image');
+            
+            // 避免重複綁定
+            const newFileInput = fileInput.cloneNode(true);
+            fileInput.parentNode.replaceChild(newFileInput, fileInput);
+            
+            // 顯示預覽的輔助函式
+            const showPreview = (src) => {
+                document.getElementById('res-img-preview').src = src;
+                document.getElementById('res-base64-storage').value = src;
+                document.getElementById('res-img-preview-container').classList.remove('hidden');
+            };
+
+            newFileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // 門檻設定：700KB (Base64 轉碼後約 930KB，接近 Firebase 1MB 上限)
+                const SAFETY_LIMIT_BYTES = 700 * 1024; 
+
+                // 情況 A：檔案很小 (小於 700KB)，直接使用原圖，不壓縮
+                if (file.size < SAFETY_LIMIT_BYTES) {
+                    console.log("檔案小於 700KB，使用原圖模式");
+                    const reader = new FileReader();
+                    reader.onload = (ev) => showPreview(ev.target.result);
+                    reader.readAsDataURL(file);
+                    return;
+                }
+
+                // 情況 B：檔案過大，進行「高畫質」壓縮
+                console.log("檔案過大，啟動高畫質壓縮模式...");
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        // 1. 尺寸限制：放寬到 1920px (Full HD)，確保文字清晰
+                        // 如果原圖小於 1920，就維持原圖尺寸
+                        const maxDim = 1920; 
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxDim || height > maxDim) {
+                            if (width > height) {
+                                height = Math.round(height * (maxDim / width));
+                                width = maxDim;
+                            } else {
+                                width = Math.round(width * (maxDim / height));
+                                height = maxDim;
+                            }
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // 2. 智慧壓縮迴圈
+                        // 先嘗試用 0.85 (高畫質) 輸出
+                        let quality = 0.85;
+                        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+                        // 3. 安全檢查：Base64 字串長度不能超過 1,000,000 (約 1MB)
+                        // 如果 0.85 還是太大，就慢慢降低品質，直到剛好符合限制
+                        while (dataUrl.length > 1000000 && quality > 0.3) {
+                            quality -= 0.1; // 每次降低 10%
+                            dataUrl = canvas.toDataURL('image/jpeg', quality);
+                            console.log(`檔案仍太大，降質重試: ${quality.toFixed(1)}`);
+                        }
+
+                        showPreview(dataUrl);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        window.clearResourceImage = function() {
+            document.getElementById('input-res-image').value = '';
+            document.getElementById('res-base64-storage').value = '';
+            document.getElementById('res-img-preview-container').classList.add('hidden');
+            document.getElementById('res-img-preview').src = '';
+        }
+        window.openImageModal = function(src) {
+            document.getElementById('zoomed-image').src = src;
+            document.getElementById('image-zoom-modal').classList.remove('hidden');
+        }
+        window.closeImageModal = function() {
+            document.getElementById('image-zoom-modal').classList.add('hidden');
+        }
+
         window.openModal = function(mode, id = null, groupId = null, preCategory = null) {
             document.getElementById('universal-form').reset();
+            clearResourceImage();
             document.getElementById('input-mode').value = mode; 
             document.getElementById('input-id').value = id || ''; 
             document.getElementById('input-group-id').value = groupId || '';
             document.getElementById('universal-modal').classList.remove('hidden');
-            const fl=document.getElementById('field-link'), fd=document.getElementById('field-date'), fc=document.getElementById('field-category'), fo=document.getElementById('field-owner-display');
-            fl.classList.add('hidden'); fd.classList.add('hidden'); fc.classList.add('hidden'); fo.classList.add('hidden');
+            const fl=document.getElementById('field-link'), fd=document.getElementById('field-date'), fc=document.getElementById('field-category'), fo=document.getElementById('field-owner-display'), fi=document.getElementById('field-resource-image');
+            fl.classList.add('hidden'); fd.classList.add('hidden'); fc.classList.add('hidden'); fo.classList.add('hidden'); fi.classList.add('hidden');
             
             if (mode === 'resource') { 
                 document.getElementById('modal-title').innerText = id ? '編輯連結' : '新增連結'; 
-                fl.classList.remove('hidden'); 
-                if(id) { const g=resourcesData.find(g=>g.id===groupId), i=g.links.find(i=>i.id===id); document.getElementById('input-text').value=i.text; document.getElementById('input-url').value=i.url; } 
+                fl.classList.remove('hidden'); fi.classList.remove('hidden');
+                if(id) { 
+                    const g=resourcesData.find(g=>g.id===groupId), i=g.links.find(i=>i.id===id); 
+                    document.getElementById('input-text').value=i.text; document.getElementById('input-url').value=i.url; 
+                    if(i.image) {
+                        document.getElementById('res-base64-storage').value = i.image;
+                        document.getElementById('res-img-preview').src = i.image;
+                        document.getElementById('res-img-preview-container').classList.remove('hidden');
+                    }
+                } 
             }
             else if (mode === 'todo') { 
                 document.getElementById('modal-title').innerText = id ? '編輯待辦' : '新增待辦'; 
@@ -399,6 +477,39 @@
         }
         window.closeModal = function() { document.getElementById('universal-modal').classList.add('hidden'); }
         document.getElementById('universal-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
+
+        function renderResources() {
+            const container = document.getElementById('resources-container'); container.innerHTML = '';
+            resourcesData.forEach(group => {
+                let linksHtml = group.links.map(link => {
+                    let imgHtml = link.image ? `<img src="${link.image}" onclick="event.preventDefault(); event.stopPropagation(); openImageModal(this.src)" class="w-10 h-10 rounded-md object-cover border border-slate-200 cursor-zoom-in flex-shrink-0 mr-3 bg-slate-100">` : '';
+                    const linkTag = link.url ? 'a' : 'div';
+                    const linkHref = link.url ? `href="${link.url}" target="_blank"` : '';
+                    const cursorStyle = link.url ? 'cursor-pointer hover:text-custom-green' : 'cursor-default';
+
+                    return `
+                    <div class="p-2 hover:bg-green-50 rounded-xl transition relative group/item">
+                        <div class="flex items-center justify-between">
+                            <${linkTag} ${linkHref} class="flex-1 flex items-center min-w-0 pr-2 ${cursorStyle}">
+                                ${imgHtml}
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-sm text-slate-700 font-bold truncate">${link.text}</span>
+                                    ${link.url ? '<span class="text-[10px] text-slate-400 truncate"><i class="fas fa-link mr-1"></i>開啟連結</span>' : ''}
+                                </div>
+                            </${linkTag}>
+                            <button onclick="toggleActions('res-${link.id}', this)" class="text-slate-300 hover:text-custom-green px-2 flex-shrink-0"><i class="fas fa-chevron-down chevron-icon text-xs"></i></button>
+                        </div>
+                        <div id="actions-res-${link.id}" class="action-area flex gap-2 z-10 relative">
+                            <button onclick="editResource('${group.id}', '${link.id}')" class="flex-1 bg-green-100 text-green-700 py-1.5 rounded-lg text-xs font-bold hover:bg-green-200"><i class="fas fa-pen mr-1"></i> 編輯</button>
+                            <button onclick="deleteResource('${group.id}', '${link.id}')" class="flex-1 bg-red-100 text-red-600 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200"><i class="fas fa-trash mr-1"></i> 刪除</button>
+                        </div>
+                    </div>`
+                }).join('');
+
+                const html = `<div class="${group.isSpecial ? 'col-span-2 bg-gradient-to-r from-yellow-50 to-orange-50 border-orange-100' : 'bg-white border-slate-100 flex flex-col'} p-4 rounded-3xl shadow-sm border relative group/card"><div class="flex justify-between items-start mb-3"><h3 class="font-bold text-slate-800 text-base flex items-center"><i class="fas ${group.icon} ${group.isSpecial ? 'text-orange-500' : 'text-custom-green'} mr-2"></i> ${group.title}</h3><button onclick="openModal('resource', null, '${group.id}')" class="text-slate-400 hover:text-custom-green text-sm bg-white w-7 h-7 shadow-sm rounded-full flex items-center justify-center transition"><i class="fas fa-plus"></i></button></div><div class="space-y-2 flex-1">${linksHtml}</div></div>`; 
+                container.innerHTML += html;
+            });
+        }
 
         function renderTodos() {
             const container = document.getElementById('todo-list'); container.innerHTML = '';
@@ -477,10 +588,10 @@
             const diffDays = (tripStart - today) / (1000 * 60 * 60 * 24);
 
             if (diffDays <= 14 && diffDays >= -10) {
-                console.log("切換模式：即時預報 (Fetching Live Data)");
+                console.log("切換模式：即時預報");
                 await fetchRealWeather();
             } else {
-                console.log("切換模式：歷史資料 (Showing Historical Data)");
+                console.log("切換模式：歷史資料");
                 renderWeatherList('fuk', historicalWeather.fukuoka);
                 renderWeatherList('pus', historicalWeather.busan);
             }
@@ -542,7 +653,6 @@
             if(!container) return;
             container.innerHTML = '';
             data.forEach(day => {
-                const shortDate = day.date.split(' ')[0]; 
                 container.innerHTML += `
                     <div class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg border-b border-slate-50 last:border-0">
                         <div class="text-xs font-bold text-slate-600 w-20">${day.date}</div>
@@ -573,10 +683,12 @@
                 const targetScroll = activeTab.offsetLeft - 80;
                 container.scrollTo({ left: targetScroll, behavior: 'auto' });
             }
+            setupImageInput();
         });
 
         window.addEventListener('load', function() {
             loadAllData();
         });
     </script>
-</body></html>
+</body>
+</html>
