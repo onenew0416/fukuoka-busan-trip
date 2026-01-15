@@ -39,8 +39,8 @@
             購物清單 <i class="fas fa-shopping-bag text-custom-green ml-2"></i>
         </h1>
     </div>
-	
-	<div class="flex p-3 gap-2 sticky top-[72px] z-20 bg-green-50/95 backdrop-blur-sm">
+
+    <div class="flex p-3 gap-2 sticky top-[72px] z-20 bg-green-50/95 backdrop-blur-sm">
         <button onclick="switchCity('fuk')" id="tab-fuk" class="flex-1 py-2 rounded-xl font-bold text-base shadow-md transition-all duration-300 flex items-center justify-center gap-2 transform active:scale-95">
             <span class="w-1.5 h-1.5 rounded-full bg-white"></span> 福岡 Fukuoka
         </button>
@@ -150,12 +150,12 @@
             const tabFuk = document.getElementById('tab-fuk');
             const tabPus = document.getElementById('tab-pus');
             
-			if (currentCity === 'fuk') {
-                tabFuk.className = "flex-1 py-2 rounded-xl font-bold text-base shadow-lg transition-all duration-300 flex items-center justify-center gap-2 bg-red-500 text-white";
+            if (currentCity === 'fuk') {
+                tabFuk.className = "flex-1 py-2 rounded-xl font-bold text-base shadow-lg transition-all duration-300 flex items-center justify-center gap-2 bg-red-500 text-white transform scale-105";
                 tabPus.className = "flex-1 py-2 rounded-xl font-bold text-base shadow-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white text-slate-400";
             } else {
                 tabFuk.className = "flex-1 py-2 rounded-xl font-bold text-base shadow-sm transition-all duration-300 flex items-center justify-center gap-2 bg-white text-slate-400";
-                tabPus.className = "flex-1 py-2 rounded-xl font-bold text-base shadow-lg transition-all duration-300 flex items-center justify-center gap-2 bg-blue-500 text-white";
+                tabPus.className = "flex-1 py-2 rounded-xl font-bold text-base shadow-lg transition-all duration-300 flex items-center justify-center gap-2 bg-blue-500 text-white transform scale-105";
             }
 
             const themeColor = currentCity === 'fuk' ? 'red' : 'blue';
@@ -168,13 +168,20 @@
                 const items = shoppingData.filter(i => i.city === currentCity && i.category === cat.id);
                 
                 const itemsHtml = items.map(item => `
-                    <div class="flex items-center p-3 bg-white rounded-xl border border-slate-100 shadow-sm mb-2 relative group">
+                    <div class="flex items-center p-3 bg-white rounded-xl border border-slate-100 shadow-sm mb-2 relative group transition-all ${item.bought ? 'opacity-60 bg-slate-50' : ''}">
+                        
+                        <div onclick="toggleBought('${item.id}')" class="mr-3 cursor-pointer flex-shrink-0">
+                             <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${item.bought ? 'bg-custom-green border-custom-green' : 'bg-white border-slate-300'}">
+                                ${item.bought ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                             </div>
+                        </div>
+
                         ${item.image ? 
-                            `<img src="${item.image}" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-12 h-12 rounded-lg object-cover border border-slate-200 mr-3 cursor-zoom-in bg-slate-100 flex-shrink-0">` : 
+                            `<img src="${item.image}" onclick="event.stopPropagation(); openImageModal(this.src)" class="w-12 h-12 rounded-lg object-cover border border-slate-200 mr-3 cursor-zoom-in bg-slate-100 flex-shrink-0 ${item.bought ? 'grayscale' : ''}">` : 
                             `<div class="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 mr-3 flex items-center justify-center text-slate-300 flex-shrink-0"><i class="fas fa-image"></i></div>`
                         }
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-slate-700 truncate">${item.name}</h4>
+                        <div class="flex-1 min-w-0" onclick="toggleBought('${item.id}')">
+                            <h4 class="font-bold text-slate-700 truncate ${item.bought ? 'line-through text-slate-400' : ''}">${item.name}</h4>
                             ${item.note ? `<p class="text-xs text-slate-400 truncate">${item.note}</p>` : ''}
                         </div>
                         <div class="flex gap-2 ml-2">
@@ -210,6 +217,21 @@
             });
         }
 
+        // 勾選功能 (新增)
+        window.toggleBought = async function(id) {
+            const item = shoppingData.find(i => i.id === id);
+            if (!item) return;
+
+            // 1. 本地立即更新 (提升反應速度)
+            item.bought = !item.bought;
+            renderContent();
+
+            // 2. 更新資料庫
+            try {
+                await updateDoc(doc(db, "shopping_items", id), { bought: item.bought });
+            } catch (err) { console.error(err); }
+        }
+
         window.openModal = function(category, id = null) {
             document.getElementById('shopping-form').reset();
             clearImage();
@@ -238,25 +260,16 @@
             }
         }
 
+        // 優化：防止選取文字拖曳到外部時誤關視窗
+        const modal = document.getElementById('shopping-modal');
+        let isMouseDownOnBackdrop = false;
+        modal.addEventListener('mousedown', function(e) { isMouseDownOnBackdrop = (e.target === this); });
+        modal.addEventListener('click', function(e) { if (e.target === this && isMouseDownOnBackdrop) { closeModal(); } });
+
         window.closeModal = function() {
             document.getElementById('shopping-modal').classList.add('hidden');
         }
-		// 優化：防止選取文字拖曳到外部時誤關視窗
-        const modal = document.getElementById('shopping-modal');
-        let isMouseDownOnBackdrop = false;
 
-        // 1. 監聽滑鼠按下：確認是否按在背景上
-        modal.addEventListener('mousedown', function(e) {
-            isMouseDownOnBackdrop = (e.target === this);
-        });
-
-        // 2. 監聽點擊：只有當「按下」與「放開」都在背景時才關閉
-        modal.addEventListener('click', function(e) {
-            if (e.target === this && isMouseDownOnBackdrop) {
-                closeModal();
-            }
-        });
-		
         window.handleFormSubmit = async function(e) {
             e.preventDefault();
             const id = document.getElementById('input-id').value;
@@ -267,6 +280,7 @@
                 note: document.getElementById('input-note').value,
                 image: document.getElementById('base64-storage').value || null,
                 created_at: Date.now()
+                // bought 狀態不在此重置，預設會是 undefined (即未購買)
             };
 
             try {
@@ -274,6 +288,7 @@
                     delete payload.created_at; 
                     await updateDoc(doc(db, "shopping_items", id), payload);
                 } else {
+                    payload.bought = false; // 新增時預設未購買
                     await addDoc(collection(db, "shopping_items"), payload);
                 }
                 loadShoppingItems();
@@ -287,7 +302,6 @@
             loadShoppingItems();
         }
 
-        // 圖片上傳：智慧壓縮邏輯
         const fileInput = document.getElementById('input-image');
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
