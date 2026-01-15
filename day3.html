@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Day 3: 海之中道&泡湯</title>
+    <title>Day 3: 相島&海之中道</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -403,7 +403,21 @@
         window.closeModal = function() { document.getElementById('add-modal').classList.add('hidden'); }
         
         // 綁定背景點擊關閉
-        document.getElementById('add-modal').addEventListener('click', function(e){if(e.target===this)closeModal()});
+		// 優化：防止選取文字拖曳到外部時誤關視窗
+        const modal = document.getElementById('add-modal');
+        let isMouseDownOnBackdrop = false;
+
+        // 1. 監聽滑鼠按下：確認是否按在背景上
+        modal.addEventListener('mousedown', function(e) {
+            isMouseDownOnBackdrop = (e.target === this);
+        });
+
+        // 2. 監聽點擊：只有當「按下」與「放開」都在背景時才關閉
+        modal.addEventListener('click', function(e) {
+            if (e.target === this && isMouseDownOnBackdrop) {
+                closeModal();
+            }
+        });
     
         // 編輯 (將資料填回表單)
         window.editItem = function(id) {
