@@ -40,7 +40,7 @@
         </h1>
     </div>
 
-    <div class="flex p-3 gap-2 sticky top-[72px] z-20 bg-green-50/95 backdrop-blur-sm">
+    <div class="flex p-4 gap-4 sticky top-[72px] z-20 bg-green-50/95 backdrop-blur-sm">
         <button onclick="switchCity('fuk')" id="tab-fuk" class="flex-1 py-2 rounded-xl font-bold text-base shadow-md transition-all duration-300 flex items-center justify-center gap-2 transform active:scale-95">
             <span class="w-1.5 h-1.5 rounded-full bg-white"></span> 福岡 Fukuoka
         </button>
@@ -79,6 +79,11 @@
                         <input type="text" id="input-name" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
                     </div>
                     
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">商品連結 (選填)</label>
+                        <input type="url" id="input-url" placeholder="https://..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm">
+                    </div>
+
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">備註 / 價格 (選填)</label>
                         <input type="text" id="input-note" placeholder="例如: ¥1000, 買兩個..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green">
@@ -184,7 +189,10 @@
                             <h4 class="font-bold text-slate-700 truncate ${item.bought ? 'line-through text-slate-400' : ''}">${item.name}</h4>
                             ${item.note ? `<p class="text-xs text-slate-400 truncate">${item.note}</p>` : ''}
                         </div>
-                        <div class="flex gap-2 ml-2">
+                        <div class="flex gap-2 ml-2 items-center">
+                            ${item.url ? 
+                                `<a href="${item.url}" target="_blank" class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-100 hover:text-blue-600 transition flex items-center justify-center"><i class="fas fa-link text-xs"></i></a>` 
+                                : ''}
                             <button onclick="openModal('${cat.id}', '${item.id}')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:bg-${themeColor}-100 hover:text-${themeColor}-500 transition flex items-center justify-center"><i class="fas fa-pen text-xs"></i></button>
                             <button onclick="deleteItem('${item.id}')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:bg-red-100 hover:text-red-500 transition flex items-center justify-center"><i class="fas fa-trash text-xs"></i></button>
                         </div>
@@ -217,19 +225,12 @@
             });
         }
 
-        // 勾選功能 (新增)
         window.toggleBought = async function(id) {
             const item = shoppingData.find(i => i.id === id);
             if (!item) return;
-
-            // 1. 本地立即更新 (提升反應速度)
             item.bought = !item.bought;
             renderContent();
-
-            // 2. 更新資料庫
-            try {
-                await updateDoc(doc(db, "shopping_items", id), { bought: item.bought });
-            } catch (err) { console.error(err); }
+            try { await updateDoc(doc(db, "shopping_items", id), { bought: item.bought }); } catch (err) { console.error(err); }
         }
 
         window.openModal = function(category, id = null) {
@@ -250,6 +251,7 @@
                 document.getElementById('modal-title').innerText = '編輯商品';
                 document.getElementById('input-name').value = item.name;
                 document.getElementById('input-note').value = item.note || '';
+                document.getElementById('input-url').value = item.url || ''; // 回填網址
                 if(item.image) {
                     document.getElementById('base64-storage').value = item.image;
                     document.getElementById('img-preview').src = item.image;
@@ -260,7 +262,6 @@
             }
         }
 
-        // 優化：防止選取文字拖曳到外部時誤關視窗
         const modal = document.getElementById('shopping-modal');
         let isMouseDownOnBackdrop = false;
         modal.addEventListener('mousedown', function(e) { isMouseDownOnBackdrop = (e.target === this); });
@@ -278,9 +279,9 @@
                 category: document.getElementById('input-category').value,
                 name: document.getElementById('input-name').value,
                 note: document.getElementById('input-note').value,
+                url: document.getElementById('input-url').value, // 儲存網址
                 image: document.getElementById('base64-storage').value || null,
                 created_at: Date.now()
-                // bought 狀態不在此重置，預設會是 undefined (即未購買)
             };
 
             try {
@@ -288,7 +289,7 @@
                     delete payload.created_at; 
                     await updateDoc(doc(db, "shopping_items", id), payload);
                 } else {
-                    payload.bought = false; // 新增時預設未購買
+                    payload.bought = false; 
                     await addDoc(collection(db, "shopping_items"), payload);
                 }
                 loadShoppingItems();
