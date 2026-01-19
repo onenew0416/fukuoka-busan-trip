@@ -160,7 +160,24 @@
             container.innerHTML = '';
 
             CATEGORIES.forEach(cat => {
-                const items = shoppingData.filter(i => i.city === currentCity && i.category === cat.id);
+                // 1. 先篩選出該城市與分類的商品
+                let items = shoppingData.filter(i => i.city === currentCity && i.category === cat.id);
+                
+                // 2. 加入排序邏輯 (新增這段)
+                items.sort((a, b) => {
+                    // 確保 bought 狀態為布林值 (避免 undefined)
+                    const boughtA = !!a.bought;
+                    const boughtB = !!b.bought;
+
+                    // 第一順位：購買狀態 (未買在上，已買在下)
+                    if (boughtA !== boughtB) {
+                        return boughtA ? 1 : -1;
+                    }
+                    // 第二順位：名稱筆畫 (少在上)
+                    return a.name.localeCompare(b.name, "zh-Hant");
+                });
+                
+                // ... (接原本的 const itemsHtml = items.map(...) ) ...
                 
                 const itemsHtml = items.map(item => `
                     <div onclick="toggleActions('shop-${item.id}', this)" class="p-3 bg-white rounded-xl border border-slate-100 shadow-sm mb-2 transition-all cursor-pointer ${item.bought ? 'opacity-60 bg-slate-50' : ''}">

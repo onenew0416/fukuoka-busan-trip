@@ -265,8 +265,17 @@
                 const snapshot = await getDocs(collection(db, "todos"));
                 todoData = [];
                 snapshot.forEach(doc => todoData.push({ id: doc.id, ...doc.data() }));
-                // 依照名稱排序
-                todoData.sort((a, b) => a.text.localeCompare(b.text, "zh-Hant"));
+                
+                // 修改排序邏輯：
+                // 1. 完成狀態 (未完成在上，已完成在下)
+                // 2. 文字筆畫 (少在上，多在下)
+                todoData.sort((a, b) => {
+                    if (a.done !== b.done) {
+                        return a.done ? 1 : -1; // true(已完成) 放後面
+                    }
+                    return a.text.localeCompare(b.text, "zh-Hant"); // 中文筆畫排序
+                });
+                
                 renderTodos();
             } catch(e) { console.error(e); }
         }
