@@ -82,6 +82,14 @@
                         <input type="hidden" id="base64-storage">
                     </div>
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">商品名稱</label><input type="text" id="input-name" required class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">購買數量</label>
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="adjustQty(-1)" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 font-bold text-lg hover:bg-slate-200 active:scale-95 transition">-</button>
+                            <input type="number" id="input-qty" value="1" min="1" class="flex-1 bg-slate-100 rounded-xl px-4 py-2 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-center">
+                            <button type="button" onclick="adjustQty(1)" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 font-bold text-lg hover:bg-slate-200 active:scale-95 transition">+</button>
+                        </div>
+                    </div>                    
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">備註 (選填)</label><input type="text" id="input-note" placeholder="例如: ¥1000, 買兩個..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green"></div>
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">商品連結 (選填)</label><input type="url" id="input-url" placeholder="https://..." class="w-full bg-slate-100 rounded-xl px-4 py-3 font-bold text-slate-700 outline-none focus:ring-2 focus:ring-custom-green text-sm"></div>
                 </div>
@@ -196,7 +204,10 @@
                                 }
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-start">
-                                        <h4 class="font-bold text-slate-700 break-words leading-snug ${item.bought ? 'line-through text-slate-400' : ''}">${item.name}</h4>
+                                        <h4 class="font-bold text-slate-700 break-words leading-snug ${item.bought ? 'line-through text-slate-400' : ''}">
+                                            ${item.name} 
+                                            <span class="ml-1 text-xs font-bold text-custom-green bg-green-50 px-1.5 py-0.5 rounded-full">x${item.quantity || 1}</span>
+                                        </h4>
                                         ${item.url ? 
                                             `<a href="${item.url}" target="_blank" onclick="event.stopPropagation()" class="ml-2 text-blue-500 hover:text-blue-600 transition inline-flex items-center justify-center w-5 h-5 rounded-full hover:bg-blue-50 flex-shrink-0 mt-0.5">
                                                 <i class="fas fa-external-link-alt text-xs"></i>
@@ -259,11 +270,16 @@
         window.openModal = function(category, id = null) {
             document.getElementById('shopping-form').reset();
             clearImage();
+            
             document.getElementById('shopping-modal').classList.remove('hidden');
             document.getElementById('input-city').value = currentCity;
             document.getElementById('input-category').value = category;
             document.getElementById('input-id').value = id || '';
+            
+            // 設定預設數量
+            document.getElementById('input-qty').value = 1; 
 
+            // 補回：按鈕顏色樣式設定
             const themeColor = currentCity === 'fuk' ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600';
             const btn = document.getElementById('submit-btn');
             btn.className = `w-full text-white font-bold py-3 rounded-xl mt-6 shadow-lg active:scale-95 transition-transform ${themeColor}`;
@@ -274,13 +290,28 @@
                 document.getElementById('input-name').value = item.name;
                 document.getElementById('input-note').value = item.note || '';
                 document.getElementById('input-url').value = item.url || '';
+                
+                // 回填數量
+                document.getElementById('input-qty').value = item.quantity || 1;
+
                 if(item.image) {
                     document.getElementById('base64-storage').value = item.image;
                     document.getElementById('img-preview').src = item.image;
                     document.getElementById('img-preview-container').classList.remove('hidden');
                 }
-            } else { document.getElementById('modal-title').innerText = '新增商品'; }
+            } else {
+                document.getElementById('modal-title').innerText = '新增商品';
+            }
         }
+
+        // 數量增減控制
+        window.adjustQty = function(delta) {
+            const input = document.getElementById('input-qty');
+            let val = parseInt(input.value) || 1; // 如果是空的預設為 1
+            val += delta;
+            if (val < 1) val = 1; // 最小值為 1
+            input.value = val;
+        }        
 
         const modal = document.getElementById('shopping-modal');
         let isMouseDownOnBackdrop = false;
@@ -297,16 +328,29 @@
                 name: document.getElementById('input-name').value,
                 note: document.getElementById('input-note').value,
                 url: document.getElementById('input-url').value,
+                
+                // 儲存數量
+                quantity: parseInt(document.getElementById('input-qty').value) || 1,
+
                 image: document.getElementById('base64-storage').value || null,
                 created_at: Date.now()
             };
+
+            // 補回：儲存資料庫的邏輯
             try {
-                if (id) { delete payload.created_at; await updateDoc(doc(db, "shopping_items", id), payload); } 
-                else { payload.bought = false; await addDoc(collection(db, "shopping_items"), payload); }
+                if (id) {
+                    delete payload.created_at; 
+                    await updateDoc(doc(db, "shopping_items", id), payload);
+                } else {
+                    payload.bought = false; // 新增時預設未購買
+                    await addDoc(collection(db, "shopping_items"), payload);
+                }
                 loadShoppingItems();
                 closeModal();
             } catch (err) { alert("儲存失敗"); console.error(err); }
         }
+
+            // ... (後面儲存邏輯不變) ...
 
         window.deleteItem = async function(id) {
             if(!confirm('確定刪除這個商品嗎？')) return;
