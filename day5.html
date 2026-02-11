@@ -238,7 +238,8 @@
             for (const city of CITIES) {
                 if (isLive) {
                     console.log(`Day 5: Fetching live weather for ${city.id}`);
-                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&start_date=${TARGET_DATE}&end_date=${TARGET_DATE}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+                    // 修改：網址最後加上 &forecast_days=16 以抓取遠期預報
+                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${CITY_GEO.lat}&longitude=${CITY_GEO.lon}&start_date=${TARGET_DATE}&end_date=${TARGET_DATE}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`;
                     try {
                         const res = await fetch(url);
                         const data = await res.json();

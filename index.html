@@ -678,16 +678,25 @@
         }
 
         async function fetchCityWeather(id, lat, lon, start, end) {
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&start_date=${start}&end_date=${end}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+            // 修改 1: 網址最後加上 &forecast_days=16 嘗試抓取 16 天內的預報
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&start_date=${start}&end_date=${end}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`;
+            
             try {
                 const res = await fetch(url);
                 const data = await res.json();
+                
+                // 修改 2: 嚴格檢查 data.daily 是否存在
                 if(data.daily) {
                     const formattedData = convertApiData(data.daily);
                     renderWeatherList(id, formattedData);
+                } else {
+                    // 如果 API 回傳成功但沒有 daily 資料 (例如日期太遠)，手動拋出錯誤
+                    // 這樣才會跳到下面的 catch，顯示歷史備份資料
+                    throw new Error("No daily data available");
                 }
             } catch(e) {
                 console.error("API Error, falling back to history", e);
+                // 進入備用模式：顯示手動設定的歷史資料
                 renderWeatherList(id, id === 'fuk' ? historicalWeather.fukuoka : historicalWeather.busan);
             }
         }
